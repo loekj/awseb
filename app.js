@@ -7,9 +7,15 @@ var bodyParser = require('body-parser');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+var http = require('http');
+var server = http.createServer(app);
+server.listen(3000, 'localhost');
+
+var version = "v1";
+var fulfillmentRoute = require('./routes/' + version + '/fulfillment');
+var collectionRoute = require('./routes/' + version + '/collection');
+app.use('/fulfillment', fulfillmentRoute);
+app.use('/collection', collectionRoute);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -22,14 +28,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* 
 * API dir
 */
-app.get('/fulfillment', function(req, res, next) {
-  console.log("asdadasd");
-  res.render('index', { title: 'ExpressA' });
-});
-
-
-//var fulfillment = require('./routes/fulfillment');
-//app.use('/', routes);
+// app.get('/fulfillment', function(req, res, next) {
+//   console.log("fulfillment");
+//   res.jsonp({ title: 'fulfillment' });
+// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -42,15 +44,15 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
+// if (app.get('env') === 'development') {
+//   app.use(function(err, req, res, next) {
+//     res.status(err.status || 500);
+//     res.render('error', {
+//       message: err.message,
+//       error: err
+//     });
+//   });
+// }
 
 // production error handler
 // no stacktraces leaked to user
@@ -61,6 +63,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 module.exports = app;
