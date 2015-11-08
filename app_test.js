@@ -37,3 +37,4 @@ server.on('listening', function() {
 
 
 //curl -v -H "Accept: application/json" -H "Content-type: application/json" -X GET -d ' {"data":{"userUuid":"attl3nZ3k41fH6wtrA3J3SQJo","tests":{"experimentUuid": "test123", "activeVariation": "null"}}}'  http://127.0.0.1:3000/fulfillment
+//curl -v -H "Accept: application/json" -H "Content-type: application/json" -X GET -d ' {"data":{"userUuid":"attl3nZ3k41fH6wtrA3J3SQJo","tests":{"experimentUuid": "test123", "activeVariation": "null"}}}' http://sigmaticv010-env.elasticbeanstalk.com/fulfillment
