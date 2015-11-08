@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* 
 * API dir
 */
-var routes = require('./routes/fulfillment');
+var routes = require('./routes/APIEndpoints');
 //var fulfillment = require('./routes/fulfillment');
 app.use('/', routes);
 
