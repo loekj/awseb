@@ -23,6 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 * API dir
 */
 app.get('/fulfillment', function(req, res, next) {
+  console.log("asdadasd");
   res.render('index', { title: 'ExpressA' });
 });
 
