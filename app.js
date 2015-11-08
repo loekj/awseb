@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 var routes = require('./routes/fulfillment');
 //var fulfillment = require('./routes/fulfillment');
 app.use('/', routes);
+console.log(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

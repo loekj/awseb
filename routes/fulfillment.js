@@ -5,7 +5,7 @@ var router = express.Router();
 * GET
 */
 router.get('/fulfillment', function(req, res, next) {
-//	console.log("GOOEEEE");
+	console.log("GOOEEEE");
   res.render('index', { title: 'ExpressFULFILLMENT' });
 });
 
