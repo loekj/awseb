@@ -22,9 +22,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* 
 * API dir
 */
-var routes = require('./routes/APIEndpoints');
+router.get('/fulfillment', function(req, res, next) {
+  res.render('index', { title: 'ExpressA' });
+});
+
+
 //var fulfillment = require('./routes/fulfillment');
-app.use('/', routes);
+//app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
