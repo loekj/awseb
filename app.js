@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* 
 * API dir
 */
-router.get('/fulfillment', function(req, res, next) {
+app.get('/fulfillment', function(req, res, next) {
   res.render('index', { title: 'ExpressA' });
 });
 
