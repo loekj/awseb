@@ -6,6 +6,7 @@ var router = express.Router();
 */
 router.get('/fulfillment', function(req, res, next) {
 	console.log("GOOEEEE");
+	res.send(req);
   res.render('index', { title: 'ExpressFULFILLMENT' });
 });
 
