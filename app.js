@@ -30,7 +30,6 @@ app.get('/fulfillment', function(req, res, next) {
   var ful_query = req.body;
   var tests_arr = ful_query.data.tests;
   for(i=0; i < tests_arr.length; i++) {
-    res.json(process.env);
     if (tests_arr[i].activeVariation.toLowerCase() == 'null') {
       // person is not in test yet. Activate new test
       break;
@@ -39,7 +38,7 @@ app.get('/fulfillment', function(req, res, next) {
       break;
     }
   }
-  res.json({"name":"assss"});
+  res.json(process.env);
 });
 
 module.exports = app;
