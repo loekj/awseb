@@ -17,6 +17,7 @@ app.get('/fulfillment', function(req, res, next) {
 	var ful_query = req.body;
 	var tests_arr = ful_query.data.tests;
 	for(i=0; i < tests_arr.length; i++) {
+		console.log(i);
 		if (tests_arr[i].activeVariation.toLowerCase() == 'null') {
 			// person is not in test yet. Activate new test
 			break;
@@ -25,7 +26,8 @@ app.get('/fulfillment', function(req, res, next) {
 			break;
 		}
 	}
-	next();
+	res.json({"name":"assss"});
+	//console.log(next);
 });
 
 server.listen(3000, 'localhost');
