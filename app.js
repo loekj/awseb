@@ -22,97 +22,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-/* 
-* API dir
+/*
+* API Modules
 */
-app.get('/fulfillment', function(req, res, next) {
-  var ful_query = req.body;
-  var tests_arr = ful_query.data.tests;
-  for(i=0; i < tests_arr.length; i++) {
-    if (tests_arr[i].activeVariation.toLowerCase() == 'null') {
-      // person is not in test yet. Activate new test
-      break;
-    } else {
-      // person is already in test, feed already active variation in response!
-      break;
-    }
-  }
-  res.json(process.env);
-});
-
+var fulfillment = require('./controllers/endpoints/fulfillment.js');
+var register = require('./controllers/endpoints/register.js');
+var experiment = require('./controllers/endpoints/experiment.js');
 
 /*
-* Register account
+* API Endpoints
 */
-app.post('/register', function(req, res, next) {
-  res.json({"hallo":"halloo"});
-}
+app.post('/fulfillment', fulfillment.POST);
+app.post('/register', register.POST);
+app.post('/experiment', experiment.POST);
 
-/*
-* Register experiment
-* Upon new experiment, create new tables
-*/
-app.post('/newexp', function(req, res, next) {
-  var newexp_json = req.body;
-  
-  // If custom success, edit succes fn table:
-  if (newexp_json.succesFnDdefault) {
-    var succesUuid = newexp_json.succesFnDefault;
-  } else { 
-    // custom must be defined
-    // create new uuid
-    // call database controller and do query asynchronous,
-    var query = ... minify(newexp_json.succesFnBlob);
-    var succesUuid = 
-  }  
-
-  // Assuming all keys exist as contract prescribed in sigmatic docs
-  var new_exp = {
-    name = newexp_json.expName;
-    prop = newexp_json.expProp;
-    ...
-    ...
-    ...
-  }
-  var exp_uuid = ....
-  // do INSERT query here
-  res.json({"hallo":"halloo"});
-}
-
-
-
-  // function setupVariations(connection, callback){
-  //   var ful_query = req.body;
-  //   var tests_arr = ful_query.data.tests;
-  //   var query = "CREATE TABLE IF NOT EXISTS " + oauth_id + "." + experiment_uuid + ".variations (" +
-  //     "id INT NOT NULL AUTO_INCREMENT," +
-  //     "addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-  //     "modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-  //     "variationUuid VARCHAR(255) NOT NULL," +
-  //     "name VARCHAR(50) NOT NULL DEFAULT 'Untitled'," +
-  //     "experimentUuid VARCHAR(255) NOT NULL," +
-  //     "js MEDIUMBLOB NOT NULL," +
-  //     "css MEDIUMBLOB NOT NULL," +
-  //     "html MEDIUMBLOB NOT NULL" +
-  //     "PRIMARY KEY ( id )," +
-  //     "UNIQUE KEY unique_variationUuid ( variationUuid )" +
-  //     ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-  //   runQuery(query, connection, callback);
-  // }
-
-  // function setupUserData(connection, callback){
-  //   var query = "CREATE TABLE IF NOT EXISTS " + oauth_id + "." + experiment_uuid + ".userdata (" +
-  //   "id INT NOT NULL AUTO_INCREMENT," +
-  //   "addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-  //   "userUuid VARCHAR(255) NOT NULL," +
-  //   "variationUuid VARCHAR(255) NOT NULL," +
-  //   "experimentUuid VARCHAR(255) NOT NULL," +
-  //   "succesReturn VARCHAR(255) DEFAULT NULL," +
-  //   "miscFields MEDIUMBLOB DEFAULT NULL" +
-  //   "PRIMARY KEY ( id )" +
-  //   ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-  //   runQuery(query, connection, callback);
-  // }
-}
 
 module.exports = app;

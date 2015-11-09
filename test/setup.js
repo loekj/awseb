@@ -55,11 +55,11 @@ function setupSuccess(connection, callback){
 
 function runQuery(query, connection, callback) {
 	console.log('Calling "' + query.slice(0,60) + '"...');
-	connection.query(query, function(err, rows, fields) {
+	connection.query(query, function(err, rows) {
 		if (err) {
-			callback('error','error querying: ' + err.message);
+			callback(err, err.message);
 		} else {
-			callback(null, 'Rows affected: ' + rows.affectedRows);
+			callback(null, JSON.stringify(rows));
 		}
 	});
 }

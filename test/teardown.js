@@ -12,9 +12,9 @@ function runQuery(query, connection, callback) {
 	console.log('Calling "' + query.slice(0,60) + '"...');
 	connection.query(query, function(err, rows, fields) {
 		if (err) {
-			callback('error','error querying: ' + err.message);
+			callback(err, err.message);
 		} else {
-			callback(null, 'Affected: ' + rows.affectedRows);
+			callback(null, JSON.stringify(rows));
 		}
 	});
 }

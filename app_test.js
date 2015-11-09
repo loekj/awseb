@@ -10,25 +10,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-/* 
-* API dir
+/*
+* API Endpoints
 */
-app.get('/fulfillment', function(req, res, next) {
-	var ful_query = req.body;
-	var tests_arr = ful_query.data.tests;
-	for(i=0; i < tests_arr.length; i++) {
-		console.log(i);
-		if (tests_arr[i].activeVariation.toLowerCase() == 'null') {
-			// person is not in test yet. Activate new test
-			break;
-		} else {
-			// person is already in test, feed already active variation in response!
-			break;
-		}
-	}
-	res.json({"name":"assss"});
-	//console.log(next);
-});
+var fulfillment = require('./controllers/endpoints/fulfillment_test.js');
+app.post('/fulfillment', fulfillment.POST);
 
 server.listen(3000, 'localhost');
 server.on('listening', function() {
