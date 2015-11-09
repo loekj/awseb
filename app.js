@@ -12,7 +12,8 @@ var connection = mysql.createConnection({
   host     : process.env.RDS_HOSTNAME,
   user     : process.env.RDS_USERNAME,
   password : process.env.RDS_PASSWORD,
-  port     : process.env.RDS_PORT
+  port     : process.env.RDS_PORT,
+  database : process.env.RDS_DB_NAME
 });
 
 var app = express();
@@ -40,5 +41,56 @@ app.get('/fulfillment', function(req, res, next) {
   }
   res.json(process.env);
 });
+
+
+/*
+* Register account
+*/
+app.get('/register', function(req, res, next) {
+  console.log('user data');
+}
+
+/*
+* Register experiment
+*/
+app.get('/newexp', function(req, res, next) {
+  function setupVariations(connection, callback){
+    var ful_query = req.body;
+    var tests_arr = ful_query.data.tests;
+    var query = "CREATE TABLE IF NOT EXISTS " + oauth_id + "." + experiment_uuid + ".variations (" +
+      "id INT NOT NULL AUTO_INCREMENT," +
+      "addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+      "modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+      "variationUuid VARCHAR(255) NOT NULL," +
+      "name VARCHAR(50) NOT NULL DEFAULT 'Untitled'," +
+      "experimentUuid VARCHAR(255) NOT NULL," +
+      "js MEDIUMBLOB NOT NULL," +
+      "css MEDIUMBLOB NOT NULL," +
+      "html MEDIUMBLOB NOT NULL" +
+      "PRIMARY KEY ( id )," +
+      "UNIQUE KEY unique_variationUuid ( variationUuid )" +
+      ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+    runQuery(query, connection, callback);
+  }
+
+  function setupUserData(connection, callback){
+    var query = "CREATE TABLE IF NOT EXISTS " + oauth_id + "." + experiment_uuid + ".userdata (" +
+    "id INT NOT NULL AUTO_INCREMENT," +
+    "addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+    "userUuid VARCHAR(255) NOT NULL," +
+    "variationUuid VARCHAR(255) NOT NULL," +
+    "experimentUuid VARCHAR(255) NOT NULL," +
+    "succesReturn VARCHAR(255) DEFAULT NULL," +
+    "miscFields MEDIUMBLOB DEFAULT NULL" +
+    "PRIMARY KEY ( id )" +
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+    runQuery(query, connection, callback);
+  }
+}
+
+
+var sql = "SELECT * FROM ?? WHERE ?? = ?";
+var inserts = ['users', 'id', userId];
+sql = mysql.format(sql, inserts);
 
 module.exports = app;
