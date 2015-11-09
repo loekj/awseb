@@ -45,7 +45,7 @@ app.get('/fulfillment', function(req, res, next) {
 * Register account
 */
 app.post('/register', function(req, res, next) {
-  console.log('user data');
+  res.json({"hallo":"halloo"});
 }
 
 /*
@@ -53,6 +53,34 @@ app.post('/register', function(req, res, next) {
 * Upon new experiment, create new tables
 */
 app.post('/newexp', function(req, res, next) {
+  var newexp_json = req.body;
+  
+  // If custom success, edit succes fn table:
+  if (newexp_json.succesFnDdefault) {
+    var succesUuid = newexp_json.succesFnDefault;
+  } else { 
+    // custom must be defined
+    // create new uuid
+    // call database controller and do query asynchronous,
+    var query = ... minify(newexp_json.succesFnBlob);
+    var succesUuid = 
+  }  
+
+  // Assuming all keys exist as contract prescribed in sigmatic docs
+  var new_exp = {
+    name = newexp_json.expName;
+    prop = newexp_json.expProp;
+    ...
+    ...
+    ...
+  }
+  var exp_uuid = ....
+  // do INSERT query here
+  res.json({"hallo":"halloo"});
+}
+
+
+
   // function setupVariations(connection, callback){
   //   var ful_query = req.body;
   //   var tests_arr = ful_query.data.tests;
@@ -86,11 +114,5 @@ app.post('/newexp', function(req, res, next) {
   //   runQuery(query, connection, callback);
   // }
 }
-
-/* preparing mysql injections
-var sql = "SELECT * FROM ?? WHERE ?? = ?";
-var inserts = ['users', 'id', userId];
-sql = mysql.format(sql, inserts);
-*/
 
 module.exports = app;

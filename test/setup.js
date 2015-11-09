@@ -3,12 +3,14 @@ function setupExperiments(connection, callback){
 		"id INT NOT NULL AUTO_INCREMENT," +
 		"addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+		"experimentUuid VARCHAR(255) NOT NULL," +
+		"name VARCHAR(50) DEFAULT 'Untitled'," +
 		"oauth VARCHAR(100) NOT NULL," +
 		"succId INT NOT NULL," +
 		"prop VARCHAR(255) NOT NULL," +
 		"timeout INT NOT NULL DEFAULT 18000," +
 		"PRIMARY KEY ( id )," +
-		"UNIQUE KEY unique_oauth ( oauth )" +
+		"UNIQUE KEY unique_experimentUuid ( experimentUuid )" +
 		") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 	runQuery(query, connection, callback);	
 }
@@ -18,11 +20,13 @@ function setupAccounts(connection, callback){
 		"id INT NOT NULL AUTO_INCREMENT," +
 		"addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+		"userUuid VARCHAR(255) NOT NULL," +
 		"oauth VARCHAR(100) NOT NULL," +
 		"permis VARCHAR(50) NOT NULL," +
 		"subscrId INT NOT NULL DEFAULT 0," +
 		"PRIMARY KEY ( id )," +
-		"UNIQUE KEY unique_oauth ( oauth )" +
+		"UNIQUE KEY unique_oauth ( oauth )," +
+		"UNIQUE KEY unique_userUuid ( userUuid )" +
 		") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 	runQuery(query, connection, callback);
 }
@@ -32,6 +36,7 @@ function setupSuccess(connection, callback){
 		"id INT NOT NULL AUTO_INCREMENT," +
 		"addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+		"succesfnUuid VARCHAR(255) NOT NULL," +
 		"descr TINYBLOB NOT NULL," +
 		"fn MEDIUMBLOB NOT NULL," +
 		"argstr1 VARCHAR(50) DEFAULT NULL," +
@@ -40,7 +45,8 @@ function setupSuccess(connection, callback){
 		"argint1 INT DEFAULT NULL," +
 		"argint2 INT DEFAULT NULL," +
 		"argint3 INT DEFAULT NULL," +
-		"PRIMARY KEY ( id )" +
+		"PRIMARY KEY ( id )," +
+		"UNIQUE KEY unique_succesfnUuid ( succesfnUuid )" +
 		") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 	runQuery(query, connection, callback);
 }
