@@ -24,10 +24,11 @@ exports.POST = function(req, res, next) {
 			cpuUtilization(function (err, data) {
 				log.console(data);
 			});
-			break;
 		} else {
 			// person is already in test, feed already active variation in response!
-			break;
+			/*
+			mysql query = ",,,,," get blah
+			*/
 		}
 	}
 };
