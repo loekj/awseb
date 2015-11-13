@@ -25,16 +25,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 /*
 * API Modules
 */
+var register = require('./controllers/endpoints/test.js');
 var fulfillment = require('./controllers/endpoints/fulfillment.js');
 var register = require('./controllers/endpoints/register.js');
-var experiment = require('./controllers/endpoints/experiment.js');
+//var experiment = require('./controllers/endpoints/experiment.js');
 
 /*
 * API Endpoints
 */
+app.get('/', test.POST);
 app.post('/fulfillment', fulfillment.POST);
 app.post('/register', register.POST);
-app.post('/experiment', experiment.POST);
+//app.post('/experiment', experiment.POST);
 
 
 module.exports = app;

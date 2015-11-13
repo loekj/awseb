@@ -1,36 +1,36 @@
-var express = require('express');
+// var express = require('express');
 
-/* 
-* POST
-*/
-exports.POST = function(req, res, next) {
-	var newexp_json = req.body;
+// /* 
+// * POST
+// */
+// exports.POST = function(req, res, next) {
+// 	var newexp_json = req.body;
 
-	// If custom success, edit succes fn table:
-	if (newexp_json.succesFnDdefault) {
-    var succesUuid = newexp_json.succesFnDefault;
-	} else { 
-	// custom must be defined
-	// create new uuid
-	// call database controller and do query asynchronous,
-	var query = ... minify(newexp_json.succesFnBlob);
-	var succesUuid = 
-	}  
+// 	// If custom success, edit succes fn table:
+// 	if (newexp_json.succesFnDdefault) {
+//     var succesUuid = newexp_json.succesFnDefault;
+// 	} else { 
+// 	// custom must be defined
+// 	// create new uuid
+// 	// call database controller and do query asynchronous,
+// 	var query = ... minify(newexp_json.succesFnBlob);
+// 	var succesUuid = 
+// 	}  
 
-	// Assuming all keys exist as contract prescribed in sigmatic docs
-	var new_exp = {
-	name = newexp_json.expName;
-	prop = newexp_json.expProp;
-	...
-	...
-	...
-	}
-	var exp_uuid = ....
-	// do INSERT query here
+// 	// Assuming all keys exist as contract prescribed in sigmatic docs
+// 	var new_exp = {
+// 	name = newexp_json.expName;
+// 	prop = newexp_json.expProp;
+// 	...
+// 	...
+// 	...
+// 	}
+// 	var exp_uuid = ....
+// 	// do INSERT query here
 
-	// send json back with header defined
-	res.json({"hallo":"halloo"});	
-};
+// 	// send json back with header defined
+// 	res.json({"hallo":"halloo"});	
+// };
 
 
 
