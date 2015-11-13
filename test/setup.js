@@ -4,9 +4,10 @@ function setupExperiments(connection, callback){
 		"addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"experimentUuid VARCHAR(255) NOT NULL," +
+		"succesfnUuid VARCHAR(255) NOT NULL," +
+		"descr BLOB NOT NULL," +
 		"name VARCHAR(50) DEFAULT 'Untitled'," +
 		"oauth VARCHAR(100) NOT NULL," +
-		"succId INT NOT NULL," +
 		"prop VARCHAR(255) NOT NULL," +
 		"timeout INT NOT NULL DEFAULT 18000," +
 		"PRIMARY KEY ( id )," +
@@ -37,14 +38,11 @@ function setupSuccess(connection, callback){
 		"addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"succesfnUuid VARCHAR(255) NOT NULL," +
-		"descr TINYBLOB NOT NULL," +
-		"fn MEDIUMBLOB NOT NULL," +
-		"argstr1 VARCHAR(50) DEFAULT NULL," +
+		"fn BLOB NOT NULL," +
+		"argstr1 VARCHAR(100) DEFAULT NULL," +
 		"argstr2 VARCHAR(50) DEFAULT NULL," +
 		"argstr3 VARCHAR(50) DEFAULT NULL," +
-		"argint1 INT DEFAULT NULL," +
-		"argint2 INT DEFAULT NULL," +
-		"argint3 INT DEFAULT NULL," +
+		"argstr4 VARCHAR(50) DEFAULT NULL," +
 		"PRIMARY KEY ( id )," +
 		"UNIQUE KEY unique_succesfnUuid ( succesfnUuid )" +
 		") ENGINE=InnoDB DEFAULT CHARSET=utf8;";

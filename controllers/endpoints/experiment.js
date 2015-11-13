@@ -8,7 +8,7 @@ exports.POST = function(req, res, next) {
 
 	// If custom success, edit succes fn table:
 	if (newexp_json.succesFnDdefault) {
-	var succesUuid = newexp_json.succesFnDefault;
+    var succesUuid = newexp_json.succesFnDefault;
 	} else { 
 	// custom must be defined
 	// create new uuid
@@ -63,6 +63,6 @@ exports.POST = function(req, res, next) {
   //   "succesReturn VARCHAR(255) DEFAULT NULL," +
   //   "miscFields MEDIUMBLOB DEFAULT NULL" +
   //   "PRIMARY KEY ( id )" +
-  //   ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+  //   ") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
   //   runQuery(query, connection, callback);
   // }
