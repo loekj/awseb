@@ -1,12 +1,15 @@
 var express = require('express');
 var path = require('path');
 var http = require('http');
-var logger = require('morgan');
+var logger = require('bunyan');
 // var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var log = new logger({name: 'sigmatic'}); //{name: 'hello' /*, ... */}
+
 var mode = process.env.NODE_ENV;
 var host = process.env.NODE_HOST;
+log.info({NODE_ENV:mode, NODE_HOST:host}, 'env settings');
 
 if (host == 'remote') {
 	var mysql = require('mysql');
