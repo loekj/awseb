@@ -9,8 +9,11 @@ from sklearn.datasets import make_hastie_10_2
 Python script that trains the model
 For now just do random selection
 """
-import random,sys
+import random
+import sys, os
+import socket
 
+server_address = '/tmp/pysocket'
 class dummyObj(object):
 	def __init__(self):
 		self.x = 5

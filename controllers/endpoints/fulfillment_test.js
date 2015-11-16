@@ -11,16 +11,19 @@ exports.GET = function(req, res, next) {
 		mode: 'text',
 		pythonPath: '/usr/bin/python2.7',
 		pythonOptions: ['-u'],
-		scriptPath: './../ai',
-		args: [exp_uuid, '5', '26', 'job'] //latter 2 args are e.g. user account data from client's server
+		scriptPath: __dirname + '/../ai',
+		args: ['exp_uuid', req.query.x, '5', '26', 'job'] //latter 2 args are e.g. user account data from client's server
 	};
 
 	PythonShell.run('gradientBoosting.py', options, function (err, results) {
 		if (err) {
 			//LOGGER: console.log(JSON.stringify(err.traceback));
-			res.json({"error":err.traceback});
+			console.log(err);
+			console.log(results);
+			res.json({"error":err});
+		} else if (results) {
+			res.json({"succes":results});
 		}
-		res.json({"succes":results});
 	});			
 };
 

@@ -27,27 +27,33 @@ if (host == 'local') {
 	var server = http.createServer(app);
 }
 
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-/*
-* API Modules
-*/
-var test = require('./controllers/endpoints/test.js');
-var fulfillment = require('./controllers/endpoints/fulfillment.js');
-var register = require('./controllers/endpoints/register.js');
-//var experiment = require('./controllers/endpoints/experiment.js');
-
 /*
 * API Endpoints
 */
-app.get('/', test.POST);
-app.post('/fulfillment', fulfillment.POST);
-app.post('/register', register.POST);
+if (mode == 'production') {
+	var fulfillment = require('./controllers/endpoints/fulfillment.js');
+	var register = require('./controllers/endpoints/register.js');
+	//var experiment = require('./controllers/endpoints/experiment.js');
+
+	app.post('/', test.POST);
+	app.post('/fulfillment', fulfillment.POST);
+	app.post('/register', register.POST);
+
+} else if (mode == 'debug') {
+	var test = require('./controllers/endpoints/test.js');
+	var fulfillment = require('./controllers/endpoints/fulfillment_test.js');
+	var register = require('./controllers/endpoints/register.js');
+	//var experiment = require('./controllers/endpoints/experiment.js');	
+
+	app.get('/', test.GET);
+	app.get('/fulfillment', fulfillment.GET);
+	app.post('/register', register.POST);
+}
 //app.post('/experiment', experiment.POST);
 
 if (host == 'local') {
