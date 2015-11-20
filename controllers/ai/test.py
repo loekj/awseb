@@ -14,6 +14,7 @@ import sys, os
 import socket
 
 server_address = '/tmp/pysocket'
+"""Implement socket listening?"""
 class dummyObj(object):
 	def __init__(self):
 		self.x = 5

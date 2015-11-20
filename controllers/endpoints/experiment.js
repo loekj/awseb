@@ -37,7 +37,7 @@
   // function setupVariations(connection, callback){
   //   var ful_query = req.body;
   //   var tests_arr = ful_query.data.tests;
-  //   var query = "CREATE TABLE IF NOT EXISTS " + oauth_id + "." + experiment_uuid + ".variations (" +
+  //   var query = "CREATE TABLE IF NOT EXISTS " + experiment_uuid + ".variations (" +
   //     "id INT NOT NULL AUTO_INCREMENT," +
   //     "addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
   //     "modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
@@ -53,16 +53,34 @@
   //   runQuery(query, connection, callback);
   // }
 
-  // function setupUserData(connection, callback){
-  //   var query = "CREATE TABLE IF NOT EXISTS " + oauth_id + "." + experiment_uuid + ".userdata (" +
+
+  // function setupInTest(connection, callback){
+  //   var query = "CREATE TABLE IF NOT EXISTS " + experiment_uuid + ".intest (" +
   //   "id INT NOT NULL AUTO_INCREMENT," +
   //   "addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+  //   "testUuid VARCHAR(255) NOT NULL," +  
   //   "userUuid VARCHAR(255) NOT NULL," +
   //   "variationUuid VARCHAR(255) NOT NULL," +
-  //   "experimentUuid VARCHAR(255) NOT NULL," +
+  //   "experimentUuid VARCHAR(255) NOT NULL" +
+  //   "PRIMARY KEY ( id )," +
+  //   "UNIQUE KEY unique_testUuid ( testUuid )" +
+  //   ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+  //   runQuery(query, connection, callback);
+  // }
+
+
+  // function setupUserData(connection, callback){
+  //   var query = "CREATE TABLE IF NOT EXISTS " + experiment_uuid + ".userdata (" +
+  //   "id INT NOT NULL AUTO_INCREMENT," +
+  //   "addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+  //   "testUuid VARCHAR(255) NOT NULL," +
+  //   "userUuid VARCHAR(255) NOT NULL," +
+  //   "variationUuid VARCHAR(255) NOT NULL," +
+  //   "expUuid VARCHAR(255) NOT NULL," +
   //   "succesReturn VARCHAR(255) DEFAULT NULL," +
   //   "miscFields MEDIUMBLOB DEFAULT NULL" +
-  //   "PRIMARY KEY ( id )" +
+  //   "PRIMARY KEY ( id )," +
+  //   "UNIQUE KEY unique_testUuid ( testUuid )" +
   //   ") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
   //   runQuery(query, connection, callback);
   // }

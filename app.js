@@ -9,18 +9,18 @@ var log = new logger({name: 'sigmatic'}); //{name: 'hello' /*, ... */}
 
 var mode = process.env.NODE_ENV;
 var host = process.env.NODE_HOST;
-log.info({NODE_ENV:mode, NODE_HOST:host}, 'env settings');
+//log.info({NODE_ENV:mode, NODE_HOST:host}, 'env settings');
 
-if (host == 'remote') {
-	var mysql = require('mysql');
-	var connection = mysql.createConnection({
-	  host     : process.env.RDS_HOSTNAME,
-	  user     : process.env.RDS_USERNAME,
-	  password : process.env.RDS_PASSWORD,
-	  port     : process.env.RDS_PORT,
-	  database : process.env.RDS_DB_NAME
-	});
-}
+// if (host == 'remote') {
+// 	var mysql = require('mysql');
+// 	var connection = mysql.createConnection({
+// 	  host     : process.env.RDS_HOSTNAME,
+// 	  user     : process.env.RDS_USERNAME,
+// 	  password : process.env.RDS_PASSWORD,
+// 	  port     : process.env.RDS_PORT,
+// 	  database : process.env.RDS_DB_NAME
+// 	});
+// }
 
 var app = express();
 if (host == 'local') {
