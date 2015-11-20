@@ -35,13 +35,31 @@ exports.POST = function(req, res, next) {
 					console.log(err);
 					throw err;
 				}
+				testUuid = uuid.v4(); // create testUuid
 				if (parseInt(fields.prop,10) <= math.random()*100) {
 					//test person! select random variation, fetch results and serve
-				} else {
-					//get winning variation
-					var inputs = [fields.numVar];// ...[, '5', '26', 'job']
 
+					// ALSO NEED TO FETC GETSUCCESFN HERE!
+					getRandomVariation(function(err, results) {
+						if (err) {
+							console.log(err);
+							throw err;
+						}
+						res.json({
+							'testUuid': testUuid,
+							'html': {
+								results.html
+							},
+							'css': results.css,
+							'js': results.js,
+							'succ': results[1];
+						});
+					});
+				} else {
 					// run in parallel. Two independent tasks
+					// predict variation by machine learning
+					// fetch corresponding test function
+					var inputs = [fields.numVar];// ...[, '5', '26', 'job']
 					async.parallel([
 						function(callback) {
 							predictVariation(inputs, callback);
@@ -50,12 +68,12 @@ exports.POST = function(req, res, next) {
 							getSuccesFn(fields.succUuid, callback);
 						}
 					], function(err, results) {
-						testUuid = uuid.v4(); // create testUuid
 						console.log(results);
 						var winVarUuid = results[0];
 						getVariation(winVarUuid, function(err, results) {
 							if (err) {
-								// do blag
+								console.log(err);
+								throw err;
 							}
 							res.json({
 								'testUuid': testUuid,
@@ -65,9 +83,11 @@ exports.POST = function(req, res, next) {
 								'css': results.css,
 								'js': results.js,
 								'succ': results[1];
-							});						
+							});
+							
+							// add to inTest-database
+
 						});
-						// add to intest-database
 					});
 
 				}
@@ -78,6 +98,25 @@ exports.POST = function(req, res, next) {
 	}
 };
 
+
+function getRandomVariation(callback) {
+	// This is very slow. Optimize later.
+	var queryString = 'SELECT succUuid, fn, argstr1, argstr2, argstr3, argstr4 FROM' + expUuid + '.variations' + ' ORDER BY RAND() LIMIT 1';
+	connection.query(queryString, function(err, rows, fields) {
+		if (err) {
+			console.log(err);
+			callback(err, err.message);
+		}
+		callback(null, {
+				'succUuid': fields.succUuid,
+				'succFn': fields.fn,
+				'arg1': fields.argstr1,
+				'arg2': fields.argstr2,
+				'arg3': fields.argstr3,
+				'arg4': fields.argstr4
+		});	
+	});		
+}
 
 
 
