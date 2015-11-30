@@ -39,6 +39,7 @@ function setupSuccess(connection, callback){
 		"addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"succUuid VARCHAR(255) NOT NULL," +
+		"userUuid VARCHAR(255) DEFAULT NULL," +
 		"fn BLOB NOT NULL," +
 		"argstr1 VARCHAR(100) DEFAULT NULL," +
 		"argstr2 VARCHAR(100) DEFAULT NULL," +

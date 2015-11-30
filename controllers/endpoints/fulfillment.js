@@ -65,6 +65,7 @@ exports.POST = function(req, res, next) {
 							predictVariation(inputs, callback);
 						},
 						function(callback) {
+							// PROBABLY DONT NEED THIS HERE. MOVE TO SOMEWHERE ELSE!
 							getSuccesFn(fields.succUuid, callback);
 						}
 					], function(err, results) {

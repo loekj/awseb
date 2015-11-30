@@ -37,19 +37,19 @@
   // function setupVariations(connection, callback){
   //   var ful_query = req.body;
   //   var tests_arr = ful_query.data.tests;
-  //   var query = "CREATE TABLE IF NOT EXISTS " + experiment_uuid + ".variations (" +
-  //     "id INT NOT NULL AUTO_INCREMENT," +
-  //     "addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-  //     "modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-  //     "variationUuid VARCHAR(255) NOT NULL," +
-  //     "name VARCHAR(50) NOT NULL DEFAULT 'Untitled'," +
-  //     "experimentUuid VARCHAR(255) NOT NULL," +
-  //     "js MEDIUMBLOB NOT NULL," +
-  //     "css MEDIUMBLOB NOT NULL," +
-  //     "html MEDIUMBLOB NOT NULL" +
-  //     "PRIMARY KEY ( id )," +
-  //     "UNIQUE KEY unique_variationUuid ( variationUuid )" +
-  //     ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+    // var query = "CREATE TABLE IF NOT EXISTS " + experiment_uuid + ".variations (" +
+    //   "id INT NOT NULL AUTO_INCREMENT," +
+    //   "addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+    //   "modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+    //   "variationUuid VARCHAR(255) NOT NULL," +
+    //   "name VARCHAR(50) NOT NULL DEFAULT 'Untitled'," +
+    //   "expUuid VARCHAR(255) NOT NULL," +
+    //   "js MEDIUMBLOB," +
+    //   "css MEDIUMBLOB," +
+    //   "html MEDIUMBLOB," +
+    //   "PRIMARY KEY ( id )," +
+    //   "UNIQUE KEY unique_variationUuid ( variationUuid )" +
+    //   ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
   //   runQuery(query, connection, callback);
   // }
 
@@ -61,7 +61,7 @@
   //   "testUuid VARCHAR(255) NOT NULL," +  
   //   "userUuid VARCHAR(255) NOT NULL," +
   //   "variationUuid VARCHAR(255) NOT NULL," +
-  //   "experimentUuid VARCHAR(255) NOT NULL" +
+  //   "expUuid VARCHAR(255) NOT NULL," +
   //   "PRIMARY KEY ( id )," +
   //   "UNIQUE KEY unique_testUuid ( testUuid )" +
   //   ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
@@ -77,8 +77,8 @@
   //   "userUuid VARCHAR(255) NOT NULL," +
   //   "variationUuid VARCHAR(255) NOT NULL," +
   //   "expUuid VARCHAR(255) NOT NULL," +
-  //   "succesReturn VARCHAR(255) DEFAULT NULL," +
-  //   "miscFields MEDIUMBLOB DEFAULT NULL" +
+  //   "successReturn VARCHAR(255) DEFAULT NULL," +
+  //   "miscFields MEDIUMBLOB DEFAULT NULL," +
   //   "PRIMARY KEY ( id )," +
   //   "UNIQUE KEY unique_testUuid ( testUuid )" +
   //   ") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
