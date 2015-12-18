@@ -1,7 +1,7 @@
 
 exports.connect = function(){
-	var mode = process.env.NODE_ENV;
-	var host = process.env.NODE_HOST;
+	// var mode = process.env.NODE_ENV;
+	// var host = process.env.NODE_HOST;
 	//log.info({NODE_ENV:mode, NODE_HOST:host}, 'env settings');
 
 	var mysql = require('mysql');

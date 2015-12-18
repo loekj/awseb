@@ -53,9 +53,9 @@ CREATE TABLE IF NOT EXISTS
 		id INT NOT NULL AUTO_INCREMENT, 
 		addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 		testUuid VARCHAR(255) NOT NULL,   
-		userUuid VARCHAR(255) NOT NULL, 
 		variationUuid VARCHAR(255) NOT NULL, 
 		expUuid VARCHAR(255) NOT NULL, 
+		miscFields MEDIUMBLOB DEFAULT NULL,
 		PRIMARY KEY ( id ), 
 		UNIQUE KEY unique_testUuid ( testUuid ) 
 	)
@@ -66,9 +66,9 @@ CREATE TABLE IF NOT EXISTS
 		id INT NOT NULL AUTO_INCREMENT, 
 		addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 		testUuid VARCHAR(255) NOT NULL,   
-		userUuid VARCHAR(255) NOT NULL, 
 		variationUuid VARCHAR(255) NOT NULL, 
 		expUuid VARCHAR(255) NOT NULL, 
+		miscFields MEDIUMBLOB DEFAULT NULL,
 		PRIMARY KEY ( id ), 
 		UNIQUE KEY unique_testUuid ( testUuid ) 
 	)
@@ -79,7 +79,6 @@ CREATE TABLE IF NOT EXISTS
 		id INT NOT NULL AUTO_INCREMENT,
 		addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 		testUuid VARCHAR(255) NOT NULL, 
-		userUuid VARCHAR(255) NOT NULL, 
 		variationUuid VARCHAR(255) NOT NULL, 
 		expUuid VARCHAR(255) NOT NULL,
 		successReturn VARCHAR(255) DEFAULT NULL, 
@@ -94,7 +93,6 @@ CREATE TABLE IF NOT EXISTS
 		id INT NOT NULL AUTO_INCREMENT,
 		addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 		testUuid VARCHAR(255) NOT NULL, 
-		userUuid VARCHAR(255) NOT NULL, 
 		variationUuid VARCHAR(255) NOT NULL, 
 		expUuid VARCHAR(255) NOT NULL, 
 		successReturn VARCHAR(255) DEFAULT NULL, 
@@ -119,37 +117,37 @@ INSERT INTO
 		('vuuid5', 'E', 'euuid2','<a href="/"><img src="http://www.mullenloweus.com/wp-content/uploads//2013/10/instagramlogo.jpg" alt=""></a>', 'p{color:green;text-align:right;}');
 
 INSERT INTO 
-	euuid1_intest (testUuid, userUuid, variationUuid, expUuid)
+	euuid1_intest (testUuid, variationUuid, expUuid, miscFields)
 	VALUES
-		('tuuid1', 'uuuid1', 'vuuid1', 'euuid1'),
-		('tuuid2', 'uuuid1', 'vuuid2', 'euuid1'),
-		('tuuid3', 'uuuid1', 'vuuid1', 'euuid1'),
-		('tuuid4', 'uuuid1', 'vuuid2', 'euuid1');		
+		('tuuid1', 'vuuid1', 'euuid1', '{8,USA}'),
+		('tuuid2', 'vuuid2', 'euuid1', '{89,NL}'),
+		('tuuid3', 'vuuid1', 'euuid1', '{42,NL}'),
+		('tuuid4', 'vuuid2', 'euuid1', '{72,NL}');		
 
 INSERT INTO 
-	euuid2_intest (testUuid, userUuid, variationUuid, expUuid)
+	euuid2_intest (testUuid, variationUuid, expUuid, miscFields)
 	VALUES
-		('tuuid5', 'uuuid1', 'vuuid3', 'euuid2'),
-		('tuuid6', 'uuuid1', 'vuuid3', 'euuid2'),
-		('tuuid7', 'uuuid1', 'vuuid5', 'euuid2');		
+		('tuuid5', 'vuuid3', 'euuid2', '{26000}'),
+		('tuuid6', 'vuuid3', 'euuid2', '{11000}'),
+		('tuuid7', 'vuuid5', 'euuid2', '{93000}');		
 
 INSERT INTO 
-	euuid1_userdata (testUuid, userUuid, variationUuid, expUuid, successReturn, miscFields)
+	euuid1_userdata (testUuid, variationUuid, expUuid, successReturn, miscFields)
 	VALUES
-		('tuuid8', 'uuuid1', 'vuuid1', 'euuid1', '600', '{24,NL}'),
-		('tuuid9', 'uuuid1', 'vuuid1', 'euuid1', '800', '{10,NL}'),
-		('tuuid10', 'uuuid1', 'vuuid2', 'euuid1', '1200', '{53,USA}'),
-		('tuuid11', 'uuuid1', 'vuuid1', 'euuid1', '700', '{23,NL}'),
-		('tuuid12', 'uuuid1', 'vuuid2', 'euuid1', '700', '{21,USA}'),
-		('tuuid13', 'uuuid1', 'vuuid2', 'euuid1', '1000', '{15,NL}'),
-		('tuuid14', 'uuuid1', 'vuuid2', 'euuid1', '900', '{29,USA}'),
-		('tuuid15', 'uuuid1', 'vuuid1', 'euuid1', '600', '{34,NL}');
+		('tuuid8', 'vuuid1', 'euuid1', '600', '{24,NL}'),
+		('tuuid9', 'vuuid1', 'euuid1', '800', '{10,NL}'),
+		('tuuid10', 'vuuid2', 'euuid1', '1200', '{53,USA}'),
+		('tuuid11', 'vuuid1', 'euuid1', '700', '{23,NL}'),
+		('tuuid12', 'vuuid2', 'euuid1', '700', '{21,USA}'),
+		('tuuid13', 'vuuid2', 'euuid1', '1000', '{15,NL}'),
+		('tuuid14', 'vuuid2', 'euuid1', '900', '{29,USA}'),
+		('tuuid15', 'vuuid1', 'euuid1', '600', '{34,NL}');
 
 INSERT INTO 
-	euuid2_userdata (testUuid, userUuid, variationUuid, expUuid, successReturn, miscFields)
+	euuid2_userdata (testUuid, variationUuid, expUuid, successReturn, miscFields)
 	VALUES
-		('tuuid16', 'uuuid1', 'vuuid1', 'euuid2', '2', '{13000}'),
-		('tuuid17', 'uuuid1', 'vuuid1', 'euuid2', '5', '{34000}'),
-		('tuuid18', 'uuuid1', 'vuuid2', 'euuid2', '4', '{32000}'),
-		('tuuid19', 'uuuid1', 'vuuid1', 'euuid2', '1', '{50000}'),
-		('tuuid20', 'uuuid1', 'vuuid2', 'euuid2', '8', '{23000}');
+		('tuuid16', 'vuuid1', 'euuid2', '2', '{13000}'),
+		('tuuid17', 'vuuid1', 'euuid2', '5', '{34000}'),
+		('tuuid18', 'vuuid2', 'euuid2', '4', '{32000}'),
+		('tuuid19', 'vuuid1', 'euuid2', '1', '{50000}'),
+		('tuuid20', 'vuuid2', 'euuid2', '8', '{23000}');

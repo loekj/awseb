@@ -1,0 +1,6 @@
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1515,"level":30,"msg":"NON-TEST SUBJECT: PREDICT WINNING","time":"2015-12-18T19:54:12.664Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1515,"level":30,"msg":"NON-TEST SUBJECT: PREDICT WINNING","time":"2015-12-18T19:54:30.142Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1527,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:00:21.690Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1527,"level":30,"msg":"NON-TEST SUBJECT: PREDICT WINNING","time":"2015-12-18T20:00:24.873Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1527,"level":30,"msg":"TEST SUBJECT: RANDOM VAR","time":"2015-12-18T20:00:31.181Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1527,"level":30,"Rows affected":1,"msg":"Insert 33f7a729-16e2-43ae-9d22-d276f22712fdinto intest","time":"2015-12-18T20:00:31.488Z","v":0}

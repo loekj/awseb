@@ -1,16 +1,15 @@
 var express = require('express');
 var path = require('path');
 var http = require('http');
-var logger = require('bunyan');
-// var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var logger = require('./log/logger.js')
+// var cookieParser = require('cookie-parser');
 
-var log = new logger({name: 'sigmatic'}); //{name: 'hello' /*, ... */}
+var log = logger.getLogger();
 
-// NODE_ENV=debug NODE_HOST=local node app.js
 var mode = process.env.NODE_ENV;
 var host = process.env.NODE_HOST;
-//log.info({NODE_ENV:mode, NODE_HOST:host}, 'env settings');
+log.info({NODE_ENV:mode, NODE_HOST:host}, 'env settings');
 
 
 var app = express();
@@ -20,8 +19,8 @@ if (host == 'local') {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-//app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+//app.use(cookieParser());
 
 /*
 * API Endpoints
@@ -29,23 +28,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 if (mode == 'production') {
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
 	var register = require('./controllers/endpoints/register.js');
-	//var experiment = require('./controllers/endpoints/experiment.js');
-
-	app.post('/', test.POST);
+	var collection = require('./controllers/endpoints/collection.js');
+	// experiment is for registering/editing experiment
+	//var experiment = require('./controllers/endpoints/experiment.js');	
+	
+	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
 
 } else if (mode == 'debug') {
-	var test = require('./controllers/endpoints/test.js');
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
+	var collection = require('./controllers/endpoints/collection.js');
 	var register = require('./controllers/endpoints/register.js');
+	// experiment is for registering/editing experiment
 	//var experiment = require('./controllers/endpoints/experiment.js');	
 
-	app.get('/', test.GET);
+	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
 }
-//app.post('/experiment', experiment.POST);
 
 if (host == 'local') {
 	server.listen(3000, '127.0.0.1');

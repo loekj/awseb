@@ -4,6 +4,7 @@ node_modules/
 
 # Local run cmd
 run_local.sh
+test/full_reset.sh
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
