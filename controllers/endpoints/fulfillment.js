@@ -22,7 +22,27 @@ exports.POST = function(req, res, next) {
 	var callb = req.query.callback;
 	var user_uuid = req.query.userUuid;
 	var modules_arr = req.query.modules;
+
+	/* For when multiple modules at once
+	response = [];
+	requests_todo = modules_arr.length;
+	*/
 	for(i=0; i < modules_arr.length; i++) {
+		// for now only handles 1 element in modules_arr. need to concat version later
+		// This version is async, does not work maybe due to DB connection. Change to series()...
+		// getResponse(modules_arr[i], user_uuid, function(err, results) {
+		// 	if (err) {
+		// 		console.log(err);
+		// 		throw err;
+		// 	}			
+		// 	response.push(results);
+
+		// 	// finish all callbacks, prepare response
+		// 	if (--requests_todo === 0) {
+
+		// 	}
+		// });
+
 		if (modules_arr[i].activeVariation.toLowerCase() == 'null') {
 			var exp_uuid = modules_arr.experimentUuid;
 			// person is not in test yet. decide if in test
@@ -35,12 +55,21 @@ exports.POST = function(req, res, next) {
 					console.log(err);
 					throw err;
 				}
+
 				testUuid = uuid.v4(); // create testUuid
+
 				if (parseInt(fields.prop,10) <= math.random()*100) {
 					//test person! select random variation, fetch results and serve
 
-					// ALSO NEED TO FETC GETSUCCESFN HERE!
-					getRandomVariation(function(err, results) {
+					async.parallel([
+						function(callback) {
+							getRandomVariation(callback); // later pass inputs to this
+						},
+						function(callback) {
+							getSuccesFn(fields.succUuid, callback);
+						}
+					], function(err, results) {
+						console.log("Results parralel: " + JSON.stringify(results));
 						if (err) {
 							console.log(err);
 							throw err;
@@ -48,29 +77,30 @@ exports.POST = function(req, res, next) {
 						res.json({
 							'testUuid': testUuid,
 							'html': {
-								results.html
+								results[0].html
 							},
-							'css': results.css,
-							'js': results.js,
-							'succ': results[1];
+							'css': results[0].css,
+							'js': results[0].js,
+							'succ': results[1]
+						});
+						
+						// add to inTest-database later
+
 						});
 					});
+
 				} else {
 					// run in parallel. Two independent tasks
 					// predict variation by machine learning
 					// fetch corresponding test function
 					var inputs = [fields.numVar];// ...[, '5', '26', 'job']
-					async.parallel([
-						function(callback) {
-							predictVariation(inputs, callback);
-						},
-						function(callback) {
-							// PROBABLY DONT NEED THIS HERE. MOVE TO SOMEWHERE ELSE!
-							getSuccesFn(fields.succUuid, callback);
-						}
-					], function(err, results) {
+					predictVariation(inputs, function(err, results) {
+						if (err) {
+							console.log(err);
+							throw err;
+						}						
 						console.log(results);
-						var winVarUuid = results[0];
+						var winVarUuid = results;
 						getVariation(winVarUuid, function(err, results) {
 							if (err) {
 								console.log(err);
@@ -83,13 +113,10 @@ exports.POST = function(req, res, next) {
 								},
 								'css': results.css,
 								'js': results.js,
-								'succ': results[1];
+								'succ': null
 							});
-							
-							// add to inTest-database
-
 						});
-					});
+					});					
 
 				}
 				
@@ -100,21 +127,18 @@ exports.POST = function(req, res, next) {
 };
 
 
-function getRandomVariation(callback) {
+function getRandomVariation(expUuid, callback) {
 	// This is very slow. Optimize later.
-	var queryString = 'SELECT succUuid, fn, argstr1, argstr2, argstr3, argstr4 FROM' + expUuid + '.variations' + ' ORDER BY RAND() LIMIT 1';
+	var queryString = 'SELECT html, js, css FROM' + expUuid + '_variations' + ' ORDER BY RAND() LIMIT 1';
 	connection.query(queryString, function(err, rows, fields) {
 		if (err) {
 			console.log(err);
 			callback(err, err.message);
 		}
 		callback(null, {
-				'succUuid': fields.succUuid,
-				'succFn': fields.fn,
-				'arg1': fields.argstr1,
-				'arg2': fields.argstr2,
-				'arg3': fields.argstr3,
-				'arg4': fields.argstr4
+			'html' : fields.html,
+			'css' : fields.css,
+			'js' : fields.js
 		});	
 	});		
 }
@@ -122,21 +146,18 @@ function getRandomVariation(callback) {
 
 
 function getVariation(winVarUuid, expUuid, callback) {
-	var queryString = 'SELECT fn, argstr1, argstr2, argstr3, argstr4 FROM ' + expUuid + '.variations' + ' WHERE variationUuid=?';
+	var queryString =  'SELECT html, js, css FROM' + expUuid + '_variations' + ' WHERE variationUuid=?';
 	connection.query(queryString, [winVarUuid], function(err, rows, fields) {
 		if (err) {
 			console.log(err);
 			callback(err, err.message);
 		}
 		callback(null, {
-				'succUuid': succUuid,
-				'succFn': fields.fn,
-				'arg1': fields.argstr1,
-				'arg2': fields.argstr2,
-				'arg3': fields.argstr3,
-				'arg4': fields.argstr4
+			'html' : fields.html,
+			'css' : fields.css,
+			'js' : fields.js
 		});	
-	}	
+	});		
 }
 
 
@@ -205,5 +226,38 @@ function getSuccesFn(succUuid, callback) {
 	}	
 } 
 
+
+
+
+// async.parallel([
+// 						function(callback) {
+// 							predictVariation(inputs, callback);
+// 						},
+// 						function(callback) {
+// 							// PROBABLY DONT NEED THIS HERE. MOVE TO SOMEWHERE ELSE!
+// 							getSuccesFn(fields.succUuid, callback);
+// 						}
+// 					], function(err, results) {
+// 						console.log(results);
+// 						var winVarUuid = results[0];
+// 						getVariation(winVarUuid, function(err, results) {
+// 							if (err) {
+// 								console.log(err);
+// 								throw err;
+// 							}
+// 							res.json({
+// 								'testUuid': testUuid,
+// 								'html': {
+// 									results.html
+// 								},
+// 								'css': results.css,
+// 								'js': results.js,
+// 								'succ': results[1];
+// 							});
+							
+// 							// add to inTest-database
+
+// 						});
+// 					});
 
 		
