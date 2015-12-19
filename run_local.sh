@@ -1,0 +1,1 @@
+RDS_HOSTNAME=aavktpb0yx3vyf.ck7xy5rlukt9.us-west-2.rds.amazonaws.com RDS_USERNAME=sigmatic RDS_PASSWORD=dynamictesting RDS_PORT=3306 RDS_DB_NAME=ebdb NODE_HOST=local NODE_ENV=debug node app.js
