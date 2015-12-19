@@ -8,3 +8,12 @@
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1826,"level":50,"msg":"No rows affect query move to euuid1_userdata","time":"2015-12-18T21:02:41.630Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1841,"level":50,"msg":"No rows affect query move to euuid1_userdata","time":"2015-12-18T21:07:23.746Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1841,"level":50,"msg":"No rows affect query deleteeuuid1_intest WHERE testUuid=tuuid1","time":"2015-12-18T21:07:23.843Z","v":0}
+{"name":"sigmatic","hostname":"192.168.1.47","pid":17174,"level":50,"msg":"args is not defined Parralel getRandomVariation and getSuccesFn","time":"2015-12-19T20:27:03.361Z","v":0}
+{"name":"sigmatic","hostname":"192.168.1.47","pid":17176,"level":50,"msg":"i is not defined Parralel getRandomVariation and getSuccesFn","time":"2015-12-19T20:27:39.182Z","v":0}
+{"name":"sigmatic","hostname":"192.168.1.47","pid":17179,"level":50,"msg":"i is not defined Parralel getRandomVariation and getSuccesFn","time":"2015-12-19T20:28:11.099Z","v":0}
+{"name":"sigmatic","hostname":"192.168.1.47","pid":17185,"level":50,"msg":"res is not defined Parralel getRandomVariation and getSuccesFn","time":"2015-12-19T20:35:13.175Z","v":0}
+{"name":"sigmatic","hostname":"192.168.1.47","pid":17198,"level":50,"msg":"Cannot read property 'variationUuid' of undefined Parralel getRandomVariation and getSuccesFn","time":"2015-12-19T20:43:22.268Z","v":0}
+{"name":"sigmatic","hostname":"192.168.1.47","pid":17198,"level":50,"msg":"Cannot read property 'variationUuid' of undefined Parralel getRandomVariation and getSuccesFn","time":"2015-12-19T20:43:39.583Z","v":0}
+{"name":"sigmatic","hostname":"192.168.1.47","pid":17203,"level":50,"msg":"Cannot read property 'variationUuid' of undefined Parralel getRandomVariation and getSuccesFn","time":"2015-12-19T20:45:27.263Z","v":0}
+{"name":"sigmatic","hostname":"192.168.1.47","pid":17206,"level":50,"msg":"Cannot read property 'variationUuid' of undefined Parralel getRandomVariation and getSuccesFn","time":"2015-12-19T20:46:46.653Z","v":0}
+{"name":"sigmatic","hostname":"192.168.1.47","pid":17209,"level":50,"msg":"Cannot read property 'variationUuid' of undefined Parralel getRandomVariation and getSuccesFn","time":"2015-12-19T20:47:09.884Z","v":0}

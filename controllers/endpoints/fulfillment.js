@@ -27,13 +27,12 @@ var DEFAULT_SUCCUUID = [
 exports.POST = function(req, res, next) {
 	var callb = req.body.callback;
 	var modules_arr = req.body.modules;
-log.info('body:',req.body);
 	var modulePromiseArray = [];
 	var variationPromise;
 	var successPromise;
 	var modulePromise;
-	var i;
-	for(i=0; i < modules_arr.length; i++) {
+
+	for(var i=0; i < modules_arr.length; i++) {
 		var exp_uuid = modules_arr[i].experimentUuid;
 		if (modules_arr[i].activeVariation.toLowerCase() == 'null') {
 			// person is not in test yet. decide if in test or feed winning
@@ -43,7 +42,7 @@ log.info('body:',req.body);
 			var queryString = 'SELECT prop, numVar, succUuid FROM experiments WHERE ?';
 			connection.query(queryString, args, function(err, rows, fields) {
 				if (err) {
-					log.err(err.message, 'Query get experiment ' + exp_uuid);
+					log.error(err.message, 'Query get experiment ' + exp_uuid);
 					throw err;
 				}
 				
@@ -67,7 +66,7 @@ log.info('body:',req.body);
 					//console.log("WHAT IS THIS: " + JSON.stringify(rows));
 					//console.log("numVar: %s", rows[0].numVar);
 					var inputs = [rows[0].numVar];// ...[, '5', '26', 'job']
-					modulePromiseArray.push(predictVariation(inputs));					
+					modulePromiseArray.push(predictVariation(exp_uuid, inputs));					
 				}
 			})
 		} else {
@@ -80,23 +79,24 @@ log.info('body:',req.body);
 	}
 
 
-	promiseLib.all(modulePromiseArray).then(compileModules).catch(requestError);
+	promiseLib.all(modulePromiseArray).then(function(results) {
+		compileModules(results, res);
+	}).catch(requestError);
 
 };
 
 
-function compileModules(results) {
-
+function compileModules(results, res) {
 	log.info(JSON.stringify(results));
 	
 
 	var modules = [];
 	var variation_uuid = results[0].variationUuid;
-	for(i=0; i<results.length; i++) {
+	for(var i=0; i<results.length; i++) {
 // If user is being entered into test:
 		if(typeof results[i].then === 'function') {
 			results[i].then(function(variationObj, succObj) {
-				modules[i] = {
+				modules.push({
 					'testUuid': variationObj.test_uuid,
 					'html': [
 						variationObj.html
@@ -104,7 +104,7 @@ function compileModules(results) {
 					'css': variationObj.css,
 					'js': variationObj.js,
 					'succ': succObj
-				};
+				});
 
 				// add to in-test database
 				var args = {
@@ -115,7 +115,7 @@ function compileModules(results) {
 				var queryString = 'INSERT INTO ' + exp_uuid + '_intest SET ?';
 				connection.query(queryString, args, function(err, rows, fields) {
 					if (err) {
-						log.err(err.message, 'Query insert intest');
+						log.error(err.message, 'Query insert intest');
 						throw err;
 					}
 					log.info({'Rows affected' : rows.affectedRows}, 'Insert ' + test_uuid + 'into intest');
@@ -123,22 +123,25 @@ function compileModules(results) {
 			});
 		} else {
 // User in test or gets winning variation:
-			modules[i] = {
-				'testUuid': results.test_uuid,
+			log.info(JSON.stringify(results));
+			modules.push({
+				'testUuid': results[i].test_uuid,
 				'html': [
-					results.html
+					results[i].html
 				],
-				'css': results.css,
-				'js': results.js,
+				'css': results[i].css,
+				'js': results[i].js,
 				'succ': null
-			};
+			});
 			
 		}
 	}
+	res.json(modules);
+
 }
 
 function requestError(err) {
-	log.err(err.message, 'Parralel getRandomVariation and getSuccesFn');
+	log.error(err.message, 'Parralel getRandomVariation and getSuccesFn');
 	throw err;
 }
 
@@ -164,7 +167,7 @@ function getRandomVariation(expUuid) {
 function getVariation(varUuid, expUuid) {
 	return promiseLib.promise(function(resolve,reject) {
 		var varUuid = 'vuuid1'; // in real-life the python script will feedback var uuid
-		args = {
+		var args = {
 			variationUuid : varUuid
 		}
 		var queryString =  'SELECT CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM ' + expUuid + '_variations' + ' WHERE ?';
@@ -199,11 +202,12 @@ function predictVariation(exp_uuid, inputs) {
 			if (err) {
 				reject({err: err, errMessage: err.message});
 			} else if (results) {
-				getVariation(result[0], exp_uuid)
+				//log.info("RESULTS: %s", JSON.stringify(results));
+				getVariation(results[0], exp_uuid)
 				.then(function(results) {
 					resolve(results);
 				}).catch(function(err) {
-					log.err(err.message, 'Get variation');
+					log.error(err.message, 'Get variation');
 					reject({err: err, errMessage: err.message});
 				});				
 			}
@@ -213,7 +217,7 @@ function predictVariation(exp_uuid, inputs) {
 
 function getWinningVariation(err, results) {
 	if (err) {
-		log.err(err.message, 'Predict variation');
+		log.error(err.message, 'Predict variation');
 		throw err;
 	}						
 	var winVarUuid = results[0];
