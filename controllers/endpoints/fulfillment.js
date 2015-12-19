@@ -27,7 +27,7 @@ exports.POST = function(req, res, next) {
 	var callb = req.body.callback;
 	var modules_arr = req.body.modules;
 	
-	for(i=0; i < modules_arr.length; i++) {
+	for(var i=0; i < modules_arr.length; i++) {
 		var exp_uuid = modules_arr[i].experimentUuid;
 		if (modules_arr[i].activeVariation.toLowerCase() == 'null') {
 			// person is not in test yet. decide if in test or feed winning
@@ -41,7 +41,7 @@ exports.POST = function(req, res, next) {
 					throw err;
 				}
 				
-			 test_uuid = uuid.v4();
+				var test_uuid = uuid.v4();
 
 				// Get random number
 				if (math.random()*100 <= parseInt(rows[0].prop,10)) {
@@ -106,7 +106,7 @@ exports.POST = function(req, res, next) {
 								throw err;
 							}
 							res.json({
-								'testUuid': test_uuid,
+								'testUuid': null,
 								'html': [
 									results.html
 								],

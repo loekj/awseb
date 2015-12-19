@@ -41,3 +41,4 @@
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1841,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T21:07:07.438Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1841,"level":50,"msg":"No rows affect query move to euuid1_userdata","time":"2015-12-18T21:07:23.746Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1841,"level":50,"msg":"No rows affect query deleteeuuid1_intest WHERE testUuid=tuuid1","time":"2015-12-18T21:07:23.843Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":2211,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-19T18:01:10.437Z","v":0}

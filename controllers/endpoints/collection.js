@@ -11,6 +11,8 @@ var logger = require('../../log/logger.js')
 var connection = db.connect();
 var log = logger.getLogger();
 
+
+
 /* 
 * API dir
 */
@@ -65,6 +67,7 @@ exports.POST = function(req, res, next) {
 
 			if (rows.affectedRows != '1') {
 				log.error('No rows affect query delete' + exp_uuid + '_intest WHERE testUuid=' + test_uuid);
+				//res.writeHead(400, {'Content-Type': ''}); Add this later, for now, who cares
 				res.json({
 					'status': '400'
 				});
