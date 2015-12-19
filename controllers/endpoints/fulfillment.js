@@ -25,7 +25,6 @@ DEFAULT_SUCCUUID = [
 */
 exports.POST = function(req, res, next) {
 	var callb = req.body.callback;
-	var user_uuid = req.body.userUuid;
 	var modules_arr = req.body.modules;
 	
 	for(i=0; i < modules_arr.length; i++) {

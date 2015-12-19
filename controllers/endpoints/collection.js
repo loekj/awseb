@@ -15,12 +15,10 @@ var log = logger.getLogger();
 * API dir
 */
 exports.POST = function(req, res, next) {
+	var callb = req.body.callback;
 	var exp_uuid = req.body.expUuid;
-	var user_uuid = req.body.userUuid;
 	var test_uuid = req.body.testUuid;
-	var modules_arr = req.body.modules;
 	var time_of_day = req.body.timeOfDay;
-	var timestamp = req.body.timestamp;
 	var result = req.body.result;
 
 	// fetch person from intest and delete from intest
@@ -28,15 +26,24 @@ exports.POST = function(req, res, next) {
 		result,
 		test_uuid
 	]
+	console.log("VALUES: %s", JSON.stringify(req.body));
 	var query_string = 'INSERT INTO ' + exp_uuid + '_userdata (testUuid, variationUuid, expUuid, miscFields, successReturn) SELECT testUuid, variationUuid, expUuid, miscFields, ? FROM ' + exp_uuid + '_intest WHERE testUuid=?';
 	connection.query(query_string, args, function(err, rows, fields) {
 		if (err) {
-			log.err(err.message, 'Query move to ' + exp_uuid + '_userdata');
-			throw err;
+			log.error(err.message, 'Query move to ' + exp_uuid + '_userdata');
+			res.json({
+				'status': '400'
+			});
 		}
-		if (fields.rowsAffected != '1') {
-			log.err('No rows affect query move to ' + exp_uuid + '_userdata');
-			throw err;
+
+		console.log("FIELDS: %s", JSON.stringify(fields));
+		console.log("ROWS: %s", JSON.stringify(rows));		
+		console.log("ROWS AFFECTED: %s", rows.affectedRows);
+		if (rows.affectedRows != '1') {
+			log.error('No rows affect query move to ' + exp_uuid + '_userdata');
+			res.json({
+				'status': '400'
+			});
 		}
 
 		// only delete from intest if previous was successful
@@ -46,15 +53,25 @@ exports.POST = function(req, res, next) {
 		var query_string = 'DELETE FROM ' + exp_uuid + '_intest WHERE ?';		
 		connection.query(query_string, args, function(err, rows, fields) {
 			if (err) {
-				log.err(err.message, 'Query delete ' + exp_uuid + '_intest');
-				throw err;
+				log.error(err.message, 'Query delete ' + exp_uuid + '_intest');
+				res.json({
+					'status': '400'
+				});
 			}
-
+			console.log("ROWS AFFECTED: %s", rows.affectedRows);
+			console.log("FIELDS: %s", JSON.stringify(fields));
+			console.log("ROWS: %s", JSON.stringify(rows));
 			// must exist, so if not deleted, throw error
-			if (fields.rowsAffected != '1') {
-				log.err('No rows affect query delete' + exp_uuid + '_intest WHERE testUuid=' + test_uuid);
-				throw err;
+
+			if (rows.affectedRows != '1') {
+				log.error('No rows affect query delete' + exp_uuid + '_intest WHERE testUuid=' + test_uuid);
+				res.json({
+					'status': '400'
+				});
 			}
+			res.json({
+				'status': '200'
+			});
 		});
 	});
 }

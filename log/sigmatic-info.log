@@ -4,3 +4,40 @@
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1527,"level":30,"msg":"NON-TEST SUBJECT: PREDICT WINNING","time":"2015-12-18T20:00:24.873Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1527,"level":30,"msg":"TEST SUBJECT: RANDOM VAR","time":"2015-12-18T20:00:31.181Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1527,"level":30,"Rows affected":1,"msg":"Insert 33f7a729-16e2-43ae-9d22-d276f22712fdinto intest","time":"2015-12-18T20:00:31.488Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1710,"level":30,"msg":"env settings","time":"2015-12-18T20:41:23.211Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1712,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:41:29.896Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1712,"level":30,"msg":"NON-TEST SUBJECT: PREDICT WINNING","time":"2015-12-18T20:41:35.238Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1712,"level":30,"msg":"TEST SUBJECT: RANDOM VAR","time":"2015-12-18T20:41:41.157Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1712,"level":30,"Rows affected":1,"msg":"Insert 6f9e9e72-fcc7-45ed-aadd-3b8bb8efda99into intest","time":"2015-12-18T20:41:41.462Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1712,"level":30,"msg":"NON-TEST SUBJECT: PREDICT WINNING","time":"2015-12-18T20:41:42.846Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1712,"level":30,"msg":"NON-TEST SUBJECT: PREDICT WINNING","time":"2015-12-18T20:41:43.673Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1718,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:45:06.511Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1718,"level":30,"msg":"ALREADY IN TEST: FEED ACTIVE VARIATION","time":"2015-12-18T20:45:07.923Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1725,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:49:18.223Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1727,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:50:22.616Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1731,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:51:10.251Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1731,"level":50,"msg":"ER_DUP_ENTRY: Duplicate entry 'tuuid1' for key 'unique_testUuid' Query move to euuid1_userdata","time":"2015-12-18T20:51:13.646Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1741,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:53:06.104Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1743,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:54:32.862Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1743,"level":50,"msg":"ER_DUP_ENTRY: Duplicate entry 'tuuid1' for key 'unique_testUuid' Query move to euuid1_userdata","time":"2015-12-18T20:54:35.576Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1751,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:55:22.010Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1755,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:56:58.647Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1763,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:57:16.000Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1763,"level":50,"msg":"No rows affect query move to euuid1_userdata","time":"2015-12-18T20:57:21.718Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1765,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:57:28.556Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1765,"level":50,"msg":"ER_DUP_ENTRY: Duplicate entry 'tuuid1' for key 'unique_testUuid' Query move to euuid1_userdata","time":"2015-12-18T20:57:32.488Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1772,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:59:30.542Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1772,"level":50,"msg":"No rows affect query move to euuid1_userdata","time":"2015-12-18T20:59:33.372Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1774,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T20:59:47.717Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1801,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T21:00:04.178Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1812,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T21:00:55.749Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1812,"level":50,"msg":"No rows affect query move to euuid1_userdata","time":"2015-12-18T21:00:59.296Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1818,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T21:01:54.477Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1818,"level":50,"msg":"No rows affect query move to euuid1_userdata","time":"2015-12-18T21:02:01.888Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1820,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T21:02:23.263Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1826,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T21:02:38.500Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1826,"level":50,"msg":"No rows affect query move to euuid1_userdata","time":"2015-12-18T21:02:41.630Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1832,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T21:03:37.851Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1841,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2015-12-18T21:07:07.438Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1841,"level":50,"msg":"No rows affect query move to euuid1_userdata","time":"2015-12-18T21:07:23.746Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":1841,"level":50,"msg":"No rows affect query deleteeuuid1_intest WHERE testUuid=tuuid1","time":"2015-12-18T21:07:23.843Z","v":0}
