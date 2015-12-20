@@ -10,7 +10,7 @@ var PythonShell = require('python-shell');
 var db = require('../database/database.js');
 var logger = require('../../log/logger.js')
 
-var connection = db.connect();
+var connection = db.connect(false);
 var log = logger.getLogger();
 
 var DEFAULT_SUCCUUID = [
@@ -20,6 +20,7 @@ var DEFAULT_SUCCUUID = [
 	'uuid4',
 	'uuid5'
 ];
+
 
 /* 
 * API dir
