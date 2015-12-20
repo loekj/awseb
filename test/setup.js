@@ -5,12 +5,15 @@ function setupExperiments(connection, callback){
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"expUuid VARCHAR(255) NOT NULL," +
 		"succUuid VARCHAR(255) NOT NULL," +
-		"numVar INT NOT NULL," + //Number of variations
+		"numVar INT DEFAULT NULL," + //Number of variations, set in different window
 		"descr BLOB NOT NULL," +
 		"name VARCHAR(50) DEFAULT 'Untitled'," +
 		"userUuid VARCHAR(255) NOT NULL," +
 		"prop INT NOT NULL," +
 		"timeout INT NOT NULL DEFAULT 18000," +
+		"update INT NOT NULL DEFAULT 30," + //30 days, 0 value is after each new point
+		"window INT NOT NULL DEFAULT 1," + //1 day
+		"active BIT(1) DEFAULT 0," +
 		"PRIMARY KEY ( id )," +
 		"UNIQUE KEY unique_expUuid ( expUuid )" +
 		") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
