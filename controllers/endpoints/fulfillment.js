@@ -10,7 +10,7 @@ var PythonShell = require('python-shell');
 var db = require('../database/database.js');
 var logger = require('../../log/logger.js')
 
-var connection = db.connect(false);
+var connection = db.connect();
 var log = logger.getLogger();
 
 var DEFAULT_SUCCUUID = [
@@ -35,7 +35,8 @@ exports.POST = function(req, res, next) {
 
 	for(var i=0; i < modules_arr.length; i++) {
 		var exp_uuid = modules_arr[i].experimentUuid;
-		if (modules_arr[i].activeVariation.toLowerCase() == 'null') {
+		if (modules_arr[i] && modules_arr[i].activeVariation.toLowerCase() === 'null') {
+			log.info("Not in variation. Either add to one, or deliver winner.");
 			modulePromise = makeDBCall(exp_uuid).then(getTestOrBestVariation);
 			modulePromiseArray.push(modulePromise);
 		} else {
@@ -47,8 +48,10 @@ exports.POST = function(req, res, next) {
 		}
 	}
 
-	promiseLib.all(modulePromiseArray).then(function(results) {
-		compileModules(results, res);
+	promiseLib.all(modulePromiseArray)
+	.then(compileModules)
+	.then(function(modules) {
+		res.json(modules);
 	}).catch(requestError);
 
 };
@@ -71,10 +74,10 @@ function makeDBCall(exp_uuid) {
 	});
 }
 
-
 function getTestOrBestVariation(dbReturn) {
 	var rows = dbReturn.rows;
 	var fields = dbReturn.fields;
+	console.log('rows:',rows,'fields',fields);
 	var test_uuid = uuid.v4();
 	// Get random number
 	var userInTest = (math.random()*100 <= parseInt(rows[0].prop,10));
@@ -154,15 +157,13 @@ function compileModules(results, res) {
 			
 		}
 	}
-	res.json(modules);
-
+	return modules;
 }
 
 function requestError(err) {
 	log.error(err.message, 'Parralel getRandomVariation and getSuccesFn');
 	throw err;
 }
-
 
 function getRandomVariation(expUuid) {
 	return promiseLib.promise(function(resolve,reject) {
