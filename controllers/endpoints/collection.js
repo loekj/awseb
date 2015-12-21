@@ -8,13 +8,12 @@ var PythonShell = require('python-shell');
 var db = require('../database/database.js');
 var logger = require('../../log/logger.js')
 
-var connection = db.connect(false);
+var connection = db.connect();
 var log = logger.getLogger();
 
 
 sendResponse = function(res, code) {
-	res.writeHead(code);
-	res.json();
+	res.status(code).json({});
 }
 
 /* 

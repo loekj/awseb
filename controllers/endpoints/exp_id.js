@@ -11,24 +11,22 @@ var utils = require('../../misc/utils.js');
 var db = require('../database/database.js');
 var logger = require('../../log/logger.js');
 
-var connection = db.connect(true);
+var connection = db.connect();
 var log = logger.getLogger();
 
 /* 
-* GET
-* Initial get request fill in the forms with entered values.
+* GET 
+* request to fill-in the dom of the requested page. Read-only.
 */
 exports.GET = function(req, res, next) {
-  var variation_uuid = req.params.id;
-  var exp_uuid = req.body.expUuid; // *Need extra from grady. if null, new experiment.
+  var exp_uuid = req.params.expId;
 
-  console.log("variation_uuid: %s", variation_uuid);
+  console.log("exp_uuid: %s", exp_uuid);
 
   var args = {
-    'variationUuid' : variation_uuid,
     'expUuid' : exp_uuid
   }
-  var query_string = "SELECT name, active, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM :expUuid_variations WHERE variationUuid = :variationUuid";
+  var query_string = "SELECT numVar, descr, name, prop, timeout, updateTime, windowTime, active FROM experiments WHERE expUuid = :expUuid";
   connection.query(query_string, args, function(err, rows, fields) {
     if (err) {
       res.status(400).json({});
@@ -38,25 +36,81 @@ exports.GET = function(req, res, next) {
     }              
     console.log(rows);
     res.status(200).json({
+      'numVar' : rows.numVar,
+      'descr' : rows.descr,
       'name' : rows.name,
+      'prop' : rows.prop,
       'active' : rows.active,
-      'html' : rows.html,
-      'js' : rows.js,
-      'css' : rows.css
+      'timeout' : rows.timeout,
+      'updateTime' : rows.updateTime,
+      'windowTime' : rows.windowTime,
+      'active' : rows.active
     });
   });
 };
 
 
 /* 
+* DELETE 
+* request to delete an experiment from experiment dashboard
+*/
+exports.DELETE = function(req, res, next) {
+  var exp_uuid = req.params.expId;
+  promiseLib.join(deleteExp(exp_uuid), deleteExpTables(exp_uuid)).then(function {
+    res.status(200).json({});
+  }, function (err) {
+    res.status(400).json({});
+  });
+}
+
+
+/* 
+* PATCH
+* request to alter experiment.
+* if active key is defined it will only update active flag. 
+* If not defined will update experiment
+*/
+exports.PATCH = function(req, res, next) {
+  var exp_uuid = req.params.expId;
+  var promises_arr = [];
+
+  if (utils.isDef(req.body.active)) {
+    promises_arr.push(updateActive(exp_uuid, req.body.active));
+  } else {
+    var exp_name = req.body.name;
+    var user_uuid = req.body.userUuid; //*Need extra from grady
+    var exp_descr = req.body.descr; //description of experiement *Need extra from grady
+    var exp_prop = req.body.prop; 
+    var succ_uuid = req.body.succUuid; //null if own succFn, otherwise its the default functions *Need extra from grady (need this on his site hardcoded)
+    var succ = req.body.succ; //if default this is null, otherwise specified {fn, name, descr, arg1, arg2, arg3, arg4 **Need extra from grady}
+    var exp_update = req.body.updateModel;
+    var exp_window = req.body.dataWindow; 
+    var exp_timeout = req.body.timeout; //When a test-subject timed out *Need extra from grady
+
+    console.log("exp_uuid: %s", exp_uuid);
+    // create succ_uuid if new successFn (custom one).
+    if (succ_uuid.toLowerCase() === 'null') {
+      var succ_uuid = utils.dashToUnder(uuid.v4());
+      promises_arr.push(insertSuccFn(succ_uuid, user_uuid, succ));
+    } 
+    promises_arr.push(editExp(exp_uuid, succ_uuid, exp_descr, exp_name, user_uuid, exp_prop, exp_timeout, exp_update, exp_window));
+  }
+
+  promiseLib.all(promises_arr)
+  .then(function() {
+    res.status(200).json({});
+  }, function (err) {
+    log.error(err);
+    res.status(400).json({});
+  });    
+}
+
+/* 
 * POST
-* request to alter or init variations of the experiment. Change database tables.
+* request to init experiment. Change database tables
 */
 exports.POST = function(req, res, next) {
-  variation_uuid = req.params.id;
-
   var exp_name = req.body.name;
-  var exp_uuid = req.body.expUuid; // *Need extra from grady. if null, new experiment.
   var user_uuid = req.body.userUuid; //*Need extra from grady
   var exp_descr = req.body.descr; //description of experiement *Need extra from grady
   var exp_prop = req.body.prop; 
@@ -67,29 +121,17 @@ exports.POST = function(req, res, next) {
   var exp_timeout = req.body.timeout; //When a test-subject timed out *Need extra from grady
 
   var promises_arr = [];
-  var is_new_exp = false;
   
   // create expUuid
-  if (exp_uuid.toLowerCase() === 'null') {
-    var exp_uuid = utils.dashToUnder(uuid.v4());
-    is_new_exp = true;
-  }
-  console.log("exp_uuid: %s", exp_uuid);
+  var exp_uuid = utils.dashToUnder(uuid.v4());
+
   // create succ_uuid if new successFn.
   if (succ_uuid.toLowerCase() === 'null') {
     var succ_uuid = utils.dashToUnder(uuid.v4());
     promises_arr.push(insertSuccFn(succ_uuid, user_uuid, succ));
-  } else {
-    // do nothing, just feed in succ_uuid in experiment table
   }
 
-  if (is_new_exp) {
-    // set up tables of exp and insert
-    promises_arr.push(setupExpTables(exp_uuid));
-    promises_arr.push(insertExp(exp_uuid, succ_uuid, exp_descr, exp_name, user_uuid, exp_prop, exp_timeout, exp_update, exp_window));
-  } else {
-    promises_arr.push(editExp(exp_uuid, succ_uuid, exp_descr, exp_name, user_uuid, exp_prop, exp_timeout, exp_update, exp_window));
-  }
+  promises_arr.join(setupExpTables(exp_uuid), insertExp(exp_uuid, succ_uuid, exp_descr, exp_name, user_uuid, exp_prop, exp_timeout, exp_update, exp_window));
 
   promiseLib.all(promises_arr)
   .then(function() {
@@ -128,6 +170,43 @@ function insertExp(exp_uuid, succ_uuid, exp_descr, exp_name, user_uuid, exp_prop
   });
 }
 
+function deleteExp(exp_uuid) {
+  return promiseLib.promise(function(resolve, reject) {
+    var args = {
+      'expUuid' : exp_uuid,
+    }    
+    var query_string = "DELETE FROM experiments WHERE ?";
+    connection.query(query_string, args, function(err, rows, fields) {
+      if (err) {
+        reject();
+      }
+      if (rows.affectedRows != '1') {
+        reject();
+      }        
+      resolve();
+    });
+  });
+}
+
+function editExp(exp_uuid, exp_active) {
+  return promiseLib.promise(function(resolve, reject) {
+    var args = {
+      'active' : exp_active,
+    }    
+    var query_string = "UPDATE experiments SET ? WHERE expUuid = '" + exp_uuid + "'";
+    connection.query(query_string, args, function(err, rows, fields) {
+      if (err) {
+        reject();
+      }
+      if (rows.affectedRows != '1') {
+        reject();
+      }        
+      resolve();
+    });
+  });
+}
+
+
 function editExp(exp_uuid, succ_uuid, exp_descr, exp_name, user_uuid, exp_prop, exp_timeout, exp_update, exp_window) {
   return promiseLib.promise(function(resolve, reject) {
     var args = {
@@ -151,7 +230,7 @@ function editExp(exp_uuid, succ_uuid, exp_descr, exp_name, user_uuid, exp_prop, 
       args.windowTime = exp_window;
     }
 
-    var query_string = "UPDATE experiments SET ? WHERE expUuid = 'a" + exp_uuid + "'";
+    var query_string = "UPDATE experiments SET ? WHERE expUuid = '" + exp_uuid + "'";
     connection.query(query_string, args, function(err, rows, fields) {
       if (err) {
         reject();
@@ -178,13 +257,13 @@ function insertSuccFn(succ_uuid, user_uuid, succ) {
       'argstr1' : succ.arg3,
       'argstr1' : succ.arg4
     }
-    var query_string = 'INSERT INTO successfns SET ?';
+    var query_string = 'INSERT INTO successfns SET ?;';
     connection.query(query_string, args, function(err, rows, fields) {
       if (err) {
         reject();
       }
       if (rows.affectedRows != '1') {
-        reject();//except.UnchangedError("Rows affected: " + rows.affectedRows, 'Insert ' + exp_uuid + 'into experiments');
+        reject();
       }              
       resolve();
     });
@@ -194,7 +273,7 @@ function insertSuccFn(succ_uuid, user_uuid, succ) {
 
 function setupExpTables(exp_uuid) {
   return promiseLib.promise(function(resolve, reject) {   
-    var sql1 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_variations ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, variationUuid VARCHAR(255) NOT NULL, name VARCHAR(50) NOT NULL DEFAULT 'Untitled', expUuid VARCHAR(255) NOT NULL, js MEDIUMBLOB, css MEDIUMBLOB, html MEDIUMBLOB, PRIMARY KEY ( id ), UNIQUE KEY unique_variationUuid ( variationUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
+    var sql1 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_variations ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, variationUuid VARCHAR(255) NOT NULL, name VARCHAR(50) NOT NULL DEFAULT 'Untitled', expUuid VARCHAR(255) NOT NULL, active BOOLEAN NOT NULL DEFAULT 0, js MEDIUMBLOB, css MEDIUMBLOB, html MEDIUMBLOB, PRIMARY KEY ( id ), UNIQUE KEY unique_variationUuid ( variationUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
     var sql2 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_intest ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, testUuid VARCHAR(255) NOT NULL, variationUuid VARCHAR(255) NOT NULL, expUuid VARCHAR(255) NOT NULL, miscFields MEDIUMBLOB DEFAULT NULL, PRIMARY KEY ( id ), UNIQUE KEY unique_testUuid ( testUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
     var sql3 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_userdata ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, testUuid VARCHAR(255) NOT NULL, variationUuid VARCHAR(255) NOT NULL, expUuid VARCHAR(255) NOT NULL, successReturn VARCHAR(255) DEFAULT NULL, miscFields MEDIUMBLOB DEFAULT NULL, PRIMARY KEY ( id ), UNIQUE KEY unique_testUuid ( testUuid ) ) ENGINE=MyISAM DEFAULT CHARSET=utf8; "
     connection.query(sql1 + sql2 + sql3, function(err, rows, fields) {
@@ -206,3 +285,22 @@ function setupExpTables(exp_uuid) {
   });
 }
 
+
+function deleteExpTables(exp_uuid) {
+  return promiseLib.promise(function(resolve, reject) {
+    args = {
+      'var' : exp_uuid + '_variations',
+      'intest' : exp_uuid + '_intest',
+      'data' : exp_uuid + '_userdata'
+    }
+    var sql1 = "DROP TABLE :var;";
+    var sql2 = "DROP TABLE :intest;";
+    var sql3 = "DROP TABLE :data;";
+    connection.query(sql1 + sql2 + sql3, args, function(err, rows, fields) {
+      if (err) {
+        reject();
+      }      
+    resolve();
+    });
+  });
+}

@@ -10,7 +10,7 @@ var PythonShell = require('python-shell');
 var db = require('../database/database.js');
 var logger = require('../../log/logger.js')
 
-var connection = db.connect(false);
+var connection = db.connect();
 var log = logger.getLogger();
 
 var DEFAULT_SUCCUUID = [
@@ -88,8 +88,7 @@ function getTestOrBestVariation(dbReturn) {
 		successPromise = getSuccesFn(rows[0].succUuid);
 
 		// Combine promises
-		modulePromise = promiseLib.join(variationPromise, successPromise);
-		return modulePromise;
+		return promiseLib.join(variationPromise, successPromise);
 	} else {
 		log.info("NON-TEST SUBJECT: PREDICT WINNING");
 		// run in parallel. Two independent tasks

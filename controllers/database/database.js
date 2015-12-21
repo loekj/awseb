@@ -1,28 +1,13 @@
-
-exports.connect = function(multiple){
-	// var mode = process.env.NODE_ENV;
-	// var host = process.env.NODE_HOST;
-	//log.info({NODE_ENV:mode, NODE_HOST:host}, 'env settings');
-
+exports.connect = function(){
 	var mysql = require('mysql');
-	if (multiple) {
-		var connection = mysql.createConnection({
-			host     : process.env.RDS_HOSTNAME,
-			user     : process.env.RDS_USERNAME,
-			password : process.env.RDS_PASSWORD,
-			port     : process.env.RDS_PORT,
-			database : process.env.RDS_DB_NAME,
-			multipleStatements : true
-		});
-	} else {
-		var connection = mysql.createConnection({
-			host     : process.env.RDS_HOSTNAME,
-			user     : process.env.RDS_USERNAME,
-			password : process.env.RDS_PASSWORD,
-			port     : process.env.RDS_PORT,
-			database : process.env.RDS_DB_NAME
-		});		
-	}
+	var connection = mysql.createConnection({
+		host     : process.env.RDS_HOSTNAME,
+		user     : process.env.RDS_USERNAME,
+		password : process.env.RDS_PASSWORD,
+		port     : process.env.RDS_PORT,
+		database : process.env.RDS_DB_NAME,
+		multipleStatements : true
+	});
 	connection.on('close', function(err) {
 		if (err) {
 			connection = mysql.createConnection(connection.config);
@@ -30,6 +15,5 @@ exports.connect = function(multiple){
 			console.log('Connection closed normally.');
 		}
 	});
-
 	return connection;
 };

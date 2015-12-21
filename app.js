@@ -29,8 +29,6 @@ if (mode == 'production') {
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
 	var register = require('./controllers/endpoints/register.js');
 	var collection = require('./controllers/endpoints/collection.js');
-	// experiment is for registering/editing experiment
-	//var experiment = require('./controllers/endpoints/experiment.js');	
 	
 	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);
@@ -40,24 +38,27 @@ if (mode == 'production') {
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
 	var collection = require('./controllers/endpoints/collection.js');
 	var register = require('./controllers/endpoints/register.js');
-	var experiment = require('./controllers/endpoints/experiment.js');
-	var variation = require('./controllers/endpoints/variation.js');
-	var variation_id = require('./controllers/endpoints/variation_id.js');
+	var experiment = require('./controllers/endpoints/exp.js');
+	var experiment_id = require('./controllers/endpoints/exp_id.js');
+	var experiment_id_variation = require('./controllers/endpoints/exp_id_var.js');
+	var experiment_id_variation_id = require('./controllers/endpoints/exp_id_var_id.js');
 
 	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
 
-	app.post('/experiment', experiment.POST);
-	app.get('/experiment', experiment.GET);
+	app.post('/exp', experiment.POST);
+	app.get('/exp', experiment.GET);
+
+	app.post('/exp/:expId', experiment_id.POST);
+	app.get('/exp/:expId', experiment_id.GET);	
 
 	
-	app.delete('/variation', variation.DELETE);
-	app.get('/variation', variation.GET);
-	app.post('/variation', variation.POST);
+	app.get('/var', experiment_id_variation.GET);
 
-	app.get('/variation/:id', variation_id.GET);
-	app.post('/variation/:id', variation_id.POST);
+	app.delete('/exp/:expId/var/:varId', experiment_id_variation_id.DELETE);
+	app.get('/exp/:expId/var/:varId', experiment_id_variation_id.GET);
+	app.post('/exp/:expId/var/:varId', experiment_id_variation_id.POST);
 }
 
 if (host == 'local') {
