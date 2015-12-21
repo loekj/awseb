@@ -40,12 +40,24 @@ if (mode == 'production') {
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
 	var collection = require('./controllers/endpoints/collection.js');
 	var register = require('./controllers/endpoints/register.js');
-	// experiment is for registering/editing experiment
-	//var experiment = require('./controllers/endpoints/experiment.js');	
+	var experiment = require('./controllers/endpoints/experiment.js');
+	var variation = require('./controllers/endpoints/variation.js');
+	var variation_id = require('./controllers/endpoints/variation_id.js');
 
 	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
+
+	app.post('/experiment', experiment.POST);
+	app.get('/experiment', experiment.GET);
+
+	
+	app.delete('/variation', variation.DELETE);
+	app.get('/variation', variation.GET);
+	app.post('/variation', variation.POST);
+
+	app.get('/variation/:id', variation_id.GET);
+	app.post('/variation/:id', variation_id.POST);
 }
 
 if (host == 'local') {

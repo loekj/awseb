@@ -6,3 +6,7 @@ exports.isDef = function(obj) {
 	}
 	return true;
 }
+
+exports.dashToUnder = function(str) {
+	return str.replace(/-/g,'_');
+}

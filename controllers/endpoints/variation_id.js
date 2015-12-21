@@ -15,19 +15,46 @@ var connection = db.connect(true);
 var log = logger.getLogger();
 
 /* 
-* GET 
-* request to fill-in the dom of the requested page. Read-only.
+* GET
+* Initial get request fill in the forms with entered values.
 */
 exports.GET = function(req, res, next) {
-  res.status(200).json({});
-}
+  var variation_uuid = req.params.id;
+  var exp_uuid = req.body.expUuid; // *Need extra from grady. if null, new experiment.
+
+  console.log("variation_uuid: %s", variation_uuid);
+
+  var args = {
+    'variationUuid' : variation_uuid,
+    'expUuid' : exp_uuid
+  }
+  var query_string = "SELECT name, active, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM :expUuid_variations WHERE variationUuid = :variationUuid";
+  connection.query(query_string, args, function(err, rows, fields) {
+    if (err) {
+      res.status(400).json({});
+    }
+    if (rows.affectedRows != '1') {
+      res.status(400).json({});//except.UnchangedError("Rows affected: " + rows.affectedRows, 'Insert ' + exp_uuid + 'into experiments');
+    }              
+    console.log(rows);
+    res.status(200).json({
+      'name' : rows.name,
+      'active' : rows.active,
+      'html' : rows.html,
+      'js' : rows.js,
+      'css' : rows.css
+    });
+  });
+};
 
 
 /* 
 * POST
-* request to alter or init experiment. Change database tables
+* request to alter or init variations of the experiment. Change database tables.
 */
 exports.POST = function(req, res, next) {
+  variation_uuid = req.params.id;
+
   var exp_name = req.body.name;
   var exp_uuid = req.body.expUuid; // *Need extra from grady. if null, new experiment.
   var user_uuid = req.body.userUuid; //*Need extra from grady
@@ -167,7 +194,7 @@ function insertSuccFn(succ_uuid, user_uuid, succ) {
 
 function setupExpTables(exp_uuid) {
   return promiseLib.promise(function(resolve, reject) {   
-    var sql1 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_variations ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, variationUuid VARCHAR(255) NOT NULL, name VARCHAR(50) NOT NULL DEFAULT 'Untitled', expUuid VARCHAR(255) NOT NULL, active BOOLEAN NOT NULL DEFAULT 0, js MEDIUMBLOB, css MEDIUMBLOB, html MEDIUMBLOB, PRIMARY KEY ( id ), UNIQUE KEY unique_variationUuid ( variationUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
+    var sql1 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_variations ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, variationUuid VARCHAR(255) NOT NULL, name VARCHAR(50) NOT NULL DEFAULT 'Untitled', expUuid VARCHAR(255) NOT NULL, js MEDIUMBLOB, css MEDIUMBLOB, html MEDIUMBLOB, PRIMARY KEY ( id ), UNIQUE KEY unique_variationUuid ( variationUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
     var sql2 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_intest ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, testUuid VARCHAR(255) NOT NULL, variationUuid VARCHAR(255) NOT NULL, expUuid VARCHAR(255) NOT NULL, miscFields MEDIUMBLOB DEFAULT NULL, PRIMARY KEY ( id ), UNIQUE KEY unique_testUuid ( testUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
     var sql3 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_userdata ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, testUuid VARCHAR(255) NOT NULL, variationUuid VARCHAR(255) NOT NULL, expUuid VARCHAR(255) NOT NULL, successReturn VARCHAR(255) DEFAULT NULL, miscFields MEDIUMBLOB DEFAULT NULL, PRIMARY KEY ( id ), UNIQUE KEY unique_testUuid ( testUuid ) ) ENGINE=MyISAM DEFAULT CHARSET=utf8; "
     connection.query(sql1 + sql2 + sql3, function(err, rows, fields) {

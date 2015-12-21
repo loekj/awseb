@@ -5,19 +5,19 @@ function setupExperiments(connection, callback){
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"expUuid VARCHAR(255) NOT NULL," +
 		"succUuid VARCHAR(255) NOT NULL," +
-		"numVar INT DEFAULT NULL," + //Number of variations, set in different window
+		"numVar INT DEFAULT 0," + //Number of variations, set in different window
 		"descr BLOB NOT NULL," +
 		"name VARCHAR(50) DEFAULT 'Untitled'," +
 		"userUuid VARCHAR(255) NOT NULL," +
 		"prop INT NOT NULL," +
 		"timeout INT NOT NULL DEFAULT 18000," +
-		"update INT NOT NULL DEFAULT 30," + //30 days, 0 value is after each new point
-		"window INT NOT NULL DEFAULT 1," + //1 day
-		"active BIT(1) DEFAULT 0," +
+		"updateTime INT NOT NULL DEFAULT 30," + //30 days, 0 value is after each new point
+		"windowTime INT NOT NULL DEFAULT 1," + //1 day
+		"active BOOLEAN NOT NULL DEFAULT 0," +
 		"PRIMARY KEY ( id )," +
 		"UNIQUE KEY unique_expUuid ( expUuid )" +
 		") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-	runQuery(query, connection, callback);	
+	runQuery(query, connection, callback);
 }
 
 function setupAccounts(connection, callback){
@@ -96,6 +96,26 @@ if (require.main === module) {
 	    	}
 	], function (err, results) {
 	    console.log(results);
-	    process.exit(0);
+		var args = {
+			'succUuid' : succ_uuid,
+			'userUuid' : user_uuid,
+			'name' : succ.name,
+			'descr' : succ.descr,
+			'fn' : succ.fn,
+			'argstr1' : succ.arg1,
+			'argstr1' : succ.arg2,
+			'argstr1' : succ.arg3,
+			'argstr1' : succ.arg4
+		}
+		var query_string = 'INSERT INTO accounts SET ?';
+		connection.query(query_string, args, function(err, rows, fields) {
+			if (err) {
+				throw Error(err.message);
+			}
+			if (rows.affectedRows != '1') {
+				throw Error("No affected rows..?");
+			}
+			process.exit(0);
+		});
 	});
 }
