@@ -5,7 +5,7 @@ exports.connect = function(multiple){
 	//log.info({NODE_ENV:mode, NODE_HOST:host}, 'env settings');
 
 	var mysql = require('mysql');
-	if (multiple) {
+	// if (multiple) {
 		var connection = mysql.createConnection({
 			host     : process.env.RDS_HOSTNAME,
 			user     : process.env.RDS_USERNAME,
@@ -14,7 +14,7 @@ exports.connect = function(multiple){
 			database : process.env.RDS_DB_NAME,
 			multipleStatements : true
 		});
-	}
+	// }
 	connection.on('close', function(err) {
 		if (err) {
 			connection = mysql.createConnection(connection.config);
