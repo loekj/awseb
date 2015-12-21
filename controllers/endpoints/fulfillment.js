@@ -82,7 +82,7 @@ function getTestOrBestVariation(dbReturn) {
 	var test_uuid = uuid.v4();
 	// Get random number
 	var userInTest = (math.random()*100 <= parseInt(rows[0].prop,10));
-	if (userInTest) {
+	if (userInTest === true) {
 		log.info("TEST SUBJECT: RANDOM VAR");
 
 		//Test person! Select random variation
@@ -108,57 +108,56 @@ function getTestOrBestVariation(dbReturn) {
 	}
 }
 
-function compileModules(results, res) {
-	log.info(JSON.stringify(results));
-	
-
+function compileModules(results) {
 	var modules = [];
 	var variation_uuid = results[0].variationUuid;
+	var responseObj;
 	for(var i=0; i<results.length; i++) {
 // If user is being entered into test:
 		if(typeof results[i].then === 'function') {
-			results[i].then(function(variationObj, succObj) {
-				modules.push({
-					'testUuid': variationObj.test_uuid,
-					'html': [
-						variationObj.html
-					],
-					'css': variationObj.css,
-					'js': variationObj.js,
-					'succ': succObj
-				});
+			results[i].then(function(variationObj, successObj) {
+				responseObj = getResponseObj(variationObj, successObj)
+				modules.push();
 
 				// add to in-test database
-				var args = {
-				 'testUuid' : variationObj.test_uuid,
-				 'variationUuid' : variationObj.variation_uuid,
-				 'expUuid' : variationObj.exp_uuid
-				}
-				var queryString = 'INSERT INTO ' + exp_uuid + '_intest SET ?';
-				connection.query(queryString, args, function(err, rows, fields) {
-					if (err) {
-						log.error(err.message, 'Query insert intest');
-						throw err;
-					}
-					log.info({'Rows affected' : rows.affectedRows}, 'Insert ' + test_uuid + 'into intest');
-				});	
+				addUserToTestDB(variationObj, exp_uuid);
 			});
 		} else {
 // User in test or gets winning variation:
 			log.info(JSON.stringify(results));
-			modules.push({
-				'testUuid': results[i].test_uuid,
-				'html': [
-					results[i].html
-				],
-				'css': results[i].css,
-				'js': results[i].js,
-				'succ': null
-			});
-			
+			responseObj = getResponseObj(results[i]);
+			modules.push(responseObj);		
 		}
 	}
 	return modules;
+}
+
+function getResponseObj(variationObj, successObj) {
+	return {
+		'testUuid': variationObj.test_uuid,
+		'html': [
+			variationObj.html
+		],
+		'css': variationObj.css,
+		'js': variationObj.js,
+		'succ': successObj || null
+	}
+}
+
+function addUserToInTestDB(variationObj) {
+	var args = {
+	 'testUuid' : variationObj.test_uuid,
+	 'variationUuid' : variationObj.variation_uuid,
+	 'expUuid' : variationObj.exp_uuid
+	}
+	var queryString = 'INSERT INTO ' + variationObj.exp_uuid + '_intest SET ?';
+	connection.query(queryString, args, function(err, rows, fields) {
+		if (err) {
+			log.error(err.message, 'Query insert intest');
+			throw err;
+		}
+		log.info({'Rows affected' : rows.affectedRows}, 'Insert ' + variationObj.test_uuid + 'into intest');
+	});	
 }
 
 function requestError(err) {
