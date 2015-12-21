@@ -68,7 +68,7 @@ function makeDBCall(exp_uuid) {
 			if(err) {
 				reject(err);
 			} else {
-				resolve({rows:rows, fields:fields});
+				resolve({rows:rows, fields:fields, exp_uuid: exp_uuid});
 			}
 		})
 	});
@@ -77,6 +77,7 @@ function makeDBCall(exp_uuid) {
 function getTestOrBestVariation(dbReturn) {
 	var rows = dbReturn.rows;
 	var fields = dbReturn.fields;
+	var exp_uuid = dbReturn.exp_uuid;
 	console.log('rows:',rows,'fields',fields);
 	var test_uuid = uuid.v4();
 	// Get random number
