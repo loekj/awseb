@@ -14,11 +14,11 @@ var connection = db.connect();
 var log = logger.getLogger();
 
 var DEFAULT_SUCCUUID = [
-	'uuid1',
-	'uuid2',
-	'uuid3',
-	'uuid4',
-	'uuid5'
+	'suuid1',
+	'suuid2',
+	'suuid3',
+	'suuid4',
+	'suuid5'
 ];
 
 
@@ -48,8 +48,11 @@ exports.POST = function(req, res, next) {
 	}
 
 	promiseLib.all(modulePromiseArray).then(function(results) {
-		compileModules(results, res);
-	}).catch(requestError);
+		compileModules(results, exp_uuid, res);
+	}).catch(function (err) {
+		log.error(err.message, 'Parralel getRandomVariation and getSuccesFn');
+		res.status(400).json({});
+	});
 
 };
 
@@ -58,14 +61,17 @@ function makeDBCall(exp_uuid) {
 	return promiseLib.promise(function(resolve, reject) {
 		// person is not in test yet. decide if in test or feed winning
 		var args = {
-			expUuid : exp_uuid
+			'expUuid' : exp_uuid
 		};
 		var queryString = 'SELECT prop, numVar, succUuid FROM experiments WHERE ?';
 		connection.query(queryString, args, function(err, rows, fields) {
 			if(err) {
 				reject(err);
 			} else {
-				resolve({rows:rows, fields:fields});
+				resolve({
+					'rows' : rows[0],
+					'expUuid' : exp_uuid
+				});
 			}
 		})
 	});
@@ -74,18 +80,18 @@ function makeDBCall(exp_uuid) {
 
 function getTestOrBestVariation(dbReturn) {
 	var rows = dbReturn.rows;
-	var fields = dbReturn.fields;
 	var test_uuid = uuid.v4();
+	var exp_uuid = dbReturn.expUuid;
 	// Get random number
-	var userInTest = (math.random()*100 <= parseInt(rows[0].prop,10));
+	var userInTest = (math.random()*100 <= parseInt(rows.prop,10));
 	if (userInTest) {
 		log.info("TEST SUBJECT: RANDOM VAR");
 
 		//Test person! Select random variation
-		variationPromise = getRandomVariation(exp_uuid);
+		var variationPromise = getRandomVariation(exp_uuid);
 
 		//Get successes for variation:
-		successPromise = getSuccesFn(rows[0].succUuid);
+		var successPromise = getSuccesFn(rows.succUuid);
 
 		// Combine promises
 		return promiseLib.join(variationPromise, successPromise);
@@ -94,25 +100,23 @@ function getTestOrBestVariation(dbReturn) {
 		// run in parallel. Two independent tasks
 		// predict variation by machine learning
 		// fetch corresponding test function
-		//console.log("WHAT IS THIS: " + JSON.stringify(rows));
-		//console.log("numVar: %s", rows[0].numVar);
-		var inputs = [rows[0].numVar];// ...[, '5', '26', 'job']
+		var inputs = [rows.numVar];// ...[, '5', '26', 'job']
 		return predictVariation(exp_uuid, inputs).then(function(response) {
 			return getVariation(response.results[0], exp_uuid);
 		});					
 	}
 }
 
-function compileModules(results, res) {
+function compileModules(results, exp_uuid, res) {
 	log.info(JSON.stringify(results));
-	
-
 	var modules = [];
 	var variation_uuid = results[0].variationUuid;
+
 	for(var i=0; i<results.length; i++) {
-// If user is being entered into test:
+		// If user is being entered into test:
 		if(typeof results[i].then === 'function') {
 			results[i].then(function(variationObj, succObj) {
+				console.log("VAR OBJECT: %s", JSON.stringify(variationObj));
 				modules.push({
 					'testUuid': variationObj.test_uuid,
 					'html': [
@@ -153,20 +157,14 @@ function compileModules(results, res) {
 			
 		}
 	}
-	res.json(modules);
+	res.status(200).json(modules);
 
 }
 
-function requestError(err) {
-	log.error(err.message, 'Parralel getRandomVariation and getSuccesFn');
-	throw err;
-}
-
-
-function getRandomVariation(expUuid) {
+function getRandomVariation(exp_uuid) {
 	return promiseLib.promise(function(resolve,reject) {
 		// This is very slow. Optimize later.
-		var queryString = 'SELECT variationUuid, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM ' + expUuid + '_variations ORDER BY RAND() LIMIT 1';
+		var queryString = 'SELECT variationUuid, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM ' + exp_uuid + '_variations ORDER BY RAND() LIMIT 1';
 		connection.query(queryString, function(err, rows, fields) {
 			if (err) {
 				reject({err: err, errMessage: err.message});
@@ -185,7 +183,7 @@ function getVariation(varUuid, expUuid) {
 	return promiseLib.promise(function(resolve,reject) {
 		var varUuid = 'vuuid1'; // in real-life the python script will feedback var uuid
 		var args = {
-			variationUuid : varUuid
+			'variationUuid' : varUuid
 		}
 		var queryString =  'SELECT CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM ' + expUuid + '_variations' + ' WHERE ?';
 		connection.query(queryString, args, function(err, rows, fields) {
@@ -245,7 +243,7 @@ function getSuccesFn(succUuid) {
 		}
 		
 		if (!tmp_succUuid) {
-			args = {
+			var args = {
 				succUuid : succUuid			
 			}
 			var queryString = 'SELECT CAST(fn AS CHAR(10000) CHARACTER SET utf8) AS fn, argstr1, argstr2, argstr3, argstr4 FROM successfns WHERE ?';

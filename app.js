@@ -47,18 +47,20 @@ if (mode == 'production') {
 	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
 
-	app.post('/exp', experiment.POST);
 	app.get('/exp', experiment.GET);
 
 	app.post('/exp/:expId', experiment_id.POST);
+	app.patch('/exp/:expId', experiment_id.PATCH);
 	app.get('/exp/:expId', experiment_id.GET);	
+	app.delete('/exp/:expId', experiment_id.DELETE);	
 
 	
-	app.get('/var', experiment_id_variation.GET);
+	app.get('/exp/:expId/var', experiment_id_variation.GET);
 
 	app.delete('/exp/:expId/var/:varId', experiment_id_variation_id.DELETE);
 	app.get('/exp/:expId/var/:varId', experiment_id_variation_id.GET);
 	app.post('/exp/:expId/var/:varId', experiment_id_variation_id.POST);
+	app.patch('/exp/:expId/var/:varId', experiment_id_variation_id.PATCH);
 }
 
 if (host == 'local') {

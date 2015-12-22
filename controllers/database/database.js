@@ -7,7 +7,7 @@ exports.connect = function(){
 		port     : process.env.RDS_PORT,
 		database : process.env.RDS_DB_NAME,
 		multipleStatements : true
-	});
+	});		
 	connection.on('close', function(err) {
 		if (err) {
 			connection = mysql.createConnection(connection.config);

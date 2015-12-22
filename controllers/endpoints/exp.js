@@ -20,32 +20,16 @@ var log = logger.getLogger();
 * will fetch all the experiments of this user_uuid
 */
 exports.GET = function(req, res, next) {
-  var exp_uuid = req.params.expId;
-
-  console.log("exp_uuid: %s", exp_uuid);
-
   var args = {
-    'expUuid' : exp_uuid
+    'userUuid' : "cdc7b5e9_1556_4539_b62c_65b0c81510f3"
   }
-  var query_string = "SELECT numVar, descr, name, prop, timeout, updateTime, windowTime, active FROM experiments WHERE expUuid = :expUuid";
+  var query_string = "SELECT addTime, modTime, expUuid, succUuid, numVar, CAST(descr AS CHAR(10000) CHARACTER SET utf8) AS descr FROM experiments WHERE ?";
   connection.query(query_string, args, function(err, rows, fields) {
     if (err) {
       res.status(400).json({});
     }
-    if (rows.affectedRows != '1') {
-      res.status(400).json({});//except.UnchangedError("Rows affected: " + rows.affectedRows, 'Insert ' + exp_uuid + 'into experiments');
-    }              
-    console.log(rows);
     res.status(200).json({
-      'numVar' : rows.numVar,
-      'descr' : rows.descr,
-      'name' : rows.name,
-      'prop' : rows.prop,
-      'active' : rows.active,
-      'timeout' : rows.timeout,
-      'updateTime' : rows.updateTime,
-      'windowTime' : rows.windowTime,
-      'active' : rows.active
+      'experiments' : rows
     });
   });
 };

@@ -26,6 +26,8 @@ function setupAccounts(connection, callback){
 		"addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"userUuid VARCHAR(255) NOT NULL," +
+		"firstName VARCHAR(255) NOT NULL," +
+		"lastName VARCHAR(255) NOT NULL," +
 		"oauth VARCHAR(100) NOT NULL," +
 		"permis VARCHAR(50) NOT NULL," +
 		"subscrId INT NOT NULL DEFAULT 0," +
@@ -72,16 +74,14 @@ function runQuery(query, connection, callback) {
 if (require.main === module) {
 	var async = require('async');
 	var mysql = require('mysql');
-	
-	db_user = process.argv[2];
-	db_pwd = process.argv[3];
 
 	var connection = mysql.createConnection({
-	  host     : "aavktpb0yx3vyf.ck7xy5rlukt9.us-west-2.rds.amazonaws.com",
-	  user     : db_user,
-	  password : db_pwd,
-	  port     : "3306",
-	  database : "ebdb"
+		host     : process.env.RDS_HOSTNAME,
+		user     : process.env.RDS_USERNAME,
+		password : process.env.RDS_PASSWORD,
+		port     : process.env.RDS_PORT,
+		database : process.env.RDS_DB_NAME,
+		multipleStatements : true
 	});
 
 	async.series([
@@ -95,17 +95,14 @@ if (require.main === module) {
 	    		setupSuccess(connection, callback);
 	    	}
 	], function (err, results) {
+
 	    console.log(results);
 		var args = {
-			'succUuid' : succ_uuid,
-			'userUuid' : user_uuid,
-			'name' : succ.name,
-			'descr' : succ.descr,
-			'fn' : succ.fn,
-			'argstr1' : succ.arg1,
-			'argstr1' : succ.arg2,
-			'argstr1' : succ.arg3,
-			'argstr1' : succ.arg4
+			'userUuid' : "cdc7b5e9_1556_4539_b62c_65b0c81510f3",
+			'firstName' : "Loek",
+			'lastName' : "Janssen",
+			'oauth' : "ljanssen@stanford.edu",
+			'permis' : "1"
 		}
 		var query_string = 'INSERT INTO accounts SET ?';
 		connection.query(query_string, args, function(err, rows, fields) {

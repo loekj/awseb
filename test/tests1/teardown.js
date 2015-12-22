@@ -23,24 +23,22 @@ if (require.main === module) {
 	var async = require('async');
 	var mysql = require('mysql');
 
-	db_user = process.argv[2];
-	db_pwd = process.argv[3];
-	
 	var connection = mysql.createConnection({
-	  host     : "aavktpb0yx3vyf.ck7xy5rlukt9.us-west-2.rds.amazonaws.com",
-	  user     : db_user,
-	  password : db_pwd,
-	  port     : "3306",
-	  database : "ebdb"
+		host     : process.env.RDS_HOSTNAME,
+		user     : process.env.RDS_USERNAME,
+		password : process.env.RDS_PASSWORD,
+		port     : process.env.RDS_PORT,
+		database : process.env.RDS_DB_NAME,
+		multipleStatements : true
 	});
 
 	async.series([
-	    	function(callback) {
-	    		teardownDatabase(connection, callback);
-	    	},	    	
-	    	function(callback) {
-	    		resetDatabase(connection, callback);
-	    	}
+		function(callback) {
+			teardownDatabase(connection, callback);
+		},	    	
+		function(callback) {
+			resetDatabase(connection, callback);
+		}
 	], function (err, results) {
 	    console.log(results);
 	    process.exit(0);
