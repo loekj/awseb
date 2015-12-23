@@ -35,6 +35,7 @@ if (mode == 'production') {
 	app.post('/register', register.POST);
 
 } else if (mode == 'debug') {
+	var register = require('./controllers/endpoints/register.js');
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
 	var collection = require('./controllers/endpoints/collection.js');
 	var register = require('./controllers/endpoints/register.js');
@@ -42,6 +43,8 @@ if (mode == 'production') {
 	var experiment_id = require('./controllers/endpoints/exp_id.js');
 	var experiment_id_variation = require('./controllers/endpoints/exp_id_var.js');
 	var experiment_id_variation_id = require('./controllers/endpoints/exp_id_var_id.js');
+
+	app.post('/register', register.POST);
 
 	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);

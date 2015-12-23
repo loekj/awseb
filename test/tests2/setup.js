@@ -29,7 +29,7 @@ function setupAccounts(connection, callback){
 		"firstName VARCHAR(255) NOT NULL," +
 		"lastName VARCHAR(255) NOT NULL," +
 		"oauth VARCHAR(100) NOT NULL," +
-		"permis VARCHAR(50) NOT NULL," +
+		"permis VARCHAR(50) NOT NULL DEFAULT 1," +
 		"subscrId INT NOT NULL DEFAULT 0," +
 		"PRIMARY KEY ( id )," +
 		"UNIQUE KEY unique_oauth ( oauth )," +
@@ -97,22 +97,23 @@ if (require.main === module) {
 	], function (err, results) {
 
 	    console.log(results);
-		var args = {
-			'userUuid' : "cdc7b5e9_1556_4539_b62c_65b0c81510f3",
-			'firstName' : "Loek",
-			'lastName' : "Janssen",
-			'oauth' : "ljanssen@stanford.edu",
-			'permis' : "1"
-		}
-		var query_string = 'INSERT INTO accounts SET ?';
-		connection.query(query_string, args, function(err, rows, fields) {
-			if (err) {
-				throw Error(err.message);
-			}
-			if (rows.affectedRows != '1') {
-				throw Error("No affected rows..?");
-			}
-			process.exit(0);
-		});
+	    process.exit(0);
+		// var args = {
+		// 	'userUuid' : "cdc7b5e9_1556_4539_b62c_65b0c81510f3",
+		// 	'firstName' : "Loek",
+		// 	'lastName' : "Janssen",
+		// 	'oauth' : "ljanssen@stanford.edu",
+		// 	'permis' : "1"
+		// }
+		// var query_string = 'INSERT INTO accounts SET ?';
+		// connection.query(query_string, args, function(err, rows, fields) {
+		// 	if (err) {
+		// 		throw Error(err.message);
+		// 	}
+		// 	if (rows.affectedRows != '1') {
+		// 		throw Error("No affected rows..?");
+		// 	}
+		// 	process.exit(0);
+		// });
 	});
 }

@@ -29,7 +29,7 @@ function setupAccounts(connection, callback){
 		"firstName VARCHAR(255) NOT NULL," +
 		"lastName VARCHAR(255) NOT NULL," +		
 		"oauth VARCHAR(100) NOT NULL," +
-		"permis VARCHAR(50) NOT NULL," +
+		"permis VARCHAR(50) NOT NULL DEFAULT 1," +
 		"subscrId INT NOT NULL DEFAULT 0," +
 		"PRIMARY KEY ( id )," +
 		"UNIQUE KEY unique_oauth ( oauth )," +
