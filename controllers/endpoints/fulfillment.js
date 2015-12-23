@@ -240,6 +240,7 @@ function getWinningVariation(err, results) {
 function getSuccesFn(succUuid) {
 	return promiseLib.promise(function(resolve, reject) {
 		var tmp_succUuid = null;
+		var args;
 		for (var i = 0; i < DEFAULT_SUCCUUID.length; i++ ){
 			if (succUuid == DEFAULT_SUCCUUID[i]) {
 				tmp_succUuid = succUuid;
