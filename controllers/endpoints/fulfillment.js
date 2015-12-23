@@ -29,8 +29,6 @@ exports.POST = function(req, res, next) {
 	var callb = req.body.callback;
 	var modules_arr = req.body.modules;
 	var modulePromiseArray = [];
-	var variationPromise;
-	var successPromise;
 	var modulePromise;
 
 	for(var i=0; i < modules_arr.length; i++) {
@@ -78,6 +76,8 @@ function getTestOrBestVariation(dbReturn) {
 	var rows = dbReturn.rows;
 	var fields = dbReturn.fields;
 	var exp_uuid = dbReturn.exp_uuid;
+	var variationPromise;
+	var successPromise;
 	console.log('rows:',rows,'fields',fields);
 	var test_uuid = uuid.v4();
 	// Get random number
@@ -146,9 +146,9 @@ function getResponseObj(variationObj, successObj) {
 
 function addUserToInTestDB(variationObj) {
 	var args = {
-	 'testUuid' : variationObj.test_uuid,
-	 'variationUuid' : variationObj.variation_uuid,
-	 'expUuid' : variationObj.exp_uuid
+		'testUuid' : variationObj.test_uuid,
+		'variationUuid' : variationObj.variation_uuid,
+		'expUuid' : variationObj.exp_uuid
 	}
 	var queryString = 'INSERT INTO ' + variationObj.exp_uuid + '_intest SET ?';
 	connection.query(queryString, args, function(err, rows, fields) {
