@@ -78,6 +78,7 @@ function getTestOrBestVariation(dbReturn) {
 	var exp_uuid = dbReturn.exp_uuid;
 	var variationPromise;
 	var successPromise;
+	var modulePromise;
 	console.log('rows:',rows,'fields',fields);
 	var test_uuid = uuid.v4();
 	// Get random number
