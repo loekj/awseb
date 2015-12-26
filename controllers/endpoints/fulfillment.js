@@ -30,98 +30,16 @@ var DEFAULT_SUCCUUID = [
 exports.POST = function(req, res, next) {
 	var callb = req.body.callback;
 	var modules_arr = req.body.modules;
-	
+
+	var modulePromiseArray = [];
+	var modulePromise;
+
 	for(var i=0; i < modules_arr.length; i++) {
 		var exp_uuid = modules_arr[i].experimentUuid;
-		if (modules_arr[i].activeVariation.toLowerCase() == 'null') {
-			// person is not in test yet. decide if in test or feed winning
-			args = {
-				expUuid : exp_uuid
-			};
-			var queryString = 'SELECT prop, numVar, succUuid FROM experiments WHERE ?';
-			connection.query(queryString, args, function(err, rows, fields) {
-				if (err) {
-					log.err(err.message, 'Query get experiment ' + exp_uuid);
-					throw err;
-				}
-				
-				var test_uuid = utils.dashToUnder(uuid.v4());
-
-				// Get random number
-				if (math.random()*100 <= parseInt(rows[0].prop,10)) {
-					log.info("TEST SUBJECT: RANDOM VAR");
-					//test person! select random variation, fetch results and serve
-
-					async.parallel([
-						function(callback) {
-							getRandomVariation(exp_uuid, callback); // later pass inputs to this
-						},
-						function(callback) {
-							getSuccesFn(rows[0].succUuid, callback);
-						}
-					], function(err, results) {
-						if (err) {
-							log.err(err.message, 'Parralel getRandomVariation and getSuccesFn');
-							throw err;
-						}
-						var variation_uuid = results[0].variationUuid;
-						res.json({
-							'testUuid': test_uuid,
-							'html': [
-								results[0].html
-							],
-							'css': results[0].css,
-							'js': results[0].js,
-							'succ': results[1]
-						});
-						
-						// add to in-test database
-						args = {
-						 'testUuid' : test_uuid,
-						 'variationUuid' : variation_uuid,
-						 'expUuid' : exp_uuid
-						}
-						var queryString = 'INSERT INTO ' + exp_uuid + '_intest SET ?';
-						connection.query(queryString, args, function(err, rows, fields) {
-							if (err) {
-								log.err(err.message, 'Query insert intest');
-								throw err;
-							}
-							log.info({'Rows affected' : rows.affectedRows}, 'Insert ' + test_uuid + 'into intest');
-						});	
-					});
-				} else {
-					log.info("NON-TEST SUBJECT: PREDICT WINNING");
-					// run in parallel. Two independent tasks
-					// predict variation by machine learning
-					// fetch corresponding test function
-					//console.log("WHAT IS THIS: " + JSON.stringify(rows));
-					//console.log("numVar: %s", rows[0].numVar);
-					var inputs = [rows[0].numVar];// ...[, '5', '26', 'job']
-					predictVariation(inputs, function(err, results) {
-						if (err) {
-							log.err(err.message, 'Predict variation');
-							throw err;
-						}						
-						var winVarUuid = results[0];
-						getVariation(winVarUuid, exp_uuid, function(err, results) {
-							if (err) {
-								log.err(err.message, 'Get variation');
-								throw err;
-							}
-							res.json({
-								'testUuid': null,
-								'html': [
-									results.html
-								],
-								'css': results.css,
-								'js': results.js,
-								'succ': null
-							});
-						});
-					});					
-				}
-			})
+		if (modules_arr[i] && modules_arr[i].activeVariation.toLowerCase() === 'null') {
+			log.info("Not in variation. Either add to one, or deliver winner.");
+			modulePromise = makeDBCall(exp_uuid).then(getTestOrBestVariation);
+			modulePromiseArray.push(modulePromise);
 		} else {
 			log.info("ALREADY IN TEST: FEED ACTIVE VARIATION");
 			// person is already in test, feed already active variation in response!
@@ -142,8 +60,52 @@ exports.POST = function(req, res, next) {
 			});
 		}
 	}
+
+	promiseLib.all(modulePromiseArray)
+	.then(compileModules)
+	.then(function(modules) {
+		res.json(modules);
+	}).catch(requestError);
+
 };
 
+// makeDBCall -> predictVariation --> getVariation
+function makeDBCall(exp_uuid) {
+	return promiseLib.promise(function(resolve, reject) {
+		// person is not in test yet. decide if in test or feed winning
+		var args = {
+			expUuid : exp_uuid
+		};
+		var queryString = 'SELECT prop, numVar, succUuid FROM experiments WHERE ?';
+		connection.query(queryString, args, function(err, rows, fields) {
+			if(err) {
+				reject(err);
+			} else {
+				resolve({rows:rows, fields:fields, exp_uuid: exp_uuid});
+			}
+		})
+	});
+}
+
+function getTestOrBestVariation(dbReturn) {
+	var rows = dbReturn.rows;
+	var fields = dbReturn.fields;
+	var exp_uuid = dbReturn.exp_uuid;
+	var variationPromise;
+	var successPromise;
+	var modulePromise;
+	console.log('rows:',rows,'fields',fields);
+	var test_uuid = uuid.v4();
+	// Get random number
+	var userInTest = (math.random()*100 <= parseInt(rows[0].prop,10));
+	if (userInTest === true) {
+		log.info("TEST SUBJECT: RANDOM VAR");
+
+		//Test person! Select random variation
+		variationPromise = getRandomVariation(exp_uuid);
+
+		//Get successes for variation:
+		successPromise = getSuccesFn(rows[0].succUuid);
 
 function getRandomVariation(expUuid, callback) {
 	// This is very slow. Optimize later.
@@ -161,28 +123,76 @@ function getRandomVariation(expUuid, callback) {
 	});		
 }
 
+function compileModules(results) {
+	var modules = [];
+	var variation_uuid = results[0].variationUuid;
+	var responseObj;
+	for(var i=0; i<results.length; i++) {
+// If user is being entered into test:
+		if(typeof results[i].then === 'function') {
+			results[i].then(function(variationObj, successObj) {
+				responseObj = getResponseObj(variationObj, successObj)
+				modules.push();
 
-
-function getVariation(varUuid, expUuid, callback) {
-	var varUuid = 'vuuid1'; // in real-life the python script will feedback var uuid
-	args = {
-		variationUuid : varUuid
+				// add to in-test database
+				addUserToTestDB(variationObj, exp_uuid);
+			});
+		} else {
+// User in test or gets winning variation:
+			log.info(JSON.stringify(results));
+			responseObj = getResponseObj(results[i]);
+			modules.push(responseObj);		
+		}
 	}
-	var queryString =  'SELECT CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM ' + expUuid + '_variations' + ' WHERE ?';
+	return modules;
+}
+
+function getResponseObj(variationObj, successObj) {
+	return {
+		'testUuid': variationObj.test_uuid,
+		'html': [
+			variationObj.html
+		],
+		'css': variationObj.css,
+		'js': variationObj.js,
+		'succ': successObj || null
+	}
+}
+
+function addUserToInTestDB(variationObj) {
+	var args = {
+		'testUuid' : variationObj.test_uuid,
+		'variationUuid' : variationObj.variation_uuid,
+		'expUuid' : variationObj.exp_uuid
+	}
+	var queryString = 'INSERT INTO ' + variationObj.exp_uuid + '_intest SET ?';
 	connection.query(queryString, args, function(err, rows, fields) {
 		if (err) {
-			callback(err, err.message);
+			log.error(err.message, 'Query insert intest');
+			throw err;
 		}
-		callback(null, {
-			'html' : rows[0].html,
-			'css' : rows[0].css,
-			'js' : rows[0].js
-		});	
-	});		
+		log.info({'Rows affected' : rows.affectedRows}, 'Insert ' + variationObj.test_uuid + 'into intest');
+	});	
 }
 
 
-
+function getRandomVariation(expUuid) {
+	return promiseLib.promise(function(resolve,reject) {
+		// This is very slow. Optimize later.
+		var queryString = 'SELECT variationUuid, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM ' + expUuid + '_variations ORDER BY RAND() LIMIT 1';
+		connection.query(queryString, function(err, rows, fields) {
+			if (err) {
+				reject({err: err, errMessage: err.message});
+			}
+			resolve({
+				'variationUuid' : rows[0].variationUuid,
+				'html' : rows[0].html,
+				'css' : rows[0].css,
+				'js' : rows[0].js
+			});	
+		});		
+	});
+}
 
 function predictVariation(inputs, callback) {
 	var options = {
@@ -203,13 +213,18 @@ function predictVariation(inputs, callback) {
 
 
 
-
-function getSuccesFn(succUuid, callback) {
-	var tmp_succUuid = null;
-	for (var i = 0; i < DEFAULT_SUCCUUID.length; i++ ){
-		if (succUuid == DEFAULT_SUCCUUID[i]) {
-			tmp_succUuid = succUuid;
-			break;
+/************************
+ 	In Test Functions:
+ ************************/
+function getSuccesFn(succUuid) {
+	return promiseLib.promise(function(resolve, reject) {
+		var tmp_succUuid = null;
+		var args;
+		for (var i = 0; i < DEFAULT_SUCCUUID.length; i++ ){
+			if (succUuid == DEFAULT_SUCCUUID[i]) {
+				tmp_succUuid = succUuid;
+				break;
+			}
 		}
 	}
 	

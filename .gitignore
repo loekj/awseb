@@ -14,3 +14,6 @@ test/tests2/full_reset*.sh
 
 # Mysql database files
 database_info*.txt
+
+# Error logs:
+log/*
