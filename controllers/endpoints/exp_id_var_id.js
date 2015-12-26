@@ -29,7 +29,7 @@ exports.GET = function(req, res, next) {
     'variationUuid' : variation_uuid,
     'expUuid' : exp_uuid
   }
-  var query_string = "SELECT name, active, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM :expUuid_variations WHERE variationUuid = :variationUuid";
+  var query_string = 'SELECT name, active, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM ' + connection.escape(exp_uuid) + '_variations WHERE variationUuid = ' + connection.escape(variation_uuid);
   connection.query(query_string, args, function(err, rows, fields) {
     if (err) {
       res.status(400).json({});
@@ -132,10 +132,7 @@ exports.POST = function(req, res, next) {
 
 function updateNumVar(exp_uuid) {
   return promiseLib.promise(function(resolve, reject) {   
-    var args = {
-      'tableName' : exp_uuid + '_variations'
-    }
-    var query_string = 'SELECT COUNT(*) AS rowsCount FROM :tableName';
+    var query_string = 'SELECT COUNT(*) AS rowsCount FROM ' + exp_uuid + '_variations';
     connection.query(query_string, args, function(err, rows, fields) {
       if (err) {
         reject();
@@ -164,10 +161,9 @@ function updateNumVar(exp_uuid) {
 function deleteVariation(exp_uuid, variation_uuid) {
   return promiseLib.promise(function(resolve, reject) {   
     var args = {
-      'tableName' : exp_uuid + '_variations',
       'variationUuid' : variation_uuid,
     }
-    var query_string = "DELETE FROM :tableName WHERE variationUuid = :variationUuid";
+    var query_string = 'DELETE FROM ' + exp_uuid + '_variations, WHERE ?';
     connection.query(query_string, args, function(err, rows, fields) {
       if (err) {
         reject();
@@ -185,14 +181,13 @@ function deleteVariation(exp_uuid, variation_uuid) {
 function insertVariation(exp_uuid, variation_uuid, variation_name, variation_html, variation_js, variation_css) {
   return promiseLib.promise(function(resolve, reject) {   
     var args = {
-      'tableName' : exp_uuid + '_variations',
       'variationUuid' : variation_uuid,
       'name' : variation_name,
       'html' : variation_html,
       'js' : variation_js,
       'css' : variation_css
     }
-    var query_string = 'INSERT INTO :tableName SET variationUuid = :variationUuid, name = :name, html = :html, js = :js, css = :css';
+    var query_string = 'INSERT INTO ' + exp_uuid + '_variations SET ?';
     connection.query(query_string, args, function(err, rows, fields) {
       if (err) {
         reject();
@@ -208,10 +203,7 @@ function insertVariation(exp_uuid, variation_uuid, variation_name, variation_htm
 
 function editVariation(exp_uuid, variation_uuid, variation_name, variation_html, variation_js, variation_css) {
   return promiseLib.promise(function(resolve, reject) {
-    var args = {
-      'tableName' : exp_uuid + '_variations',
-      'variationUuid' : variation_uuid
-    } 
+    var args = {} 
     if (utils.isDef(variation_name)) {
       args.name = variation_name;
     }
@@ -225,7 +217,7 @@ function editVariation(exp_uuid, variation_uuid, variation_name, variation_html,
       args.css = variation_css;
     }        
 
-    var query_string = "UPDATE :tableName SET ? WHERE variationUuid = :variationUuid";
+    var query_string = 'UPDATE ' + exp_uuid + '_variations SET ? WHERE variationUuid = ' + connection.escape(variation_uuid);
     connection.query(query_string, args, function(err, rows, fields) {
       if (err) {
         reject();

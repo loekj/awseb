@@ -65,7 +65,7 @@ exports.PATCH = function(req, res, next) {
     var exp_name = req.body.name;
     var exp_descr = req.body.descr; //description of experiement *Need extra from grady
     var exp_prop = req.body.prop; 
-    var succ_uuid = req.body.succUuid; //null if own succFn, otherwise its the default functions *Need extra from grady (need this on his site hardcoded)
+    var succ_uuid = req.params.userId;; //null if own succFn, otherwise its the default functions *Need extra from grady (need this on his site hardcoded)
     var succ = req.body.succ; //if default this is null, otherwise specified {fn, name, descr, arg1, arg2, arg3, arg4 **Need extra from grady}
     var exp_update = req.body.updateModel;
     var exp_window = req.body.dataWindow; 
@@ -93,8 +93,9 @@ exports.PATCH = function(req, res, next) {
 * request to init experiment. Change database tables
 */
 exports.POST = function(req, res, next) {
+  var user_uuid = req.params.userId; //*Need extra from grady
+
   var exp_name = req.body.name;
-  var user_uuid = req.body.userUuid; //*Need extra from grady
   var exp_descr = req.body.descr; //description of experiement *Need extra from grady
   var exp_prop = req.body.prop; 
   var succ_uuid = req.body.succUuid; //null if own succFn, otherwise its the default functions *Need extra from grady (need this on his site hardcoded)
@@ -255,9 +256,9 @@ function insertSuccFn(succ_uuid, user_uuid, succ) {
 
 function setupExpTables(exp_uuid) {
   return promiseLib.promise(function(resolve, reject) {   
-    var sql1 = "CREATE TABLE IF NOT EXISTS " + connection.escape(exp_uuid) + "_variations ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, variationUuid VARCHAR(255) NOT NULL, name VARCHAR(50) NOT NULL DEFAULT 'Untitled', expUuid VARCHAR(255) NOT NULL, active BOOLEAN NOT NULL DEFAULT 0, js MEDIUMBLOB, css MEDIUMBLOB, html MEDIUMBLOB, PRIMARY KEY ( id ), UNIQUE KEY unique_variationUuid ( variationUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
-    var sql2 = "CREATE TABLE IF NOT EXISTS " + connection.escape(exp_uuid) + "_intest ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, testUuid VARCHAR(255) NOT NULL, variationUuid VARCHAR(255) NOT NULL, expUuid VARCHAR(255) NOT NULL, miscFields MEDIUMBLOB DEFAULT NULL, PRIMARY KEY ( id ), UNIQUE KEY unique_testUuid ( testUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
-    var sql3 = "CREATE TABLE IF NOT EXISTS " + connection.escape(exp_uuid) + "_userdata ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, testUuid VARCHAR(255) NOT NULL, variationUuid VARCHAR(255) NOT NULL, expUuid VARCHAR(255) NOT NULL, successReturn VARCHAR(255) DEFAULT NULL, miscFields MEDIUMBLOB DEFAULT NULL, PRIMARY KEY ( id ), UNIQUE KEY unique_testUuid ( testUuid ) ) ENGINE=MyISAM DEFAULT CHARSET=utf8; "
+    var sql1 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_variations ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, variationUuid VARCHAR(255) NOT NULL, name VARCHAR(50) NOT NULL DEFAULT 'Untitled', expUuid VARCHAR(255) NOT NULL, active BOOLEAN NOT NULL DEFAULT 0, js MEDIUMBLOB, css MEDIUMBLOB, html MEDIUMBLOB, PRIMARY KEY ( id ), UNIQUE KEY unique_variationUuid ( variationUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
+    var sql2 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_intest ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, testUuid VARCHAR(255) NOT NULL, variationUuid VARCHAR(255) NOT NULL, expUuid VARCHAR(255) NOT NULL, miscFields MEDIUMBLOB DEFAULT NULL, PRIMARY KEY ( id ), UNIQUE KEY unique_testUuid ( testUuid ) ) ENGINE=InnoDB DEFAULT CHARSET=utf8; "
+    var sql3 = "CREATE TABLE IF NOT EXISTS " + exp_uuid + "_userdata ( id INT NOT NULL AUTO_INCREMENT, addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, testUuid VARCHAR(255) NOT NULL, variationUuid VARCHAR(255) NOT NULL, expUuid VARCHAR(255) NOT NULL, successReturn VARCHAR(255) DEFAULT NULL, miscFields MEDIUMBLOB DEFAULT NULL, PRIMARY KEY ( id ), UNIQUE KEY unique_testUuid ( testUuid ) ) ENGINE=MyISAM DEFAULT CHARSET=utf8; "
     connection.query(sql1 + sql2 + sql3, function(err, rows, fields) {
       if (err) {
         reject();
@@ -270,9 +271,9 @@ function setupExpTables(exp_uuid) {
 
 function deleteExpTables(exp_uuid) {
   return promiseLib.promise(function(resolve, reject) {
-    var sql1 = "DROP TABLE " + connection.escape(exp_uuid)  + '_variations';
-    var sql2 = "DROP TABLE " + connection.escape(exp_uuid)  + '_intest';
-    var sql3 = "DROP TABLE " + connection.escape(exp_uuid)  + '_userdata';
+    var sql1 = "DROP TABLE " + exp_uuid  + '_variations';
+    var sql2 = "DROP TABLE " + exp_uuid  + '_intest';
+    var sql3 = "DROP TABLE " + exp_uuid  + '_userdata';
     connection.query(sql1 + sql2 + sql3, args, function(err, rows, fields) {
       if (err) {
         reject();

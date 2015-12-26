@@ -21,7 +21,7 @@ var log = logger.getLogger();
 */
 exports.GET = function(req, res, next) {
   var args = {
-    'userUuid' : "cdc7b5e9_1556_4539_b62c_65b0c81510f3"
+    'userUuid' : req.params.userId
   }
   var query_string = "SELECT addTime, modTime, expUuid, succUuid, numVar, CAST(descr AS CHAR(10000) CHARACTER SET utf8) AS descr FROM experiments WHERE ?";
   connection.query(query_string, args, function(err, rows, fields) {

@@ -16,13 +16,16 @@ var logger = require('../../log/logger.js');
 var connection = db.connect();
 var log = logger.getLogger();
 
-var DEFAULT_SUCCUUID = [
-	'uuid1',
-	'uuid2',
-	'uuid3',
-	'uuid4',
-	'uuid5'
-]
+var DEFAULT_SUCCUUID = {
+	"0e3a11a6_5627_499e_b60c_7b2269843e89" : "onClick",
+	"7722c97f_d721_4604_9619_34f6a4961a58" : "pageCount",
+	"7f913837_8e14_4d11_93e7_d7de44d65f35" : "sessionLength",
+	"b23cb9b0_4199_4260_97bf_a2529a34c750" : "destinationPage",
+	"6a8b2347_6cb0_43b8_b8a2_f58f1d28202f" : "saleValue",
+	"f42cde8e_91f5_4edd_b73b_513154409790" : "onMultipleClick",
+	"5be94e8c_f9bd_4c99_975e_7d0c6fe9654c" : "timeOnPage",
+	"92ba997b_9eb9_4959_ac8d_f7e082ddeac0" : "scrollDepth"
+}
 
 /* 
 * API dir
