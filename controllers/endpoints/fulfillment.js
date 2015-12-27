@@ -114,7 +114,7 @@ function getVariation(varUuid) {
 			if(err) {
 				return reject("getVariation: DB connection failed. Error: ", err);
 			}
-			var variation = db.collection('variations').find()[0];
+			var variation = db.collection('variations').findOne({_id: varUuid});
 			if (variation !== null) {
 			   resolve(variation);
 			} else {
