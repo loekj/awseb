@@ -1,3 +1,11 @@
+var promiseLib = require('when');
+
+var Mongo = require('mongodb');
+var MongoClient = Mongo.MongoClient;
+
+var dbUrl = 'mongodb://localhost:27017/';
+var url = dbUrl + 'test';
+
 // Here are some strawmen we can use to discuss our MongoDB collection structure
 
 /************************************************************
@@ -64,6 +72,29 @@ var modulesCollection = [
         expiration: "1800000000",
         unique: false
       },
+      customSuccess1: {
+        type: "destination-page",
+        url: "?signedup=true",
+        expiration: "2700000000",
+        unique: true
+      },
+    }
+  },
+  {
+    _id: "module738",
+    creationDate: 1451082879000, // Date of module's entry
+    omissionDate: 1482705244000, // Date to omit data from localStorage
+    // An array of variation IDs, matching those in the Variations Collection:
+    variations: ["module123_812", "module123_813"],
+    percentToInclude: 0.1,
+    tests: {
+      clickExample: {
+        type: "click-specific",
+        elemId: "someButton",
+        url: "/confirmation/",
+        expiration: "1800000000",
+        unique: false
+      },
       destinationPageExample: {
         type: "destination-page",
         url: "?signedup=true",
@@ -108,6 +139,27 @@ var successesCollection = [
         }
       ]
     }
+  },
+  {
+    _id: "module738", // Equal to the module's UUID in the Module Collection
+    variations: {
+      clickExample: [
+        {
+          userData: [1234, 1343, 6343, 0924, 2433],
+          value: 1
+        }
+      ],
+      destinationPageExample: [
+        {
+          userData: [1234, 1343, 6343, 2473],
+          value: 199.99
+        }, 
+        {
+          userData: [7648, 0276, 1237, 0937],
+          value: 899.99
+        }
+      ]
+    }
   }
 ]
 
@@ -126,7 +178,7 @@ var usersCollection = [
         clickExample: 12, // Number of successes incurred by this success type
         destinationPageExample: true
       },
-      module456: {
+      module738: {
         variation: "control",
         pageviews: 24, // Number of successes incurred by this success type
         destinationPageExample: true, // If success type is boolean (has user gone to specific page, in this case)
@@ -145,7 +197,7 @@ var usersCollection = [
         clickExample: 54, // Number of successes incurred by this success type
         destinationPageExample: false
       },
-      module456: {
+      module738: {
         variation: "variation5",
         pageviews: 24, // Number of successes incurred by this success type
         destinationPageExample: true, // If success type is boolean (has user gone to specific page, in this case)
@@ -155,3 +207,37 @@ var usersCollection = [
     userSegments: [6343, 0924, 7648, 0276, 1237, 0937] // If we were to store user data
   }
 ];
+
+
+function insertDbEntry(url, collectionName, data) {
+  return promiseLib.promise(function(resolve, reject) {
+    MongoClient.connect(url, function(err, db) {
+      db.collection(collectionName).insertOne(data, function(err, result) {
+        console.log("Inserted a document into the restaurants collection.");
+        resolve(result);
+        db.close(result);
+      });
+    });
+  });
+}
+
+for(var i=0; i< variationsCollection.length; i++) {
+  insertDbEntry(url, 'variations', variationsCollection[i]).then(function(x) {
+    console.log('variationsCollection', x);
+  });
+}
+for(var i=0; i< modulesCollection.length; i++) {
+  insertDbEntry(url, 'modules', modulesCollection[i]).then(function(x) {
+    console.log('modulesCollection', x);
+  });
+}
+for(var i=0; i< successesCollection.length; i++) {
+  insertDbEntry(url, 'successes', successesCollection[i]).then(function(x) {
+    console.log('successesCollection', x);
+  });
+}
+for(var i=0; i< usersCollection.length; i++) {
+  insertDbEntry(url, 'users', usersCollection[i]).then(function(x) {
+    console.log('usersCollection', x);
+  });
+}
