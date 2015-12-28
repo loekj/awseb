@@ -5,11 +5,10 @@ var uuid = require('uuid');
 var math = require('math');
 var promiseLib = require('when');
 
-
 var PythonShell = require('python-shell');
 
 var MongoClient = require('mongodb').MongoClient;
-var dbUrl = 'mongodb://localhost:27017/';
+var dbUrl = 'mongodb://localhost:27017/test';
 
 var logger = require('../../log/logger.js')
 
@@ -42,52 +41,36 @@ function getModulePromises(moduleArray, userData) {
 	var module;
 	var modulePromise;
 	var i;
-	for(i=0; i < modules_array.length; i++) {
-		module = modules_array[i];
+	for(i=0; i < moduleArray.length; i++) {
+		module = moduleArray[i];
 		if (module.activeVariation === 'null') {
 			// User isn't already in test:
 			log.info("Not in variation. Either add to one, or deliver winner.");
-			modulePromise = getModuleFromDB(module.exp_uuid)
+			modulePromise = getDbEntry('modules', module.experimentUuid)
 				.then(function(module) {
-					return getTestIdOrWinningVariationId(module, userData);
+					return getTestIdOrWinningVariation(module, userData);
 				});
 
 			modulePromiseArray.push(modulePromise);
 		} else {
 			// User is already in test. Deliver consistent variation to them:
 			log.info("ALREADY IN TEST: FEED ACTIVE VARIATION");
-			modulePromise = getVariation(module.activeVariation);
+			modulePromise = getDbEntry('variations', module.activeVariation);
 			modulePromiseArray.push(modulePromise);
 		}
 	}
 }
 
-// makeDBCall -> predictVariation --> getVariation
-function getModuleFromDB(moduleId) {
-	return promiseLib.promise(function(resolve, reject) {
-		// person is not in test yet. decide if in test or feed winning
-		var url = dbUrl + 'modules';
-		MongoClient.connect(url, function(err, db) {
-			var module = db.collection('modules').findOne({ _id: moduleId });
-			if (module !== null) {
-			   resolve(module);
-			} else {
-				reject(module);
-			}
-			db.close();
-		});
-	});
-}
-
 function getTestIdOrWinningVariation(module, userData) {
+	console.log('waitin',module);
 	// Get random number
 	var addUserToTest = (Math.random() * 100 <= parseInt(module.percentToInclude * 100));
-	var variation;
+	var variationId;
 	if(addUserToTest === true) {
 		log.info("TEST SUBJECT: RANDOM VAR");
 		//Test person! Select random variation 
 		variationId = getRandomVariationId(module.variations);
-		return getVariation(variationId).then(function(variation) {
+		return getDbEntry('variations', variationId).then(function(variation) {
 			variation.tests = module.tests;
 			addUserToInTestDB(variation);
 			return variation;
@@ -97,7 +80,7 @@ function getTestIdOrWinningVariation(module, userData) {
 		// predict variation by machine learning
 		// fetch corresponding test function
 		variationId = predictVariation(module._id, userData);
-		return getVariation(variation);
+		return getDbEntry('variations', variationId);
 	}
 }
 
@@ -105,24 +88,6 @@ function getRandomVariationId(variations) {
 	var keyIndex = Math.round(Math.random() * variations.length);
 	var variationId = variations[keyIndex];
 	return variationId;
-}
-
-function getVariation(varUuid) {
-	return promiseLib.promise(function(resolve,reject) {
-		var url = dbUrl + 'variations';
-		MongoClient.connect(url, function(err, db) {
-			if(err) {
-				return reject("getVariation: DB connection failed. Error: ", err);
-			}
-			var variation = db.collection('variations').findOne({_id: varUuid});
-			if (variation !== null) {
-			   resolve(variation);
-			} else {
-				reject(variation);
-			}
-			db.close();
-		});
-	})
 }
 
 function addUserToInTestDB(variationObj) {
@@ -138,6 +103,21 @@ function addUserToInTestDB(variationObj) {
 				log.info("failed to add test subject to DB: ", err);
 			}
 			db.close();
+		});
+	});
+}
+
+function getDbEntry(collectionName, id) {
+	return promiseLib.promise(function(resolve, reject) {
+		MongoClient.connect(dbUrl, function(err, db) {
+			if(err !== null) {
+				reject("Failed to retrieve entry from DB. Error:", err);
+			}
+			db.collection(collectionName).findOne({_id: id}).then(function(result) {
+				console.log('db results: ', {id: id, result: result, collectionName, collectionName})
+				resolve(result);
+				db.close();
+			});
 		});
 	});
 }
