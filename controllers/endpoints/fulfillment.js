@@ -48,6 +48,7 @@ function getModulePromises(moduleArray, userData) {
 			log.info("Not in variation. Either add to one, or deliver winner.");
 			modulePromise = getDbEntry('modules', module.experimentUuid)
 				.then(function(module) {
+					console.log('getDbEntry result:', module);
 					return getTestIdOrWinningVariation(module, userData);
 				});
 
@@ -55,10 +56,12 @@ function getModulePromises(moduleArray, userData) {
 		} else {
 			// User is already in test. Deliver consistent variation to them:
 			log.info("ALREADY IN TEST: FEED ACTIVE VARIATION");
+			console.log('module.activeVariation',module.activeVariation);
 			modulePromise = getDbEntry('variations', module.activeVariation);
 			modulePromiseArray.push(modulePromise);
 		}
 	}
+	return modulePromiseArray;
 }
 
 function getTestIdOrWinningVariation(module, userData) {
