@@ -20,24 +20,24 @@ var log = logger.getLogger();
 exports.POST = function(req, res, next) {
 	var callb = req.body.callback;
 	var userData = req.body.userData;
-	var modules_array = req.body.modules;
-	if(modules_array.length === undefined) {
+	var modulesArray = req.body.modules;
+	if(modulesArray.length === undefined) {
 		res.json({error: 'No modules present in request.'});
 	}
-	var modulePromiseArray = getModulePromises(modules_array, userData);
+	var variationPromiseArray = getVariationPromises(modulesArray, userData);
 
-	promiseLib.all(modulePromiseArray)
+	promiseLib.all(variationPromiseArray)
 	.then(function(modules) {
 		res.json({content: modules});
 	}).catch(function(err) {
-		log.error(err.message);
+		log.error("Variations did not compile: ",err.message);
 		res.json({err: err});
 		throw err;
 	});
 };
 
-function getModulePromises(moduleArray, userData) {
-	var modulePromiseArray = [];
+function getVariationPromises(moduleArray, userData) {
+	var variationPromiseArray = [];
 	var module;
 	var modulePromise;
 	var i;
@@ -45,32 +45,31 @@ function getModulePromises(moduleArray, userData) {
 		module = moduleArray[i];
 		if (module.activeVariation === 'null') {
 			// User isn't already in test:
-			log.info("Not in variation. Either add to one, or deliver winner.");
+			console.log("Not in variation. Either add to one, or deliver winner.");
 			modulePromise = getDbEntry('modules', module.experimentUuid)
 				.then(function(module) {
 					console.log('getDbEntry result:', module);
 					return getTestIdOrWinningVariation(module, userData);
 				});
 
-			modulePromiseArray.push(modulePromise);
+			variationPromiseArray.push(modulePromise);
 		} else {
 			// User is already in test. Deliver consistent variation to them:
-			log.info("ALREADY IN TEST: FEED ACTIVE VARIATION");
+			console.log("ALREADY IN TEST: FEED ACTIVE VARIATION");
 			console.log('module.activeVariation',module.activeVariation);
 			modulePromise = getDbEntry('variations', module.activeVariation);
-			modulePromiseArray.push(modulePromise);
+			variationPromiseArray.push(modulePromise);
 		}
 	}
-	return modulePromiseArray;
+	return variationPromiseArray;
 }
 
 function getTestIdOrWinningVariation(module, userData) {
-	console.log('waitin',module);
 	// Get random number
 	var addUserToTest = (Math.random() * 100 <= parseInt(module.percentToInclude * 100));
 	var variationId;
 	if(addUserToTest === true) {
-		log.info("TEST SUBJECT: RANDOM VAR");
+		console.log("TEST SUBJECT: RANDOM VAR");
 		//Test person! Select random variation 
 		variationId = getRandomVariationId(module.variations);
 		return getDbEntry('variations', variationId).then(function(variation) {
@@ -79,11 +78,13 @@ function getTestIdOrWinningVariation(module, userData) {
 			return variation;
 		});
 	} else {
-		log.info("NON-TEST SUBJECT: PREDICT WINNING");
+		console.log("NON-TEST SUBJECT: PREDICT WINNING");
 		// predict variation by machine learning
 		// fetch corresponding test function
-		variationId = predictVariation(module._id, userData);
-		return getDbEntry('variations', variationId);
+		return predictVariation(module._id, userData).then(function(variationId) {
+			console.log('Predicted variation ID: ', variationId);
+			return getDbEntry('variations', variationId);
+		});
 	}
 }
 
@@ -100,14 +101,15 @@ function addUserToInTestDB(variationObj) {
 		'expUuid' : variationObj.exp_uuid
 	};
 	var url = dbUrl + 'users';
-	MongoClient.connect(url, function(err, db) {
-		db.collection('users').insertOne(args, function(err, db) {
-			if(err) {
-				log.info("failed to add test subject to DB: ", err);
-			}
-			db.close();
-		});
-	});
+
+	// MongoClient.connect(url, function(err, db) {
+	// 	db.collection('users').insertOne(args, function(err, db) {
+	// 		if(err) {
+	// 			console.log("failed to add test subject to DB: ", err);
+	// 		}	
+	// 		db.close();
+	// 	})
+	// });
 }
 
 function getDbEntry(collectionName, id) {
@@ -115,8 +117,10 @@ function getDbEntry(collectionName, id) {
 		MongoClient.connect(dbUrl, function(err, db) {
 			if(err !== null) {
 				reject("Failed to retrieve entry from DB. Error:", err);
-			}
-			db.collection(collectionName).findOne({_id: id}).then(function(result) {
+			}			
+			var dbPromise = db.collection(collectionName).findOne({_id: id});
+			console.log('db Promise: ', dbPromise);
+			dbPromise.then(function(result) {
 				console.log('db results: ', {id: id, result: result, collectionName, collectionName})
 				resolve(result);
 				db.close();
