@@ -2,7 +2,8 @@ var express = require('express');
 var path = require('path');
 var http = require('http');
 var bodyParser = require('body-parser');
-var logger = require('./log/logger.js')
+var logger = require('./log/logger.js');
+var db = require('./controllers/database/database.js');
 // var cookieParser = require('cookie-parser');
 
 var log = logger.getLogger();
@@ -66,11 +67,16 @@ if (mode == 'production') {
 	app.patch('/:userId/exp/:expId/var/:varId', experiment_id_variation_id.PATCH);
 }
 
-if (host == 'local') {
-	server.listen(3000, '127.0.0.1');
-	server.on('listening', function() {
-		console.log('Express server started on port %s at %s', server.address().port, server.address().address);
-	});
-}
+db.connect(function(err) {
+	if (err) {
+		throw err;
+	}
+	if (process.env.NODE_HOST == 'local') {
+		server.listen(3000, '127.0.0.1');
+		server.on('listening', function() {
+			console.log('Express server started on port %s at %s', server.address().port, server.address().address);
+		});
+	}
+});
 
 module.exports = app;

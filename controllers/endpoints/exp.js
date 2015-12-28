@@ -11,7 +11,7 @@ var utils = require('../../misc/utils.js');
 var db = require('../database/database.js');
 var logger = require('../../log/logger.js');
 
-var connection = db.connect();
+//var connection = db.connect();
 var log = logger.getLogger();
 
 /* 
@@ -20,17 +20,25 @@ var log = logger.getLogger();
 * will fetch all the experiments of this user_uuid
 */
 exports.GET = function(req, res, next) {
-  var args = {
-    'userUuid' : req.params.userId
-  }
-  var query_string = "SELECT addTime, modTime, expUuid, succUuid, numVar, CAST(descr AS CHAR(10000) CHARACTER SET utf8) AS descr FROM experiments WHERE ?";
-  connection.query(query_string, args, function(err, rows, fields) {
-    if (err) {
-      res.status(400).json({});
+  res.json({"OK": "OK"});
+  db.mongo.accounts.update({'firstName' : 'Loek', 'lastName' : 'Janssen', 'added' : Date.now(), 'email' : 'ljanssen@stanford.edu', 'permis' : 1, 'subscrId' : 0});
+  var cursor = db.mongo.accounts.find({'email' : 'ljanssen@stanford.edu'});
+  cursor.each(function(err, doc) {
+    if (doc) {
+      console.log(doc);
     }
-    res.status(200).json({
-      'experiments' : rows
-    });
   });
+  // var args = {
+  //   'userUuid' : req.params.userId
+  // }
+  // var query_string = "SELECT addTime, modTime, expUuid, succUuid, numVar, CAST(descr AS CHAR(10000) CHARACTER SET utf8) AS descr FROM experiments WHERE ?";
+  // connection.query(query_string, args, function(err, rows, fields) {
+  //   if (err) {
+  //     res.status(400).json({});
+  //   }
+  //   res.status(200).json({
+  //     'experiments' : rows
+  //   });
+  // });
 };
 

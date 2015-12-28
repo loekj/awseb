@@ -1,19 +1,15 @@
-exports.connect = function(){
-	var mysql = require('mysql');
-	var connection = mysql.createConnection({
-		host     : process.env.RDS_HOSTNAME,
-		user     : process.env.RDS_USERNAME,
-		password : process.env.RDS_PASSWORD,
-		port     : process.env.RDS_PORT,
-		database : process.env.RDS_DB_NAME,
-		multipleStatements : true
-	});		
-	connection.on('close', function(err) {
+exports.connect = function(callback){
+	var mongo_client = require('mongodb').MongoClient;
+	//mongo_client.connect('mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PWD + '@' + process.env.MONGO_HOST + process.env.MONGO_PORT + '/' + process.env.MONGO_DB, function (err, db) {
+		mongo_client.connect('mongodb://' + process.env.MONGO_HOST +  '/' + process.env.MONGO_DB, function (err, db) {
 		if (err) {
-			connection = mysql.createConnection(connection.config);
-		} else {
-			console.log('Connection closed normally.');
+			callback(err);
 		}
+		var redisClient = require('redis').createClient;
+		exports.mongo = db;
+		exports.mongo.accounts = db.collection('accounts');
+		exports.mongo.modules = db.collection('modules');
+		exports.redis = redisClient(process.env.REDIS_PORT, process.env.REDIS_HOSTNAME, {no_ready_check: true});
+		callback(err);
 	});
-	return connection;
 };
