@@ -22,19 +22,24 @@ exports.POST = function(req, res, next) {
 	var salt = crypto.randomBytes(128).toString('base64');
 	crypto.pbkdf2(req.body.pwd, salt, 10000, 512, function(err, derived_key) {
 		var pwd_crypt = derived_key;
-		var cursor = db.mongo.accounts.update(
+		db.mongo.accounts.update(
 			{ 
-			'email' : req.body.email
+			'email' : req.body.email //query
 			},
 			{	
 				$setOnInsert : {
-					'email' : req.body.email, 'pwd' : pwd_crypt, 'firstName' : req.body.firstName, 'lastName' : req.body.lastName, 'added' : Date.now(), 'permis' : 1, 'subscrId' : 0
+					'email' : req.body.email, 'pwd' : pwd_crypt, 'salt' : salt, 'firstName' : req.body.firstName, 'lastName' : req.body.lastName, 'added' : Date.now(), 'permis' : 1, 'subscrId' : 0
 				}
 			},
 			{
 				upsert : true
+			},
+			function (err, result) {
+				if (err) {
+					res.status(400).json();
+				}
+				res.status(200).json();
 			}
 		);
-		res.status(200).json({});
   	});
 }	
