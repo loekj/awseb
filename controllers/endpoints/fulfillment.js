@@ -1,246 +1,148 @@
-"use strict";
+"use strict"
 
-var express = require('express');
-var uuid = require('uuid');
-var async = require('async');
-var math = require('math');
+var express = require('express')
+var uuid = require('uuid')
+var async = require('async')
+var math = require('math')
 
 
-var utils = require('../../misc/utils.js');
-//var except = require('../../misc/exceptions.js');
+var utils = require('../../misc/utils.js')
+var db = require('../database/database.js')
+var logger = require('../../log/logger.js')
+var PythonShell = require('python-shell')
 
-var PythonShell = require('python-shell');
-var db = require('../database/database.js');
-var logger = require('../../log/logger.js');
+var logger = require('../../log/logger.js')
 
-//var connection = db.connect();
-var log = logger.getLogger();
-
-var DEFAULT_SUCCUUID = {
-	"0e3a11a6_5627_499e_b60c_7b2269843e89" : "onClick",
-	"7722c97f_d721_4604_9619_34f6a4961a58" : "pageCount",
-	"7f913837_8e14_4d11_93e7_d7de44d65f35" : "sessionLength",
-	"b23cb9b0_4199_4260_97bf_a2529a34c750" : "destinationPage",
-	"6a8b2347_6cb0_43b8_b8a2_f58f1d28202f" : "saleValue",
-	"f42cde8e_91f5_4edd_b73b_513154409790" : "onMultipleClick",
-	"5be94e8c_f9bd_4c99_975e_7d0c6fe9654c" : "timeOnPage",
-	"92ba997b_9eb9_4959_ac8d_f7e082ddeac0" : "scrollDepth"
-}
+var log = logger.getLogger()
 
 /* 
 * API dir
 */
 exports.POST = function(req, res, next) {
-	var callb = req.body.callback;
-	var modules_arr = req.body.modules;
-	
-	for(var i=0; i < modules_arr.length; i++) {
-		var exp_uuid = modules_arr[i].experimentUuid;
-		if (modules_arr[i].activeVariation.toLowerCase() == 'null') {
-			// person is not in test yet. decide if in test or feed winning
-			args = {
-				expUuid : exp_uuid
-			};
-			var queryString = 'SELECT prop, numVar, succUuid FROM experiments WHERE ?';
-			connection.query(queryString, args, function(err, rows, fields) {
-				if (err) {
-					log.err(err.message, 'Query get experiment ' + exp_uuid);
-					throw err;
-				}
-				
-				var test_uuid = utils.dashToUnder(uuid.v4());
+	var callb = req.body.callback
+	var userData = req.body.userData
+	var modulesArray = req.body.modules
+	if(modulesArray.length === undefined) {
+		res.status(400).json({error: 'No modules present in request.'})
+	}
+	var variationPromiseArray = getVariationPromises(modulesArray, userData)
 
-				// Get random number
-				if (math.random()*100 <= parseInt(rows[0].prop,10)) {
-					log.info("TEST SUBJECT: RANDOM VAR");
-					//test person! select random variation, fetch results and serve
+	promiseLib.all(variationPromiseArray)
+	.then(function(modules) {
+		res.status(200).json({content: modules})
+	}).catch(function(err) {
+		log.error("Variations did not compile: ",err.message)
+		res.status(400).json({err: err})
+		throw err
+	})
+}
 
-					async.parallel([
-						function(callback) {
-							getRandomVariation(exp_uuid, callback); // later pass inputs to this
-						},
-						function(callback) {
-							getSuccesFn(rows[0].succUuid, callback);
-						}
-					], function(err, results) {
-						if (err) {
-							log.err(err.message, 'Parralel getRandomVariation and getSuccesFn');
-							throw err;
-						}
-						var variation_uuid = results[0].variationUuid;
-						res.json({
-							'testUuid': test_uuid,
-							'html': [
-								results[0].html
-							],
-							'css': results[0].css,
-							'js': results[0].js,
-							'succ': results[1]
-						});
-						
-						// add to in-test database
-						args = {
-						 'testUuid' : test_uuid,
-						 'variationUuid' : variation_uuid,
-						 'expUuid' : exp_uuid
-						}
-						var queryString = 'INSERT INTO ' + exp_uuid + '_intest SET ?';
-						connection.query(queryString, args, function(err, rows, fields) {
-							if (err) {
-								log.err(err.message, 'Query insert intest');
-								throw err;
-							}
-							log.info({'Rows affected' : rows.affectedRows}, 'Insert ' + test_uuid + 'into intest');
-						});	
-					});
-				} else {
-					log.info("NON-TEST SUBJECT: PREDICT WINNING");
-					// run in parallel. Two independent tasks
-					// predict variation by machine learning
-					// fetch corresponding test function
-					//console.log("WHAT IS THIS: " + JSON.stringify(rows));
-					//console.log("numVar: %s", rows[0].numVar);
-					var inputs = [rows[0].numVar];// ...[, '5', '26', 'job']
-					predictVariation(inputs, function(err, results) {
-						if (err) {
-							log.err(err.message, 'Predict variation');
-							throw err;
-						}						
-						var winVarUuid = results[0];
-						getVariation(winVarUuid, exp_uuid, function(err, results) {
-							if (err) {
-								log.err(err.message, 'Get variation');
-								throw err;
-							}
-							res.json({
-								'testUuid': null,
-								'html': [
-									results.html
-								],
-								'css': results.css,
-								'js': results.js,
-								'succ': null
-							});
-						});
-					});					
-				}
-			})
+function getVariationPromises(moduleArray, userData) {
+	var variationPromiseArray = []
+	var module
+	var modulePromise
+	var i
+	for(i=0 i < moduleArray.length i++) {
+		module = moduleArray[i]
+		if (module.activeVariation === 'null') {
+			// User isn't already in test:
+			console.log("Not in variation. Either add to one, or deliver winner.")
+			modulePromise = getDbEntry('modules', module.experimentUuid)
+				.then(function(module) {
+					console.log('getDbEntry result:', module)
+					return getTestIdOrWinningVariation(module, userData)
+				})
+
+			variationPromiseArray.push(modulePromise)
 		} else {
-			log.info("ALREADY IN TEST: FEED ACTIVE VARIATION");
-			// person is already in test, feed already active variation in response!
-			getVariation(modules_arr[i].activeVariation, exp_uuid, function(err, results) {
-				if (err) {
-					log.err(err.message, 'Get variation');
-					throw err;
-				}
-				res.json({
-					'testUuid': null,
-					'html': [
-						results.html
-					],
-					'css': results.css,
-					'js': results.js,
-					'succ': null
-				});
-			});
+			// User is already in test. Deliver consistent variation to them:
+			console.log("ALREADY IN TEST: FEED ACTIVE VARIATION")
+			console.log('module.activeVariation',module.activeVariation)
+			modulePromise = getDbEntry('variations', module.activeVariation)
+			variationPromiseArray.push(modulePromise)
 		}
 	}
-};
-
-
-function getRandomVariation(expUuid, callback) {
-	// This is very slow. Optimize later.
-	var queryString = 'SELECT variationUuid, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM ' + expUuid + '_variations ORDER BY RAND() LIMIT 1';
-	connection.query(queryString, function(err, rows, fields) {
-		if (err) {
-			callback(err, err.message);
-		}
-		callback(null, {
-			'variationUuid' : rows[0].variationUuid,
-			'html' : rows[0].html,
-			'css' : rows[0].css,
-			'js' : rows[0].js
-		});	
-	});		
+	return variationPromiseArray
 }
 
-
-
-function getVariation(varUuid, expUuid, callback) {
-	var varUuid = 'vuuid1'; // in real-life the python script will feedback var uuid
-	args = {
-		variationUuid : varUuid
+function getTestIdOrWinningVariation(module, userData) {
+	// Get random number
+	var addUserToTest = (Math.random() * 100 <= parseInt(module.percentToInclude * 100))
+	var variationId
+	if(addUserToTest === true) {
+		console.log("TEST SUBJECT: RANDOM VAR")
+		//Test person! Select random variation 
+		variationId = getRandomVariationId(module.variations)
+		return getDbEntry(db.mongo.variations, variationId).then(function(variation) {
+			variation.tests = module.tests
+			addUserToInTestDB(variation)
+			return variation
+		})
+	} else {
+		console.log("NON-TEST SUBJECT: PREDICT WINNING")
+		// predict variation by machine learning
+		// fetch corresponding test function
+		return predictVariation(module._id, userData).then(function(variationId) {
+			console.log('Predicted variation ID: ', variationId)
+			return getDbEntry('variations', variationId)
+		})
 	}
-	var queryString =  'SELECT CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM ' + expUuid + '_variations' + ' WHERE ?';
-	connection.query(queryString, args, function(err, rows, fields) {
-		if (err) {
-			callback(err, err.message);
-		}
-		callback(null, {
-			'html' : rows[0].html,
-			'css' : rows[0].css,
-			'js' : rows[0].js
-		});	
-	});		
 }
 
+function getRandomVariationId(variations) {
+	var keyIndex = Math.round(Math.random() * variations.length)
+	var variationId = variations[keyIndex]
+	return variationId
+}
 
+function addUserToInTestDB(variationObj) {
+	var args = {
+		'testUuid' : variationObj.test_uuid,
+		'variationUuid' : variationObj.variation_uuid,
+		'expUuid' : variationObj.exp_uuid
+	}
+	var url = dbUrl + 'users'
 
+	// MongoClient.connect(url, function(err, db) {
+	// 	db.collection('users').insertOne(args, function(err, db) {
+	// 		if(err) {
+	// 			console.log("failed to add test subject to DB: ", err)
+	// 		}	
+	// 		db.close()
+	// 	})
+	// })
+}
 
-function predictVariation(inputs, callback) {
-	var options = {
+function getDbEntry(collection, id) {
+	return promiseLib.promise(function(resolve, reject) {
+		MongoClient.connect(dbUrl, function(err, result) {
+			if (err) {
+				reject("Failed to retrieve entry from DB. Error:", err)
+			}			
+			var dbPromise = collection.findOne({
+				'_id' : id
+			})
+			console.log('db Promise: ', dbPromise)
+			dbPromise.then(function(result) {
+				console.log('db results: ', {id: id, result: result, collectionName, collectionName})
+				resolve(result)
+				db.close()
+			})
+		})
+	})
+}
+
+function predictVariation(exp_uuid, inputs) {
+	return promiseLib.promise(function(resolve, reject) {		
+		var options = {
 			mode: 'text',
 			pythonPath: '/usr/bin/python2.7',
 			pythonOptions: ['-u'],
 			scriptPath: __dirname + '/../ai',
 			args: inputs
-		};
-	PythonShell.run('gradientBoosting.py', options, function (err, results) {
-		if (err) {
-			callback(err, err.message);
-		} else if (results) {
-			callback(null, results);
 		}
-	});
+		PythonShell.run('gradientBoosting.py', options, function (err, variationId) {
+			resolve(variationId)
+		})
+	})
 }
-
-
-
-
-function getSuccesFn(succUuid, callback) {
-	var tmp_succUuid = null;
-	for (var i = 0; i < DEFAULT_SUCCUUID.length; i++ ){
-		if (succUuid == DEFAULT_SUCCUUID[i]) {
-			tmp_succUuid = succUuid;
-			break;
-		}
-	}
-	
-	if (!tmp_succUuid) {
-		args = {
-			succUuid : succUuid			
-		}
-		var queryString = 'SELECT CAST(fn AS CHAR(10000) CHARACTER SET utf8) AS fn, argstr1, argstr2, argstr3, argstr4 FROM successfns WHERE ?';
-		connection.query(queryString, args, function(err, rows, fields) {
-			if (err) {
-				callback(err, err.message);				
-			}
-			callback(null, {
-					'succUuid': succUuid,
-					'succFn': rows[0].fn,
-					'arg1': rows[0].argstr1,
-					'arg2': rows[0].argstr2,
-					'arg3': rows[0].argstr3,
-					'arg4': rows[0].argstr4
-			});	
-		}
-
-	)} else {
-		callback(null, {
-				'succUuid': succUuid,
-				'succFn': 'null',
-		});			
-	}	
-} 
-
-

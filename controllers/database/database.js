@@ -9,6 +9,7 @@ exports.connect = function(callback){
 		exports.mongo = db;
 		exports.mongo.accounts = db.collection('accounts');
 		exports.mongo.modules = db.collection('modules');
+		exports.mongo.variations = db.collection('variations');
 		exports.redis = redisClient(process.env.REDIS_PORT, process.env.REDIS_HOSTNAME, {no_ready_check: true});
 		callback(err);
 	});
