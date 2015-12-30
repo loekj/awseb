@@ -69,7 +69,8 @@ function getTestIdOrWinningVariation(module, userData) {
 	// Get random number
 	var addUserToTest = (Math.random() * 100 <= parseInt(module.prop))
 	var variationId
-	if(addUserToTest === true) {
+	var predictPromise
+	if(addUserToTest === true || !utils.isDef(module.fit)) { //fit does not exist if not trained yet
 		console.log("TEST SUBJECT: RANDOM VAR")
 		//Test person! Select random variation 
 		variationId = getRandomVariationId(module.variations)
@@ -82,7 +83,14 @@ function getTestIdOrWinningVariation(module, userData) {
 		console.log("NON-TEST SUBJECT: PREDICT WINNING")
 		// predict variation by machine learning
 		// fetch corresponding test function
-		return predictVariation(module._id, userData).then(function(variationId) {
+		if (module.succ.depVarType === 'binary') {
+			predictPromise = predictVariationNB(module, userData)
+		} else if (module.succ.depVarType === 'mclass') {
+			predictPromise = predictVariationMCLASS(module, userData)
+		} else {//(module.succ.depVarType === 'num') {
+			predictPromise = predictVariationREGR(module, userData)
+		}
+		return predictPromise.then(function(variationId) {
 			console.log('Predicted variation ID: ', variationId)
 			return getDbEntry(db.mongo.variations, variationId)
 		})
@@ -135,20 +143,38 @@ function getDbEntry(collection, id) {
 	})
 }
 
-function predictVariation(exp_uuid, inputs) {
-	return promiseLib.promise(function(resolve, reject) {		
-		var options = {
-			mode: 'text',
-			pythonPath: '/usr/bin/python2.7',
-			pythonOptions: ['-u'],
-			scriptPath: __dirname + '/../ai',
-			args: inputs
-		}
-		PythonShell.run('gradientBoosting.py', options, function (err, variationId) {
-			resolve("5684588e754a9fe6cdeaba55")
-		})
+// n = variation number, k = feature number
+function predictVariationNB(module, inputs) {
+	return promiseLib.promise(function(resolve, reject) {
+		var n = module.variations.length
+		var k = module.featureType.length
+		module.fit
 	})
+}
+
+// n = variation number, k = feature number
+function predictVariationMCLASS(module, inputs) {
+	// return promiseLib.promise(function(resolve, reject) {
+	// 	var n = module.variations.length
+	// 	var k = module.featureType.length
+	// 	module.fit
+	// })
+}
+
+// n = variation number, k = feature number
+function predictVariationREGR(module, inputs) {
+	// return promiseLib.promise(function(resolve, reject) {
+	// 	var n = module.variations.length
+	// 	var k = module.featureType.length
+	// 	module.fit
+	// })
 }	
+
+
+
+/*
+OLD PYTHON SHELL SOCKET
+*/
 	// return promiseLib.promise(function(resolve, reject) {		
 	// 	var options = {
 	// 		mode: 'text',
