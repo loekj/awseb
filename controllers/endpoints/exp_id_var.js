@@ -19,7 +19,7 @@ var log = logger.getLogger();
 */
 exports.GET = function(req, res, next) {
 	var obj_id = new db.mongo.ObjectID(req.params.expId)
-	db.mongo.modules.findOne({'_id' : obj_id}, unction(err, result){
+	db.mongo.modules.findOne({'_id' : obj_id}, function(err, result){
 		if (err) {
 			res.status(400).json({})
 		}

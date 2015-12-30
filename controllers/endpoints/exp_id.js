@@ -20,7 +20,7 @@ var log = logger.getLogger()
 */
 exports.GET = function(req, res, next) {
   var obj_id = new db.mongo.ObjectID(req.params.expId)
-  db.mongo.findOne({'_id' : obj_id}, unction(err, result){
+  db.mongo.modules.findOne({'_id' : obj_id}, function(err, result){
     if (err) {
       res.status(400).json({});
     }
@@ -39,7 +39,14 @@ exports.DELETE = function(req, res, next) {
     if (err) {
       res.status(400).json({});
     }
-    res.status(200).json({});
+    log.info("Deleted modules document id " + req.params.expId)
+    db.mongo.data.remove({'_moduleId' : obj_id}, function(err, result){
+      if (err) {
+        res.status(400).json({});
+      }
+      log.info("Deleted data document id of module id " + req.params.expId)
+      res.status(200).json({});
+    })    
   })
 }
 
@@ -99,6 +106,7 @@ exports.PATCH = function(req, res, next) {
       if (err) {
         res.status(400).json({});
       }
+      log.info("Updated modules document id " + req.params.expId)
       res.status(200).json({});
     }
   );  
@@ -111,44 +119,60 @@ exports.PATCH = function(req, res, next) {
 exports.POST = function(req, res, next) {
 
   var succ_body, url = null
-  if (utils.isDef(req.body.url)){
-    url = req.body.url
+  if (utils.isDef(req.body.succ.url)){
+    url = req.body.succ.url
   }
 
-  if (!utils.isDef(req.body.succUuid.toLowerCase())) {
+  if (!utils.isDef(req.body.succ.succUuid.toLowerCase())) {
     succ_body = {
-      '_id' : null,
+      'succUuid' : null,
       'fn' : req.body.succ.fn,
       'name' : req.body.succ.name,
       'url' : url,
       'args' : req.body.succ.args,
-      'timeout' : req.body.timeout
+      'timeout' : parseInt(req.body.succ.timeout,10)
     }
   } else {
     succ_body = {
-      '_id' : req.body.succUuid,
+      'succUuid' : req.body.succ.succUuid,
       'url' : url,
       'args' : req.body.succ.args,
-      'timeout' : req.body.timeout
+      'timeout' : parseInt(req.body.succ.timeout,10)
     }
   }
+
+  var userId = new db.mongo.ObjectID(req.params.userId)
   db.mongo.modules.insert(
     {
-      '_userId' : req.params.userId,
+      '_userId' : userId,
       'name' : req.body.name,
       'descr' : req.body.descr,
       'added' : Date.now(),
       'modified' : Date.now(),
-      'prop' : req.body.prop,
-      'window' : req.body.dataWindow,
-      'update' : req.body.updateModel,
+      'prop' : parseInt(req.body.prop, 10),
+      'window' : parseInt(req.body.dataWindow,10),
+      'update' : parseInt(req.body.updateModel,10),
       'variations' : [],
-      'succ' : succ_body
+      'succ' : succ_body,
+      'featureType' : req.body.featureType
     }, function(err, result) {
       if (err) {
         log.error(err)
         res.status(400).json({})
       }
-      res.status(200).json({})
-    })
+      log.info("Inserted into modules document id " + result.ops[0]._id)
+      db.mongo.data.insert(
+        {
+          '_moduleId' : result.ops[0]._id,
+          '_userId' : userId,
+          'data' : []
+        }, function(err, result) {
+          if (err) {
+            log.error(err)
+            res.status(400).json({})
+          }
+          log.info("Inserted into data document id " + result.ops[0]._id)
+          res.status(200).json({})
+        })       
+    })  
 }

@@ -4,7 +4,7 @@ var express = require('express')
 var uuid = require('uuid')
 var async = require('async')
 var math = require('math')
-
+var promiseLib = require('when')
 
 var utils = require('../../misc/utils.js')
 var db = require('../database/database.js')
@@ -29,7 +29,7 @@ exports.POST = function(req, res, next) {
 
 	promiseLib.all(variationPromiseArray)
 	.then(function(modules) {
-		res.status(200).json({content: modules})
+		res.status(200).json(modules)
 	}).catch(function(err) {
 		log.error("Variations did not compile: ",err.message)
 		res.status(400).json({err: err})
@@ -42,12 +42,12 @@ function getVariationPromises(moduleArray, userData) {
 	var module
 	var modulePromise
 	var i
-	for(i=0 i < moduleArray.length i++) {
+	for(i=0; i < moduleArray.length; i++) {
 		module = moduleArray[i]
-		if (module.activeVariation === 'null') {
+		if (!utils.isDef(module.activeVariation)) {
 			// User isn't already in test:
 			console.log("Not in variation. Either add to one, or deliver winner.")
-			modulePromise = getDbEntry('modules', module.experimentUuid)
+			modulePromise = getDbEntry(db.mongo.modules, module.expUuid)
 				.then(function(module) {
 					console.log('getDbEntry result:', module)
 					return getTestIdOrWinningVariation(module, userData)
@@ -58,7 +58,7 @@ function getVariationPromises(moduleArray, userData) {
 			// User is already in test. Deliver consistent variation to them:
 			console.log("ALREADY IN TEST: FEED ACTIVE VARIATION")
 			console.log('module.activeVariation',module.activeVariation)
-			modulePromise = getDbEntry('variations', module.activeVariation)
+			modulePromise = getDbEntry(db.mongo.variations, module.activeVariation)
 			variationPromiseArray.push(modulePromise)
 		}
 	}
@@ -67,15 +67,15 @@ function getVariationPromises(moduleArray, userData) {
 
 function getTestIdOrWinningVariation(module, userData) {
 	// Get random number
-	var addUserToTest = (Math.random() * 100 <= parseInt(module.percentToInclude * 100))
+	var addUserToTest = (Math.random() * 100 <= parseInt(module.prop))
 	var variationId
 	if(addUserToTest === true) {
 		console.log("TEST SUBJECT: RANDOM VAR")
 		//Test person! Select random variation 
 		variationId = getRandomVariationId(module.variations)
 		return getDbEntry(db.mongo.variations, variationId).then(function(variation) {
-			variation.tests = module.tests
-			addUserToInTestDB(variation)
+			addUserToInTestDB(module._id, userData, variation._id)
+			variation.succ = module.succ
 			return variation
 		})
 	} else {
@@ -84,7 +84,7 @@ function getTestIdOrWinningVariation(module, userData) {
 		// fetch corresponding test function
 		return predictVariation(module._id, userData).then(function(variationId) {
 			console.log('Predicted variation ID: ', variationId)
-			return getDbEntry('variations', variationId)
+			return getDbEntry(db.mongo.variations, variationId)
 		})
 	}
 }
@@ -95,39 +95,42 @@ function getRandomVariationId(variations) {
 	return variationId
 }
 
-function addUserToInTestDB(variationObj) {
-	var args = {
-		'testUuid' : variationObj.test_uuid,
-		'variationUuid' : variationObj.variation_uuid,
-		'expUuid' : variationObj.exp_uuid
-	}
-	var url = dbUrl + 'users'
-
-	// MongoClient.connect(url, function(err, db) {
-	// 	db.collection('users').insertOne(args, function(err, db) {
-	// 		if(err) {
-	// 			console.log("failed to add test subject to DB: ", err)
-	// 		}	
-	// 		db.close()
-	// 	})
-	// })
+function addUserToInTestDB(experimentId, userData, variationId) {
+	var expId = new db.mongo.ObjectID(experimentId)
+	var varId = new db.mongo.ObjectID(variationId)
+	db.mongo.data.update(
+		{
+			'_moduleId' : expId
+		},
+		{
+			$push : {
+				'data' : [
+					Date.now(),
+					userData,
+					variationId,
+					true //in test or not
+				]
+			}
+		},
+		function(err, result) {
+			if (err) {
+				log.error(err)
+			}
+			log.info(result)
+		}
+	)
 }
 
 function getDbEntry(collection, id) {
-	return promiseLib.promise(function(resolve, reject) {
-		MongoClient.connect(dbUrl, function(err, result) {
-			if (err) {
-				reject("Failed to retrieve entry from DB. Error:", err)
-			}			
-			var dbPromise = collection.findOne({
-				'_id' : id
-			})
-			console.log('db Promise: ', dbPromise)
-			dbPromise.then(function(result) {
-				console.log('db results: ', {id: id, result: result, collectionName, collectionName})
-				resolve(result)
-				db.close()
-			})
+	return promiseLib.promise(function(resolve, reject) {	
+		var obj_id = new db.mongo.ObjectID(id)
+		var dbPromise = collection.findOne({
+			'_id' : obj_id
+		})
+		console.log('db Promise: ', dbPromise)
+		dbPromise.then(function(result) {
+			console.log('db  query results: ', {id: id, result: result})
+			resolve(result)
 		})
 	})
 }
@@ -142,7 +145,20 @@ function predictVariation(exp_uuid, inputs) {
 			args: inputs
 		}
 		PythonShell.run('gradientBoosting.py', options, function (err, variationId) {
-			resolve(variationId)
+			resolve("5684588e754a9fe6cdeaba55")
 		})
 	})
-}
+}	
+	// return promiseLib.promise(function(resolve, reject) {		
+	// 	var options = {
+	// 		mode: 'text',
+	// 		pythonPath: '/usr/bin/python2.7',
+	// 		pythonOptions: ['-u'],
+	// 		scriptPath: __dirname + '/../ai',
+	// 		args: inputs
+	// 	}
+	// 	PythonShell.run('gradientBoosting.py', options, function (err, variationId) {
+	// 		resolve(variationId)
+	// 	})
+	// })
+	//}
