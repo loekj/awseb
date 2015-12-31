@@ -144,6 +144,10 @@ function getDbEntry(collection, id) {
 	})
 }
 
+function LogGauss(x, mean, variance) {
+	return (-0.5 * math.log(2 * math.pi * variance) - math.pow(x - mean, 2) / (2 * variance))
+}
+
 // n = variation number, k = feature number
 function predictVariationNB(module, inputs) {
 	return promiseLib.promise(function(resolve, reject) {
@@ -151,7 +155,26 @@ function predictVariationNB(module, inputs) {
 		var k = module.featureType.length
 		var max_score = 0
 		var max_var_id
-		module.fit //must be defined, otherwise random var branch would be executed
+		//must be defined, otherwise random var branch would be executed
+
+		
+		Object.keys(module.fit).forEach(function(key){
+			var i = 0
+			var prob = 0
+			module.fit[key].forEach(function(feature) {
+				if (Array.isArray(feature)) { //numerical
+					prob += LogGauss(parseFloat(inputs[i]), feature[0], feature[1])
+				} else { //categorical
+					prob += feature[inputs[i]]
+				}
+				i++
+			})
+			if (prob > max_score) {
+				max_score = prob
+				max_var_id = key
+			}			
+		})
+		resolve(max_var_id)
 	})
 }
 
