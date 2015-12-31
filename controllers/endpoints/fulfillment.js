@@ -132,14 +132,27 @@ function addUserToInTestDB(experimentId, userData, variationId) {
 
 function getDbEntry(collection, id) {
 	return promiseLib.promise(function(resolve, reject) {	
-		var obj_id = new db.mongo.ObjectID(id)
-		var dbPromise = collection.findOne({
-			'_id' : obj_id
-		})
-		console.log('db Promise: ', dbPromise)
-		dbPromise.then(function(result) {
-			console.log('db  query results: ', {id: id, result: result})
-			resolve(result)
+		db.redis.get(id, function(err, result) {
+			if (err) {
+				log.error(err)
+				reject(err)
+			}
+			if (result) { //exist in cache
+				resolve(JSON.parse(result))
+			} else { //does not exist in cache
+				var obj_id = new db.mongo.ObjectID(id)
+				var dbPromise = collection.findOne({
+					'_id' : obj_id
+				})
+				console.log('db Promise: ', dbPromise)
+				dbPromise.then(function(result) {
+					// add to cache
+					console.log('db  query results: ', {id: id, result: result})
+					db.redis.set(id, JSON.stringify(result), function() {
+						resolve(result)
+					})
+				})
+			}
 		})
 	})
 }
@@ -148,16 +161,14 @@ function LogGauss(x, mean, variance) {
 	return (-0.5 * math.log(2 * math.pi * variance) - math.pow(x - mean, 2) / (2 * variance))
 }
 
-// n = variation number, k = feature number
 function predictVariationNB(module, inputs) {
 	return promiseLib.promise(function(resolve, reject) {
-		var n = module.variations.length
-		var k = module.featureType.length
 		var max_score = 0
 		var max_var_id
 		//must be defined, otherwise random var branch would be executed
-
 		
+
+		//forEach is sync, so should work.
 		Object.keys(module.fit).forEach(function(key){
 			var i = 0
 			var prob = 0
@@ -178,22 +189,10 @@ function predictVariationNB(module, inputs) {
 	})
 }
 
-// n = variation number, k = feature number
 function predictVariationMCLASS(module, inputs) {
-	// return promiseLib.promise(function(resolve, reject) {
-	// 	var n = module.variations.length
-	// 	var k = module.featureType.length
-	// 	module.fit
-	// })
 }
 
-// n = variation number, k = feature number
 function predictVariationREGR(module, inputs) {
-	// return promiseLib.promise(function(resolve, reject) {
-	// 	var n = module.variations.length
-	// 	var k = module.featureType.length
-	// 	module.fit
-	// })
 }	
 
 
