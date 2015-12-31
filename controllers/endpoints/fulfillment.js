@@ -138,8 +138,10 @@ function getDbEntry(collection, id) {
 				reject(err)
 			}
 			if (result) { //exist in cache
+				console.log("EXIST IN CACHE! :D")
 				resolve(JSON.parse(result))
 			} else { //does not exist in cache
+				console.log("NOT EXIST IN CACHE! :(")
 				var obj_id = new db.mongo.ObjectID(id)
 				var dbPromise = collection.findOne({
 					'_id' : obj_id
