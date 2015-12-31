@@ -149,7 +149,9 @@ function predictVariationNB(module, inputs) {
 	return promiseLib.promise(function(resolve, reject) {
 		var n = module.variations.length
 		var k = module.featureType.length
-		module.fit
+		var max_score = 0
+		var max_var_id
+		module.fit //must be defined, otherwise random var branch would be executed
 	})
 }
 

@@ -70,8 +70,8 @@
       ],
       "timeout": 15000
     },
-    "featureType": [
-      "0", // 0 is categorical, 1 is numerical
+    "featureType": [ // 0 is categorical, 1 is numerical
+      "0", 
       "1",
       "0",
       "0"
@@ -83,52 +83,30 @@
     /*
     "fit" : {
       "568575d508e9edcad10506a5" : [
-          [
-            "0.12",
-            "0.21",
-            "0.02",
-            "0.50" // Categorical feature 4 classes (see featureType)
-          ],
+          { 
+            "green":"0.12",
+            "red":"0.21",
+            "blue":"0.02",
+            "black":"0.50" // Categorical feature 4 classes (see featureType)
+          },
           [
             "2.1",
             "1.82" // Numerical feature (see featureType)
           ],
-          [
-            "0.12",
-            "0.88" // Categorical feature 2 classes (see featureType)
-          ],          
-          [
-            "0.19",
-            "0.14",
-            "0.05",
-            "0.09",
-            "0.41" // Categorical feature 5 classes (see featureType)
-          ],     
-        ]
-      "568575d508e9edcad10506a6" : [
-          [
-            "0.52",
-            "0.11",
-            "0.22",
-            "0.10" 
-          ],
-          [
-            "1.01",
-            "0.82" 
-          ],
-          [
-            "0.32",
-            "0.58" 
-          ],          
-          [
-            "0.51",
-            "0.04",
-            "0.05",
-            "0.09",
-            "0.19" 
-          ],     
-          etc....
-        ]        
+          {
+            "0":"0.12",
+            "1":"0.88" // Categorical feature 2 classes (see featureType)
+          },          
+          {
+            "ford":"0.19",
+            "vw":"0.14",
+            "jaguar":"0.05",
+            "bently":"0.09",
+            "cadillac":"0.41" // Categorical feature 5 classes (see featureType)
+          },     
+        ], 
+        same for other varia tions
+        etc....      
     }
     */ 
   }
