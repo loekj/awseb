@@ -112,12 +112,13 @@ function addUserToInTestDB(experimentId, userData, variationId) {
 		},
 		{
 			$push : {
-				'data' : [
-					Date.now(),
-					userData,
-					variationId,
-					true //in test or not
-				]
+				'data' : 
+				{
+					'added' : Date.now(),
+					'userData' : userData,
+					'variation' : varId,
+					'inTest' : true
+				}
 			}
 		},
 		function(err, result) {

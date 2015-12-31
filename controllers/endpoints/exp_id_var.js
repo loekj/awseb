@@ -26,12 +26,12 @@ exports.GET = function(req, res, next) {
 		var obj_arr = result.variations.map(function(val) { //synchronous
 			return new db.mongo.ObjectID(val)
 		})
-		res.status(200).json(
-			fb.mongo.variations.find({
-				'id' : {
-					$in : obj_arr
-				}
-			}).toArray()
-		)
+		db.mongo.variations.find({
+			'_id' : {
+				$in : obj_arr
+			}
+		}).toArray(function ( err, result) {
+			res.status(200).json(result)
+		})
 	})
 }

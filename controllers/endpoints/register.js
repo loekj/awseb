@@ -36,9 +36,9 @@ exports.POST = function(req, res, next) {
 			},
 			function (err, result) {
 				if (err) {
-					res.status(400).json();
+					res.status(400).json({});
 				}
-				res.status(200).json();
+				res.status(200).json({});
 			}
 		);
   	});

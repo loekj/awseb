@@ -129,7 +129,7 @@ exports.POST = function(req, res, next) {
       'fn' : req.body.succ.fn,
       'name' : req.body.succ.name,
       'url' : url,
-      'depVarType' : req.body.depVarType,
+      'depVarType' : req.body.succ.depVarType,
       'args' : req.body.succ.args,
       'timeout' : parseInt(req.body.succ.timeout,10)
     }
@@ -137,7 +137,7 @@ exports.POST = function(req, res, next) {
     succ_body = {
       'succUuid' : req.body.succ.succUuid,
       'url' : url,
-      'depVarType' : req.body.depVarType,
+      'depVarType' : req.body.succ.depVarType,
       'args' : req.body.succ.args,
       'timeout' : parseInt(req.body.succ.timeout,10)
     }
