@@ -91,18 +91,18 @@
           },
           [
             "2.1",
-            "1.82" // Numerical feature (see featureType)
+            "1.82" // Numerical feature, 1st = mean, 2nd = std dev.
           ],
           {
             "0":"0.12",
-            "1":"0.88" // Categorical feature 2 classes (see featureType)
+            "1":"0.88" // Categorical feature 2 classes
           },          
           {
             "ford":"0.19",
             "vw":"0.14",
             "jaguar":"0.05",
             "bently":"0.09",
-            "cadillac":"0.41" // Categorical feature 5 classes (see featureType)
+            "cadillac":"0.41" // Categorical feature 5 classes
           },     
         ], 
         same for other varia tions
