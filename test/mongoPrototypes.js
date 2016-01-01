@@ -13,7 +13,8 @@
    "lastName":"Janssen",
    "added":1451240081045,
    "permis":1,
-   "subscrId":0
+   "subscrId":0,
+   "company":"Sigmatic LLC"
 }
 
 /************************************************************
@@ -59,15 +60,13 @@
       "568575e208e9edcad10506a8",
       "568575e608e9edcad10506a9"
     ],
+    "succUuid": "7722c97f-d721-4604-9619-34f6a4961a58",
     "succ": {
-      "succUuid": "7722c97f-d721-4604-9619-34f6a4961a58",
       "url": "/testurl", //url can be missing
       "depVarType": "binary", //binary/ mclass/ numerical (defines train type)
-      "args": [
-        "test1",
-        "test2",
-        "test3"
-      ],
+      "type" : "click-specific",
+      "elId" : "someButton",
+      "unique" : true,
       "timeout": 15000
     },
     "featureType": [ // 0 is categorical, 1 is numerical
@@ -130,8 +129,7 @@
           "green"
         ],
         'variation' : "568575d508e9edcad10506a5", 
-        'result' : null,
-        'inTest' : true
+        'result' : null //no result recorded yet, so either in-test if time-out not succeeded or did not complete
       }, 
       {
         'testUuid' : "9j2cdla1-72g5-10zs-akz6-141167991291",
@@ -142,8 +140,7 @@
           "black"
         ],
         'variation' : "568575d508e9edcad10506a7",
-        'result' : "1", //binary response modules.succ.depVarType
-        'inTest' : false
+        'result' : "1" //binary response modules.succ.depVarType
       },           
    ]
 }

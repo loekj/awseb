@@ -60,28 +60,11 @@ exports.DELETE = function(req, res, next) {
 exports.PATCH = function(req, res, next) {
   var obj_id = new db.mongo.ObjectID(req.params.expId)
 
-  var succ_body, url = null
-  if (utils.isDef(req.body.url)){
-    url = req.body.url
+  var succ_uuid = null
+  if (utils.isDef(req.body.succUuid.toLowerCase())) {
+    succ_uuid = req.body.succUuid
   }
-
-  if (!utils.isDef(req.body.succUuid.toLowerCase())) {
-    succ_body = {
-      '_id' : null,
-      'fn' : req.body.succ.fn,
-      'name' : req.body.succ.name,
-      'url' : url,
-      'args' : req.body.succ.args,
-      'timeout' : req.body.timeout
-    }
-  } else {
-    succ_body = {
-      '_id' : req.body.succUuid,
-      'url' : url,
-      'args' : req.body.succ.args,
-      'timeout' : req.body.timeout
-    }
-  } 
+   
   db.mongo.modules.update(
     { 
     '_id' : obj_id //query
@@ -96,7 +79,8 @@ exports.PATCH = function(req, res, next) {
         'prop' : req.body.prop,
         'window' : req.body.dataWindow,
         'update' : req.body.updateModel,
-        'succ' : succ_body
+        'succUuid' : succ_uuid,
+        'succ' : req.body.succ
       }
     },
     {
@@ -118,29 +102,9 @@ exports.PATCH = function(req, res, next) {
 */
 exports.POST = function(req, res, next) {
 
-  var succ_body, url = null
-  if (utils.isDef(req.body.succ.url)){
-    url = req.body.succ.url
-  }
-
-  if (!utils.isDef(req.body.succ.succUuid.toLowerCase())) {
-    succ_body = {
-      'succUuid' : null,
-      'fn' : req.body.succ.fn,
-      'name' : req.body.succ.name,
-      'url' : url,
-      'depVarType' : req.body.succ.depVarType,
-      'args' : req.body.succ.args,
-      'timeout' : parseInt(req.body.succ.timeout,10)
-    }
-  } else {
-    succ_body = {
-      'succUuid' : req.body.succ.succUuid,
-      'url' : url,
-      'depVarType' : req.body.succ.depVarType,
-      'args' : req.body.succ.args,
-      'timeout' : parseInt(req.body.succ.timeout,10)
-    }
+  var succ_uuid = null
+  if (utils.isDef(req.body.succUuid.toLowerCase())) {
+    succ_uuid = req.body.succUuid
   }
 
   var userId = new db.mongo.ObjectID(req.params.userId)
@@ -155,7 +119,8 @@ exports.POST = function(req, res, next) {
       'window' : parseInt(req.body.dataWindow,10),
       'update' : parseInt(req.body.updateModel,10),
       'variations' : [],
-      'succ' : succ_body,
+      'succUuid' : succ_uuid,
+      'succ' : req.body.succ,
       'featureType' : req.body.featureType
     }, function(err, result) {
       if (err) {

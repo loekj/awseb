@@ -49,7 +49,7 @@ function getVariationPromises(moduleArray, userData) {
 			console.log("Not in variation. Either add to one, or deliver winner.")
 			modulePromise = getDbEntry(db.mongo.modules, module.expUuid)
 				.then(function(module) {
-					console.log('getDbEntry result:', module)
+					//console.log('getDbEntry result:', module)
 					return getTestIdOrWinningVariation(module, userData)
 				})
 
@@ -57,7 +57,7 @@ function getVariationPromises(moduleArray, userData) {
 		} else {
 			// User is already in test. Deliver consistent variation to them:
 			console.log("ALREADY IN TEST: FEED ACTIVE VARIATION")
-			console.log('module.activeVariation',module.activeVariation)
+			//console.log('module.activeVariation',module.activeVariation)
 			modulePromise = getDbEntry(db.mongo.variations, module.activeVariation)
 			variationPromiseArray.push(modulePromise)
 		}
@@ -70,13 +70,16 @@ function getTestIdOrWinningVariation(module, userData) {
 	var addUserToTest = (Math.random() * 100 <= parseInt(module.prop))
 	var variationId
 	var predictPromise
+	var test_uuid
 	if(addUserToTest === true || !utils.isDef(module.fit)) { //fit does not exist if not trained yet
 		console.log("TEST SUBJECT: RANDOM VAR")
 		//Test person! Select random variation 
 		variationId = getRandomVariationId(module.variations)
 		return getDbEntry(db.mongo.variations, variationId).then(function(variation) {
-			addUserToInTestDB(module._id, userData, variation._id)
+			test_uuid = uuid.v4()
+			addUserToInTestDB(module._id, userData, variation._id, test_uuid)
 			variation.succ = module.succ
+			variation.testUuid = test_uuid
 			return variation
 		})
 	} else {
@@ -103,7 +106,7 @@ function getRandomVariationId(variations) {
 	return variationId
 }
 
-function addUserToInTestDB(experimentId, userData, variationId) {
+function addUserToInTestDB(experimentId, userData, variationId, test_uuid) {
 	var expId = new db.mongo.ObjectID(experimentId)
 	var varId = new db.mongo.ObjectID(variationId)
 	db.mongo.data.update(
@@ -114,10 +117,11 @@ function addUserToInTestDB(experimentId, userData, variationId) {
 			$push : {
 				'data' : 
 				{
+					'testUuid' : test_uuid,
 					'added' : Date.now(),
 					'userData' : userData,
 					'variation' : varId,
-					'inTest' : true
+					'result' : null
 				}
 			}
 		},
@@ -146,10 +150,10 @@ function getDbEntry(collection, id) {
 				var dbPromise = collection.findOne({
 					'_id' : obj_id
 				})
-				console.log('db Promise: ', dbPromise)
+				//console.log('db Promise: ', dbPromise)
 				dbPromise.then(function(result) {
 					// add to cache
-					console.log('db  query results: ', {id: id, result: result})
+					//console.log('db  query results: ', {id: id, result: result})
 					db.redis.set(id, JSON.stringify(result), function() {
 						resolve(result)
 					})

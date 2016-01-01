@@ -36,3 +36,19 @@
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":20407,"level":50,"msg":"Cannot read property 'prop' of undefined Parralel getRandomVariation and getSuccesFn","time":"2015-12-22T00:35:05.428Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":20409,"level":50,"msg":"variationPromise is not defined Parralel getRandomVariation and getSuccesFn","time":"2015-12-22T00:35:49.206Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MacBook-Pro.local","pid":20411,"level":50,"msg":"args is not defined Parralel getRandomVariation and getSuccesFn","time":"2015-12-22T00:37:16.738Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":54872,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T18:36:20.057Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":54946,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T18:39:30.142Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55042,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:04:49.102Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55044,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:07:02.382Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55046,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:08:14.516Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55054,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:08:58.754Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55056,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:10:40.667Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55060,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:15:30.771Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55062,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:16:51.035Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55064,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:17:26.092Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55074,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:20:24.293Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55076,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:21:00.511Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55078,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:21:09.651Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55095,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:31:02.396Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55135,"level":50,"msg":"Variations did not compile:  test_uuid is not defined","time":"2016-01-01T20:45:41.748Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":55138,"level":50,"msg":"Variations did not compile:  test_uuid is not defined","time":"2016-01-01T20:47:02.251Z","v":0}

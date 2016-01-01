@@ -13,5 +13,5 @@ var logger = require('../../log/logger.js')
 var log = logger.getLogger()
 
 exports.trainNB = function(exp_uuid) {
-	db.mongo.modules.find
+	//db.mongo.modules.find.....
 }

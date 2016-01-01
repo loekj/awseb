@@ -28,7 +28,7 @@ exports.POST = function(req, res, next) {
 			},
 			{	
 				$setOnInsert : {
-					'email' : req.body.email, 'pwd' : pwd_crypt, 'salt' : salt, 'firstName' : req.body.firstName, 'lastName' : req.body.lastName, 'added' : Date.now(), 'permis' : 1, 'subscrId' : 0
+					'email' : req.body.email, 'pwd' : pwd_crypt, 'salt' : salt, 'firstName' : req.body.firstName, 'lastName' : req.body.lastName, 'added' : Date.now(), 'permis' : 1, 'subscrId' : 0, 'company' : req.body.company
 				}
 			},
 			{
