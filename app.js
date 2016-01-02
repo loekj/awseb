@@ -29,23 +29,41 @@ if (mode == 'production') {
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
 	var register = require('./controllers/endpoints/register.js');
 	var collection = require('./controllers/endpoints/collection.js');
-	// experiment is for registering/editing experiment
-	//var experiment = require('./controllers/endpoints/experiment.js');	
 	
 	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
 
 } else if (mode == 'debug') {
+	var register = require('./controllers/endpoints/register.js');
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
 	var collection = require('./controllers/endpoints/collection.js');
 	var register = require('./controllers/endpoints/register.js');
-	// experiment is for registering/editing experiment
-	//var experiment = require('./controllers/endpoints/experiment.js');	
+	var experiment = require('./controllers/endpoints/exp.js');
+	var experiment_id = require('./controllers/endpoints/exp_id.js');
+	var experiment_id_variation = require('./controllers/endpoints/exp_id_var.js');
+	var experiment_id_variation_id = require('./controllers/endpoints/exp_id_var_id.js');
+
+	app.post('/register', register.POST);
 
 	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
+
+	app.get('/exp', experiment.GET);
+
+	app.post('/exp/:expId', experiment_id.POST);
+	app.patch('/exp/:expId', experiment_id.PATCH);
+	app.get('/exp/:expId', experiment_id.GET);	
+	app.delete('/exp/:expId', experiment_id.DELETE);	
+
+	
+	app.get('/exp/:expId/var', experiment_id_variation.GET);
+
+	app.delete('/exp/:expId/var/:varId', experiment_id_variation_id.DELETE);
+	app.get('/exp/:expId/var/:varId', experiment_id_variation_id.GET);
+	app.post('/exp/:expId/var/:varId', experiment_id_variation_id.POST);
+	app.patch('/exp/:expId/var/:varId', experiment_id_variation_id.PATCH);
 }
 
 if (host == 'local') {

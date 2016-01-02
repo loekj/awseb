@@ -11,6 +11,11 @@ var logger = require('../../log/logger.js')
 var connection = db.connect();
 var log = logger.getLogger();
 
+
+sendResponse = function(res, code) {
+	res.status(code).json({});
+}
+
 /* 
 * API dir
 */
@@ -31,9 +36,7 @@ exports.POST = function(req, res, next) {
 	connection.query(query_string, args, function(err, rows, fields) {
 		if (err) {
 			log.error(err.message, 'Query move to ' + exp_uuid + '_userdata');
-			res.json({
-				'status': '400'
-			});
+			sendResponse(res, 400);
 		}
 
 		console.log("FIELDS: %s", JSON.stringify(fields));
@@ -41,9 +44,7 @@ exports.POST = function(req, res, next) {
 		console.log("ROWS AFFECTED: %s", rows.affectedRows);
 		if (rows.affectedRows != '1') {
 			log.error('No rows affect query move to ' + exp_uuid + '_userdata');
-			res.json({
-				'status': '400'
-			});
+			sendResponse(res, 400);
 		}
 
 		// only delete from intest if previous was successful
@@ -54,9 +55,7 @@ exports.POST = function(req, res, next) {
 		connection.query(query_string, args, function(err, rows, fields) {
 			if (err) {
 				log.error(err.message, 'Query delete ' + exp_uuid + '_intest');
-				res.json({
-					'status': '400'
-				});
+				sendResponse(res, 400);
 			}
 			console.log("ROWS AFFECTED: %s", rows.affectedRows);
 			console.log("FIELDS: %s", JSON.stringify(fields));
@@ -65,13 +64,9 @@ exports.POST = function(req, res, next) {
 
 			if (rows.affectedRows != '1') {
 				log.error('No rows affect query delete' + exp_uuid + '_intest WHERE testUuid=' + test_uuid);
-				res.json({
-					'status': '400'
-				});
+				sendResponse(res, 400);
 			}
-			res.json({
-				'status': '200'
-			});
+			sendResponse(res, 200);
 		});
 	});
 }

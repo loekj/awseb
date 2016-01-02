@@ -5,16 +5,19 @@ function setupExperiments(connection, callback){
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"expUuid VARCHAR(255) NOT NULL," +
 		"succUuid VARCHAR(255) NOT NULL," +
-		"numVar INT NOT NULL," + //Number of variations
+		"numVar INT DEFAULT 0," + //Number of variations, set in different window
 		"descr BLOB NOT NULL," +
 		"name VARCHAR(50) DEFAULT 'Untitled'," +
 		"userUuid VARCHAR(255) NOT NULL," +
 		"prop INT NOT NULL," +
 		"timeout INT NOT NULL DEFAULT 18000," +
+		"updateTime INT NOT NULL DEFAULT 30," + //30 days, 0 value is after each new point
+		"windowTime INT NOT NULL DEFAULT 1," + //1 day
+		"active BOOLEAN NOT NULL DEFAULT 0," +
 		"PRIMARY KEY ( id )," +
 		"UNIQUE KEY unique_expUuid ( expUuid )" +
 		") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-	runQuery(query, connection, callback);	
+	runQuery(query, connection, callback);
 }
 
 function setupAccounts(connection, callback){
@@ -23,8 +26,10 @@ function setupAccounts(connection, callback){
 		"addTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"modTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 		"userUuid VARCHAR(255) NOT NULL," +
+		"firstName VARCHAR(255) NOT NULL," +
+		"lastName VARCHAR(255) NOT NULL," +		
 		"oauth VARCHAR(100) NOT NULL," +
-		"permis VARCHAR(50) NOT NULL," +
+		"permis VARCHAR(50) NOT NULL DEFAULT 1," +
 		"subscrId INT NOT NULL DEFAULT 0," +
 		"PRIMARY KEY ( id )," +
 		"UNIQUE KEY unique_oauth ( oauth )," +
@@ -70,27 +75,25 @@ if (require.main === module) {
 	var async = require('async');
 	var mysql = require('mysql');
 	
-	db_user = process.argv[2];
-	db_pwd = process.argv[3];
-
 	var connection = mysql.createConnection({
-	  host     : "aavktpb0yx3vyf.ck7xy5rlukt9.us-west-2.rds.amazonaws.com",
-	  user     : db_user,
-	  password : db_pwd,
-	  port     : "3306",
-	  database : "ebdb"
+		host     : process.env.RDS_HOSTNAME,
+		user     : process.env.RDS_USERNAME,
+		password : process.env.RDS_PASSWORD,
+		port     : process.env.RDS_PORT,
+		database : process.env.RDS_DB_NAME,
+		multipleStatements : true
 	});
 
 	async.series([
-	    	function(callback) {
-	    		setupAccounts(connection, callback);
-	    	},	    	
-	    	function(callback) {
-	    		setupExperiments(connection, callback);
-	    	},
-			function(callback) {
-	    		setupSuccess(connection, callback);
-	    	}
+		function(callback) {
+			setupAccounts(connection, callback);
+		},	    	
+		function(callback) {
+			setupExperiments(connection, callback);
+		},
+		function(callback) {
+			setupSuccess(connection, callback);
+		}
 	], function (err, results) {
 	    console.log(results);
 	    process.exit(0);
