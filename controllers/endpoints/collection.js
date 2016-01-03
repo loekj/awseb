@@ -33,7 +33,7 @@ exports.POST = function(req, res, next) {
 	},
 	{
 		$set : {
-			'data.result' = outcome
+			'data.result' = outcome // Upserts automatically if result not defined
 		}
 	},
 	function(err, result) {
