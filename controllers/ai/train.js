@@ -52,7 +52,7 @@ exports.trainNB = function(exp_uuid) {
 
 		data_arr.forEach(function(val) {
 			// Skip if subject in test or result === nul (timeout)
-			if (!utils.isDef(val.result)) {
+			if (!utils.isDef(val.result) || val.result === "0") { // "0" is failed succ. func
 				continue
 			}
 
