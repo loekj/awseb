@@ -19,13 +19,13 @@ var log = logger.getLogger()
 * will fetch all the experiments of this user_uuid
 */
 exports.GET = function(req, res, next) {
-  var userId = new db.mongo.ObjectID(req.params.userId)
-  db.mongo.modules.find( { '_userId' : userId } ).toArray(function(err, result) {
-    if (err) {
-      log.error(err)
-      res.status(400).json({})
-    }
-    res.status(200).json(result)
-  })
+	var userId = new db.mongo.ObjectID(req.params.userId)
+	db.mongo.modules.find( { '_userId' : userId } ).toArray(function(err, result) {
+		if (err) {
+			log.error(err)
+			res.status(400).json({})
+		}
+		res.status(200).json(result)
+	})
 }
 

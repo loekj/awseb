@@ -52,3 +52,13 @@
 {"name":"sigmatic","hostname":"Loeks-MBP","pid":55095,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of undefined","time":"2016-01-01T20:31:02.396Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MBP","pid":55135,"level":50,"msg":"Variations did not compile:  test_uuid is not defined","time":"2016-01-01T20:45:41.748Z","v":0}
 {"name":"sigmatic","hostname":"Loeks-MBP","pid":55138,"level":50,"msg":"Variations did not compile:  test_uuid is not defined","time":"2016-01-01T20:47:02.251Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56721,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-03T01:14:32.231Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56726,"level":50,"msg":"Variations did not compile:  Can't set headers after they are sent.","time":"2016-01-03T01:15:04.771Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56728,"level":50,"msg":"Variations did not compile:  Can't set headers after they are sent.","time":"2016-01-03T01:15:41.219Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56733,"level":50,"msg":"Variations did not compile:  Can't set headers after they are sent.","time":"2016-01-03T01:17:57.512Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56750,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-03T01:44:56.145Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56750,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-03T01:46:52.622Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56750,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-03T01:50:00.095Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56750,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-03T01:57:12.185Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56750,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-03T01:57:13.911Z","v":0}
+{"name":"sigmatic","hostname":"Loeks-MBP","pid":56750,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-03T01:57:26.226Z","v":0}
