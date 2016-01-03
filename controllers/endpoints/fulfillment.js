@@ -120,8 +120,7 @@ function addUserToInTestDB(experimentId, userData, variationId, test_uuid) {
 					'testUuid' : test_uuid,
 					'added' : Date.now(),
 					'userData' : userData,
-					'variation' : varId,
-					'result' : null
+					'variation' : varId
 				}
 			}
 		},

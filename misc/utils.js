@@ -17,7 +17,7 @@ exports.mean = function(arr) {
 	return arr.reduce( (prev, curr) => prev + curr, 0) / arr.length
 }
 
-exports.std = function(arr) {
+exports.variance = function(arr) {
 	if (arr.length < 2) {
 		return 0
 	}
@@ -26,5 +26,5 @@ exports.std = function(arr) {
 	arr.forEach(function (val) {
 		sum_squares += math.pow(val - avg, 2)
 	})
-	return math.sqrt(sum_squares / (arr.length-1))
+	return sum_squares / (arr.length-1)
 }
