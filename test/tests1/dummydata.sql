@@ -1,8 +1,8 @@
 USE ebdb;
 INSERT INTO 
-	accounts (userUuid, oauth, permis)
+	accounts (userUuid, oauth, firstName, lastName, permis)
 	VALUES
-		('uuuid1', 'ljanssen@stanford.edu', '1');
+		('uuuid1', 'ljanssen@stanford.edu', 'loek', 'janssen', '1');
 
 INSERT INTO 
 	experiments (expUuid, succUuid, numVar, descr, name, userUuid, prop) 
@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS
 		variationUuid VARCHAR(255) NOT NULL, 
 		name VARCHAR(50) NOT NULL DEFAULT 'Untitled', 
 		expUuid VARCHAR(255) NOT NULL, 
+		active BOOLEAN NOT NULL DEFAULT 0,
 		js MEDIUMBLOB, 
 		css MEDIUMBLOB, 
 		html MEDIUMBLOB,
@@ -40,6 +41,7 @@ CREATE TABLE IF NOT EXISTS
 		variationUuid VARCHAR(255) NOT NULL, 
 		name VARCHAR(50) NOT NULL DEFAULT 'Untitled', 
 		expUuid VARCHAR(255) NOT NULL, 
+		active BOOLEAN NOT NULL DEFAULT 0,
 		js MEDIUMBLOB, 
 		css MEDIUMBLOB, 
 		html MEDIUMBLOB,

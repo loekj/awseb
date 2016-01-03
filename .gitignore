@@ -3,8 +3,9 @@ node_modules/
 .elasticbeanstalk/
 
 # Local run cmd
-run_local.sh
-test/full_reset.sh
+run*.sh
+test/tests1/full_reset*.sh
+test/tests2/full_reset*.sh
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
@@ -12,4 +13,7 @@ test/full_reset.sh
 !.elasticbeanstalk/*.global.yml
 
 # Mysql database files
-database_info.txt
+database_info*.txt
+
+# Error logs:
+log/*
