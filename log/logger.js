@@ -7,8 +7,8 @@ exports.getLogger = function() {
 			[
 				{
 					level: 'info',
-					stream: process.stdout
-					//path: __dirname + '/sigmatic-info.log'
+					//stream: process.stdout
+					path: __dirname + '/sigmatic-info.log'
 				},
 				{
 					level: 'warn',

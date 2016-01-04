@@ -154,4 +154,3 @@
         'result' : "1" //binary response modules.succ.depVarType
       },           
    ]
-}
