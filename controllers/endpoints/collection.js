@@ -1,13 +1,7 @@
 var express = require('express')
-var uuid = require('uuid')
-var async = require('async')
-var math = require('math')
 
-
-var PythonShell = require('python-shell')
 var db = require('../database/database.js')
 var logger = require('../../log/logger.js')
-
 var log = logger.getLogger();
 
 

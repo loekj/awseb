@@ -1,9 +1,6 @@
 "use strict"
 
 var express = require('express')
-var uuid = require('uuid')
-var async = require('async')
-var math = require('math')
 var promiseLib = require('when')
 
 var utils = require('../../misc/utils.js')
@@ -73,7 +70,7 @@ function getTestIdOrWinningVariation(module, userData) {
 		//Test person! Select random variation 
 		variationId = getRandomVariationId(module.variations)
 		return getDbEntry(db.mongo.variations, variationId).then(function(variation) {
-			test_uuid = uuid.v4()
+			test_uuid = new db.mongo.ObjectID()
 			addUserToInTestDB(module._id, userData, variation._id, test_uuid)
 			variation.succ = module.succ
 			variation.testUuid = test_uuid
@@ -150,8 +147,12 @@ function getDbEntry(collection, id) {
 				dbPromise.then(function(result) {
 					// add to cache
 					//console.log('db  query results: ', {id: id, result: result})
-					db.redis.set(id, JSON.stringify(result), function() {
-						resolve(result)
+					resolve(result)
+					db.redis.set(id, JSON.stringify(result), function(err, result) {
+						if (err) {
+							log.error("Cache redus.set error id: " + id)
+						}
+						log.info("Cached " + id)
 					})
 				})
 			}
@@ -160,7 +161,7 @@ function getDbEntry(collection, id) {
 }
 
 function LogGauss(x, mean, variance) {
-	return (-0.5 * math.log(2 * math.pi * variance) - math.pow(x - mean, 2) / (2 * variance))
+	return (-0.5 * Math.log(2 * math.pi * variance) - math.pow(x - mean, 2) / (2 * variance))
 }
 
 function predictVariationNB(module, inputs) {
