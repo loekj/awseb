@@ -15,11 +15,10 @@ sendResponse = function(res, code) {
 exports.POST = function(req, res, next) {
 	var callb = req.body.callback
 	var exp_uuid = req.body.expUuid
-	var test_uuid = req.body.testUuid
-	var time_of_day = req.body.timeOfDay
+	var test_uuid = new db.mongo.ObjectID(req.body.testUuid)
 	var outcome = req.body.result
+	//var time_of_day = req.body.timeOfDay
 
-	var module_id = new db.mongo.ObjectId(req.body.expUuid)
 	db.mongo.data.update(
 	{
 		'data.testUuid' : test_uuid
