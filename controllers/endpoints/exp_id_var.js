@@ -10,7 +10,7 @@ var utils = require('../../misc/utils.js');
 var db = require('../database/database.js');
 var logger = require('../../log/logger.js');
 
-var connection = db.connect();
+//var connection = db.connect();
 var log = logger.getLogger();
 
 /* 
@@ -18,22 +18,20 @@ var log = logger.getLogger();
 * request to fill-in the dom of the requested page. Read-only.
 */
 exports.GET = function(req, res, next) {
-	var exp_uuid = req.params.expId;
-	var args = {
-		'expUuid' : exp_uuid
-	}
-	var query_string = "SELECT addTime, modTime, variationUuid, name, active, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM " + exp_uuid + "_variations";
-	connection.query(query_string, args, function(err, rows, fields) {
+	var obj_id = new db.mongo.ObjectID(req.params.expId)
+	db.mongo.modules.findOne({'_id' : obj_id}, function(err, result){
 		if (err) {
-			res.status(400).json({});
-		} 
-		if (!rows[0]) {
-			res.status(200).json(
-				{}
-			);			
-		}             
-		res.status(200).json(
-			rows[0]
-		);
-	});
+			res.status(400).json({})
+		}
+		var obj_arr = result.variations.map(function(val) { //synchronous
+			return new db.mongo.ObjectID(val)
+		})
+		db.mongo.variations.find({
+			'_id' : {
+				$in : obj_arr
+			}
+		}).toArray(function ( err, result) {
+			res.status(200).json(result)
+		})
+	})
 }

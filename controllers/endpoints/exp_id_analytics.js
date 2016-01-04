@@ -10,7 +10,7 @@ var utils = require('../../misc/utils.js');
 var db = require('../database/database.js');
 var logger = require('../../log/logger.js');
 
-var connection = db.connect());
+//var connection = db.connect());
 var log = logger.getLogger();
 
 /* 
@@ -18,6 +18,7 @@ var log = logger.getLogger();
 * request to fill-in the dom of the requested page. Read-only.
 */
 exports.GET = function(req, res, next) {
+	var user_uuid = req.params.userId;
 	var exp_uuid = req.params.expId;
 	res.status(200).json({});
 }

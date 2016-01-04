@@ -1,54 +1,40 @@
-var promiseLib = require('when');
-
-var Mongo = require('mongodb');
-var MongoClient = Mongo.MongoClient;
-
-var dbUrl = 'mongodb://localhost:27017/';
-var url = dbUrl + 'test';
-
 // Here are some strawmen we can use to discuss our MongoDB collection structure
+
+/************************************************************
+  Collection: Accounts
+************************************************************/
+{  
+   "_id":"56802a9198e1d763bedce3c5",
+   "email":"ljanssen@stanford.edu",
+   "pwd":BinData(0,"3m0xCxgKQ97FMTdRfzGD3BLlQOQLnta9rpWBTynTw9jOq8y7UD2G9G17cniw5H1zl/tZWmbIV/ykJeSpAGQUcPQ8wlzC8myJqSzCU77JjO6Q687rlQa3u3GjoQhn2MYdF/jfYYNo5LgG1sgz1YD7I50fFjpFbaN4qB4tFXLoaKA939284LX0cu91Ai0c2daCuDZhg2xtLwbyaTxaLZzZC2pnbs69//vAyiDdfzYaNovRm0VPYA80XiHZdUBQKKlal1ibTqkcyTj5t0mAiEaNDamLIeir33ZysXQ2U6j1tA8VPJ//xFjscdBkpOuvjYhiAADkEeH6DSVMJnP/16FP16/1FkV4nyqLYZkGDz8qqSUp6eXXRH9EjXki5ZtxD6J04Jc0WwFaVLn7fc9MBDe7RM5bZBFdu3/0q2jdYXzaZA78uinSgG9nwCO9OsYz6NalAsNbRRm+DtdYvnNqny5p4yOp2rTNLsGCcED2DVSh2h3JDzcYUbYEjfhovMzpRbDTx2+BW8ByF2C7ypO4KqPmYASus3jzYBX6baiN5WKx1mZ/XUH9vHZMNd+mYmLemOVhW22BnU4flN8OiGrrFyhNYHBsmKRGafNGKLXWo02vEOp3OjATKrZ+ONabaFWGg4NZ04hE+oWfF/G5+dsRSABksm4bYJhnLBGU7qORTnpwsbE="),
+   // BinData is a BSON datatype, base64 encoded byte-strings
+   "salt":"3JdaPHM6mwk/ujONSayh29xvFw95nOclX+kq0YiQB9faWTI4ZrR1CE1x7nNzJ+KW3EmXz8583gJzDIG33vhCK114QU2tN5FJY/iB5Oecq+hOeaucdY+R5rg94lZGPZgIBg/tetbUcom9of4AIUMZYPyZmW8xw4Ravci1eGqn7UU=",
+   "firstName":"Loek",
+   "lastName":"Janssen",
+   "added":1451240081045,
+   "permis":1,
+   "subscrId":0,
+   "company":"Sigmatic LLC"
+}
 
 /************************************************************
   Collection: Variations
 ************************************************************/
-var variationsCollection = [
+[
   {
-    _id: 'module123_812', // This UUID would need to be constructed upon variation entry into the DB.
-    moduleId: 'module123', // Equal to the module's UUID in the Module
-    code: {
-      // HTML Needs to be key/value pairs.  Keys correlate to div's on page.
-      html: {
-        id1: "<div class='thingOne'>content 1</div>",
-        id2: "<div class='thingTwo'>content 2</div>",
-        id3: "<div class='thingThree'>content 3</div>"
-      },
-      css: ".thingOne {color: purple} .thingTwo {color: green}",
-      js: "return utilities.promiseLib.promise(function(resolve) { setTimeout(function() {this.resolve()}.bind({resolve: resolve}),3000); });"
-    }
-  }, 
-  {
-    _id: 'module123_813',
-    moduleId: 'module123',  
-    code: {
-      html: {
-      // HTML Needs to be key/value pairs.  Keys correlate to div's on page.
-        id1: "<div class='thingOne'>content 5</div>",
-        id2: "<div class='thingTwo'>content 6</div>",
-        id3: "<div class='thingThree'>content 7</div>"
-      },
-      css: ".thingOne {color: red} .thingTwo {color: blue}",
-      js: "return utilities.promiseLib.promise(function(resolve) { setTimeout(function() {this.resolve()}.bind({resolve: resolve}),3000); });"
-    }
-  }, 
-  {
-    _id: 'module738_814',
-    moduleId: 'module738',  
-    code: {
-      html: {
-        id1: "<div class='thingOne'>content X</div>"
-      },
-      css: ".thingOne {color: red} .thingTwo {color: blue}"
-    }
+    "_id": "568575d508e9edcad10506a5",
+    "_moduleId": "5685754a08e9edcad105069e",
+    "_userId": "56802a9198e1d763bedce3c5",
+    "name": "var4",
+    "descr": "blah1",
+    "added": 1451587029380,
+    "modified": 1451587029380,
+    "html": {
+      "id1": "<div class=\"345\"><h2>title1</h2></div>",
+      "id2": "<div class=\"678\"><h3>title3</h3></div>"
+    },
+    "css": ".345{color:blue;} .678{color:black;}",
+    "js": null
   }
 ]
 
@@ -56,188 +42,115 @@ var variationsCollection = [
 /************************************************************
   Collection: Modules
 ************************************************************/
-var modulesCollection = [
-  {
-    _id: "module123",
-    creationDate: 1451082879000, // Date of module's entry
-    omissionDate: 1482705244000, // Date to omit data from localStorage
-    // An array of variation IDs, matching those in the Variations Collection:
-    variations: ["module123_812", "module123_813"],
-    percentToInclude: 0.1,
-    tests: {
-      clickExample: {
-        type: "click-specific",
-        elemId: "someButton",
-        url: "/confirmation/",
-        expiration: "1800000000",
-        unique: false
-      },
-      customSuccess1: {
-        type: "destination-page",
-        url: "?signedup=true",
-        expiration: "2700000000",
-        unique: true
-      },
-    }
-  },
-  {
-    _id: "module738",
-    creationDate: 1451082879000, // Date of module's entry
-    omissionDate: 1482705244000, // Date to omit data from localStorage
-    // An array of variation IDs, matching those in the Variations Collection:
-    variations: ["module123_812", "module123_813"],
-    percentToInclude: 0.1,
-    tests: {
-      clickExample: {
-        type: "click-specific",
-        elemId: "someButton",
-        url: "/confirmation/",
-        expiration: "1800000000",
-        unique: false
-      },
-      destinationPageExample: {
-        type: "destination-page",
-        url: "?signedup=true",
-        expiration: "2700000000",
-        unique: true
-      },
-    }
-  }
-]
-/************************************************************
-  Collection: User-completed Successes
-************************************************************/
+[
+ {
+    "_id": "5685754a08e9edcad105069e",
+    "_userId": "56802a9198e1d763bedce3c5",
+    "name": "test2",
+    "descr": "Second test module",
+    "added": 1451586890161,
+    "modified": 1451586890161,
+    "prop": 15,
+    "window": 20,
+    "update": 15,
+    "variations": [
+      "568575d508e9edcad10506a5",
+      "568575da08e9edcad10506a6",
+      "568575de08e9edcad10506a7",
+      "568575e208e9edcad10506a8",
+      "568575e608e9edcad10506a9"
+    ],
+    "succUuid": "7722c97f-d721-4604-9619-34f6a4961a58",
+    "succ": {
+      "url": "/testurl", //url can be missing
+      "depVarType": "binary", //binary/ mclass/ numerical (defines train type)
+      "type" : "click-specific",
+      "elId" : "someButton",
+      "unique" : true,
+      "timeout": 15000
+    },
+    "featureType": [ // 0 is categorical, 1 is numerical
+      "0", 
+      "1",
+      "0",
+      "0"
+    ] 
 
-var successesCollection = [
-    {
-    _id: "module123", // Equal to the module's UUID in the Module Collection
-    variations: {
-      clickExample: [
-        {
-          userData: [1234, 1343, 6343, 0924, 2433],
-          value: 1
-        }, 
-        {
-          userData: [6343, 0924, 7648, 0276, 1237, 0937],
-          value: 1
-        }, 
-        {
-          userData: [8367, 3816, 0098],
-          value: 1
-        }, 
-      ],
-      customSuccess1: [
-        {
-          userData: [1234, 1343, 6343, 2473],
-          value: 199.99
-        }, {
-          userData: [7648, 0276, 1237, 0937],
-          value: 899.99
-        }, {
-          userData: [7366, 2389, 2971, 4301, 9378, 9034],
-          value: 7.50
-        }
-      ]
+    /* 
+    This fit key-val will only be here when model is trained
+    */
+    /*
+    "fit" : {
+      "568575d508e9edcad10506a5" : [
+          { 
+            "green":"0.12",
+            "red":"0.21",
+            "blue":"0.02",
+            "black":"0.50" // Categorical feature 4 classes (see featureType)
+          },
+          [
+            "2.1",
+            "1.82" // Numerical feature, 1st = mean, 2nd = std dev.
+          ],
+          {
+            "0":"0.12",
+            "1":"0.88" // Categorical feature 2 classes
+          },          
+          {
+            "ford":"0.19",
+            "vw":"0.14",
+            "jaguar":"0.05",
+            "bently":"0.09",
+            "cadillac":"0.41" // Categorical feature 5 classes
+          },     
+        ], 
+        same for other varia tions
+        etc....      
     }
-  },
-  {
-    _id: "module738", // Equal to the module's UUID in the Module Collection
-    variations: {
-      clickExample: [
-        {
-          userData: [1234, 1343, 6343, 0924, 2433],
-          value: 1
-        }
-      ],
-      destinationPageExample: [
-        {
-          userData: [1234, 1343, 6343, 2473],
-          value: 199.99
-        }, 
-        {
-          userData: [7648, 0276, 1237, 0937],
-          value: 899.99
-        }
-      ]
-    }
+    */ 
   }
 ]
 
 /************************************************************
-  Collection: Users
-  This may not be necessary.  Just a structure in case we need to record successes on a user bases
+  Collection: Data
 ************************************************************/
 
-var usersCollection = [
-  {
-    _id: 1290481293,
-    modules: {
-      // Keys of module object are the tests the user is in:
-      module123: {
-        variation: "variationId1",
-        clickExample: 12, // Number of successes incurred by this success type
-        destinationPageExample: true
-      },
-      module738: {
-        variation: "control",
-        pageviews: 24, // Number of successes incurred by this success type
-        destinationPageExample: true, // If success type is boolean (has user gone to specific page, in this case)
-        customSuccess1: [199.99, 24.99, 8.75] // If we were to collect purchase totals of user
-      }
-    },
-    userSegments: [1234, 1343, 6343, 0924, 2433]
-  },
-  {
-    _id: 1290481294,
-    modules: {
-      // Keys of module object are the tests the user is in:
-      module123: {
-        // Each test object contains an entry for each success:
-        variation: "control",
-        clickExample: 54, // Number of successes incurred by this success type
-        destinationPageExample: false
-      },
-      module738: {
-        variation: "variation5",
-        pageviews: 24, // Number of successes incurred by this success type
-        destinationPageExample: true, // If success type is boolean (has user gone to specific page, in this case)
-        customSuccess1: [41.00, 1.00] // If we were to collect purchase totals of user
-      }
-    },
-    userSegments: [6343, 0924, 7648, 0276, 1237, 0937] // If we were to store user data
-  }
-];
-
-
-function insertDbEntry(url, collectionName, data) {
-  return promiseLib.promise(function(resolve, reject) {
-    MongoClient.connect(url, function(err, db) {
-      db.collection(collectionName).insertOne(data, function(err, result) {
-        console.log("Inserted a document into the restaurants collection.");
-        resolve(result);
-        db.close(result);
-      });
-    });
-  });
-}
-
-for(var i=0; i< variationsCollection.length; i++) {
-  insertDbEntry(url, 'variations', variationsCollection[i]).then(function(x) {
-    console.log('variationsCollection', x);
-  });
-}
-for(var i=0; i< modulesCollection.length; i++) {
-  insertDbEntry(url, 'modules', modulesCollection[i]).then(function(x) {
-    console.log('modulesCollection', x);
-  });
-}
-for(var i=0; i< successesCollection.length; i++) {
-  insertDbEntry(url, 'successes', successesCollection[i]).then(function(x) {
-    console.log('successesCollection', x);
-  });
-}
-for(var i=0; i< usersCollection.length; i++) {
-  insertDbEntry(url, 'users', usersCollection[i]).then(function(x) {
-    console.log('usersCollection', x);
-  });
-}
+{  
+   "_id":"5685754a08e9edcad105069f",
+   "_moduleId":"5685754a08e9edcad105069e",
+   "_userId":"56802a9198e1d763bedce3c5",   
+   "data":[  
+      {
+        'testUuid' : "f42cde8e-91f5-4ehs-b73b-513154409790",
+        'added' : 1451586890260,
+        'userData' : [
+          "10",
+          "205",
+          "green"
+        ],
+        'variation' : "568575d508e9edcad10506a5", 
+        'result' : null //Did timeout
+      }, 
+      {
+        'testUuid' : "j84ga10-j4ms-06pa-mz2z-m58sj3fbxl01",
+        'added' : 1451586894260,
+        'userData' : [
+          "12.1",
+          "202",
+          "green"
+        ],
+        'variation' : "568575d508e9edcad10506a5"
+        // no result yet, so is in test!
+      },       
+      {
+        'testUuid' : "9j2cdla1-72g5-10zs-akz6-141167991291",
+        'added' : 1451586890502,
+        'userData' : [
+          "-5",
+          "201",
+          "black"
+        ],
+        'variation' : "568575d508e9edcad10506a7",
+        'result' : "1" //binary response modules.succ.depVarType
+      },           
+   ]

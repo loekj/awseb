@@ -11,7 +11,7 @@ var utils = require('../../misc/utils.js');
 var db = require('../database/database.js');
 var logger = require('../../log/logger.js');
 
-var connection = db.connect();
+//var connection = db.connect();
 var log = logger.getLogger();
 
 /* 
@@ -19,33 +19,7 @@ var log = logger.getLogger();
 * Initial get request fill in the forms with entered values.
 */
 exports.GET = function(req, res, next) {
-  var variation_uuid = req.params.varId;
-  var exp_uuid = req.params.expId;
 
-  console.log("variation_uuid: %s", variation_uuid);
-  console.log("exp_uuid: %s", exp_uuid);
-
-  var args = {
-    'variationUuid' : variation_uuid,
-    'expUuid' : exp_uuid
-  }
-  var query_string = "SELECT name, active, CAST(html AS CHAR(10000) CHARACTER SET utf8) AS html, CAST(js AS CHAR(10000) CHARACTER SET utf8) AS js, CAST(css AS CHAR(10000) CHARACTER SET utf8) AS css FROM :expUuid_variations WHERE variationUuid = :variationUuid";
-  connection.query(query_string, args, function(err, rows, fields) {
-    if (err) {
-      res.status(400).json({});
-    }
-    if (rows.affectedRows != '1') {
-      res.status(400).json({});//except.UnchangedError("Rows affected: " + rows.affectedRows, 'Insert ' + exp_uuid + 'into experiments');
-    }              
-    console.log(rows);
-    res.status(200).json({
-      'name' : rows.name,
-      'active' : rows.active,
-      'html' : rows.html,
-      'js' : rows.js,
-      'css' : rows.css
-    });
-  });
 };
 
 
@@ -54,30 +28,7 @@ exports.GET = function(req, res, next) {
 * request alter an existing variation or to disable/enable
 */
 exports.PATCH = function(req, res, next) {
-  var exp_uuid = req.params.expId;
-  var variation_uuid = req.params.varId;
-
-  var promises_arr = [];
-
-  if (utils.isDef(req.body.active)) {
-    promises_arr.push(updateActive(exp_uuid, variation_uuid, req.body.active));
-  } else {
-    var variation_name = req.body.name;
-    var variation_html = req.body.html;
-    var variation_js = req.body.js;
-    var variation_css = req.body.css;    
-
-    console.log("variation_uuid: %s", variation_uuid);
-    promises_arr.push(editVariation(exp_uuid, variation_uuid, variation_name, variation_html, variation_js, variation_css));
-  }
-
-  promiseLib.all(promises_arr)
-  .then(function() {
-    res.status(200).json({});
-  }, function (err) {
-    log.error(err);
-    res.status(400).json({});
-  });  
+   
 }
 
 /* 
@@ -85,17 +36,7 @@ exports.PATCH = function(req, res, next) {
 * request to delete a certain variation.
 */
 exports.DELETE = function(req, res, next) {
-  var exp_uuid = req.params.expId;
-  var variation_uuid = req.params.varId;
-  var promises_arr = [deleteVariation(exp_uuid, variation_uuid), updateNumVar(exp_uuid)];
-
-  promiseLib.all(promises_arr)
-  .then(function() {
-    res.status(200).json({});
-  }, function (err) {
-    log.error(err);
-    res.status(400).json({});
-  });
+ 
 }
 
 
@@ -104,138 +45,42 @@ exports.DELETE = function(req, res, next) {
 * request init variations. Change database tables.
 */
 exports.POST = function(req, res, next) {
-  var exp_uuid = req.params.expId;
 
-  var variation_name = req.body.name;
-  var variation_html = req.body.html;
-  var variation_js = req.body.js;
-  var variation_css = req.body.css;
-  
-  var promises_arr = [];
-  
-  // create variation_uuid
-  var variation_uuid = utils.dashToUnder(uuid.v4());
-
-  promises_arr.push(insertVariation(exp_uuid, variation_uuid, variation_name, variation_html, variation_js, variation_css));
-  promises_arr.push(updateNumVar(exp_uuid));
-
-  promiseLib.all(promises_arr)
-  .then(function() {
-    res.status(200).json({});
-  }, function (err) {
-    log.error(err);
-    res.status(400).json({});
-  });
-};
-
-
-
-function updateNumVar(exp_uuid) {
-  return promiseLib.promise(function(resolve, reject) {   
-    var args = {
-      'tableName' : exp_uuid + '_variations'
-    }
-    var query_string = 'SELECT COUNT(*) AS rowsCount FROM :tableName';
-    connection.query(query_string, args, function(err, rows, fields) {
+  var userId = new db.mongo.ObjectID(req.params.userId)
+  var moduleId = new db.mongo.ObjectID(req.params.expId)
+  db.mongo.variations.insert(
+    {
+      '_moduleId' : moduleId,
+      '_userId' : userId,
+      'name' : req.body.name,
+      'descr' : req.body.descr,
+      'added' : Date.now(),
+      'modified' : Date.now(),
+      'html' : req.body.html,
+      'css' : req.body.css,
+      'js' : req.body.js
+    }, function(err, result) {
       if (err) {
-        reject();
+        log.error(err)
+        res.status(400).json({})
       }
-      if (!utils.isDef(rows[0].rowsCount)) {
-        reject();
-      }
-      var args = {
-        'numVar' : rows[0].rowsCount
-      }
-      var query_string = 'UPDATE experiments SET ?';
-      connection.query(query_string, args, function(err, rows, fields) {
-        if (err) {
-          reject();
-        }
-        if (rows.affectedRows != '1') {
-          reject();
-        }      
-        resolve();
-      });
-    });
-  });
+      log.info("Inserted into variations document id " + result.ops[0]._id)
+      db.mongo.modules.update(
+        {
+          '_id' : moduleId
+        },
+        {
+          $push : {
+            'variations' : result.ops[0]._id
+          }
+        },
+        function(err, result) {
+          if (err) {
+            log.error(err)
+            res.status(400).json({})
+          }
+          log.info("Updated (pushed variation id) modules document id " + req.params.expId)
+          res.status(200).json({})
+        }) 
+    })
 }
-
-
-function deleteVariation(exp_uuid, variation_uuid) {
-  return promiseLib.promise(function(resolve, reject) {   
-    var args = {
-      'tableName' : exp_uuid + '_variations',
-      'variationUuid' : variation_uuid,
-    }
-    var query_string = "DELETE FROM :tableName WHERE variationUuid = :variationUuid";
-    connection.query(query_string, args, function(err, rows, fields) {
-      if (err) {
-        reject();
-      }
-    if (rows.affectedRows != '1') {
-      reject();
-    }      
-    log.info({'Rows affected' : rows.affectedRows}, 'Insert ' + variation_uuid + 'into ' + exp_uuid + '_variations');
-    resolve();
-    });
-  });
-}
-
-
-function insertVariation(exp_uuid, variation_uuid, variation_name, variation_html, variation_js, variation_css) {
-  return promiseLib.promise(function(resolve, reject) {   
-    var args = {
-      'tableName' : exp_uuid + '_variations',
-      'variationUuid' : variation_uuid,
-      'name' : variation_name,
-      'html' : variation_html,
-      'js' : variation_js,
-      'css' : variation_css
-    }
-    var query_string = 'INSERT INTO :tableName SET variationUuid = :variationUuid, name = :name, html = :html, js = :js, css = :css';
-    connection.query(query_string, args, function(err, rows, fields) {
-      if (err) {
-        reject();
-      }
-    if (rows.affectedRows != '1') {
-      reject();
-    }      
-    log.info({'Rows affected' : rows.affectedRows}, 'Insert ' + variation_uuid + 'into ' + exp_uuid + '_variations');
-    resolve();
-    });
-  });
-}
-
-function editVariation(exp_uuid, variation_uuid, variation_name, variation_html, variation_js, variation_css) {
-  return promiseLib.promise(function(resolve, reject) {
-    var args = {
-      'tableName' : exp_uuid + '_variations',
-      'variationUuid' : variation_uuid
-    } 
-    if (utils.isDef(variation_name)) {
-      args.name = variation_name;
-    }
-    if (utils.isDef(variation_html)) {
-      args.html = variation_html;
-    }    
-    if (utils.isDef(variation_js)) {
-      args.js = variation_js;
-    }        
-    if (utils.isDef(variation_css)) {
-      args.css = variation_css;
-    }        
-
-    var query_string = "UPDATE :tableName SET ? WHERE variationUuid = :variationUuid";
-    connection.query(query_string, args, function(err, rows, fields) {
-      if (err) {
-        reject();
-      }
-      if (rows.affectedRows != '1') {
-        reject();
-      }        
-      resolve();
-    });
-  });
-}
-
-

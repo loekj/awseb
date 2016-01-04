@@ -73,8 +73,21 @@ def main(argv = None):
 		r = RESTwrapper('http://127.0.0.1:3000/')
 
 
-	# action 1: registering a user, fire register
+	# action 1: registering a user, fire register endpoint. 
 	r.post('register','{"firstName":"Loek","lastName":"Janssen","oauth":"ljanssen@stanford.edu"}')
+	user_uuid  = raw_input('Input uuid:\t')
+
+	# action 2: registering a new experiment
+	r.post(user_uuid + '/exp/new','{"name" : "Falu vs Turqois background","descr" : "Landing page test of site engagement with different background colors of website","prop":"25","succUuid":"0e3a11a6_5627_499e_b60c_7b2269843e89","updateModel":"10","dataWindow":"30","timeout":"1000"}')
+
+	# action 3: activating the experiment
+	exp_uuid  = raw_input('Input created exp uuid:\t')
+	r.patch(user_uuid + '/exp/' + exp_uuid,'{"active" : "1"}')	
+
+	# action 4: editing the experiment
+	r.patch(user_uuid + '/exp/' + exp_uuid,'{"name" : "Falu vs Darkgreen vs Black background","descr" : "Different background colors of website","prop":"35","succUuid":"0e3a11a6_5627_499e_b60c_7b2269843e89","updateModel":"14","dataWindow":"20","timeout":"12000"}')
+
+
 
 if __name__=='__main__':
 	main(sys.argv)
