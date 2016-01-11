@@ -107,3 +107,6 @@
 {"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46102,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-11T18:26:55.747Z","v":0}
 {"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46104,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-11T18:27:14.234Z","v":0}
 {"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46106,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-11T18:27:18.528Z","v":0}
+{"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46526,"level":30,"msg":"env settings","time":"2016-01-11T18:55:14.789Z","v":0}
+{"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46546,"level":30,"msg":"env settings","time":"2016-01-11T18:58:31.190Z","v":0}
+{"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46552,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-11T18:59:16.088Z","v":0}
