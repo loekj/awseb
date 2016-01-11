@@ -15,7 +15,7 @@ var log = logger.getLogger()
 /*
 Dumb training model, everything in memory for now
 */
-exports.trainNB = function(exp_uuid) {
+exports.trainNB = function(exp_uuid, callback) {
 
 	var module_id = new db.mongo.ObjectID(exp_uuid)
 	var module_promise = db.mongo.modules.findOne({
@@ -53,7 +53,7 @@ exports.trainNB = function(exp_uuid) {
 		data_arr.forEach(function(val) {
 			// Skip if subject in test or result === nul (timeout)
 			if (!utils.isDef(val.result) || val.result === "0") { // "0" is failed succ. func
-				continue
+				//continue do nothing for now as we have no collections yet, only test data sent out.
 			}
 
 			var userData = val.userData
@@ -140,10 +140,26 @@ exports.trainNB = function(exp_uuid) {
 			},
 			function(err, result) {
 				if (err) {
-					return 0
+					log.error(exp_uuid + " is NOT successfully trained.")
+					callback(err)
+				} else {
+					log.info(exp_uuid + " is trained.")
+					callback(null, result)
 				}
-				return 1
 			}
 		)
+	})
+}
+
+// if root/train_local.sh is run
+if (require.main === module) {
+	db.connect(function(err) {
+		if (err) {
+			throw err
+		}
+		exports.trainNB(process.argv[2], function(err, result) {
+			process.exit(1)
+			// IF NOT ERR, FLUSH MODULE_ID FROM CACHE (or aply invalid tag)!
+		})
 	})
 }

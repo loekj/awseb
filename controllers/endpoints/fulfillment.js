@@ -3,6 +3,7 @@
 var express = require('express')
 var promiseLib = require('when')
 
+var math = require('math')
 var utils = require('../../misc/utils.js')
 var db = require('../database/database.js')
 var logger = require('../../log/logger.js')
@@ -160,13 +161,20 @@ function getDbEntry(collection, id) {
 	})
 }
 
-function LogGauss(x, mean, variance) {
-	return (-0.5 * Math.log(2 * math.pi * variance) - math.pow(x - mean, 2) / (2 * variance))
-}
+// function LogGauss(x, mean, variance, callback) {
+// 	console.log("X: ", x)
+// 	console.log("MEAN: ", mean)
+// 	console.log("VAR: ", variance)
+// 	callback()
+// }
 
+/*
+In future guard for overflow, check whether key exist in fit model 
+(maybe it is a new class not present in fitted model yet). If any of these issues arise, call callback
+*/
 function predictVariationNB(module, inputs) {
 	return promiseLib.promise(function(resolve, reject) {
-		var max_score = 0
+		var max_score = Number.NEGATIVE_INFINITY
 		var max_var_id
 		//must be defined, otherwise random var branch would be executed
 		
@@ -177,15 +185,22 @@ function predictVariationNB(module, inputs) {
 			var prob = 0
 			module.fit[key].forEach(function(feature) {
 				if (Array.isArray(feature)) { //numerical
-					prob += LogGauss(parseFloat(inputs[i]), feature[0], feature[1])
+					//console.log("INPUT:" ,math.pow(math.log(2 * Math.PI * feature[1]),2))
+					//console.log("FEATURE ARRAY: ", JSON.stringify(feature))
+					prob += -0.5 * math.log(2 * Math.PI * feature[1]) - math.pow(parseFloat(inputs[i]) - feature[0], 2) / (2 * feature[1])
+					//console.log("PROB NUMERICAL: ", prob)
 				} else { //categorical
+					//console.log("INPUTS[i]; " , inputs[i])
+					//console.log("FEATURE ARRAY: ", JSON.stringify(feature))
 					prob += feature[inputs[i]]
+					//console.log("PROB CAT: ", prob)
 				}
 				i++
 			})
 			if (prob > max_score) {
 				max_score = prob
 				max_var_id = key
+				console.log("UPDTING MAX: ", key)
 			}			
 		})
 		resolve(max_var_id)

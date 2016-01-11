@@ -3,6 +3,7 @@ node_modules/
 .elasticbeanstalk/
 
 # Local run cmd
+train*.sh
 run*.sh
 test/tests1/full_reset*.sh
 test/tests2/full_reset*.sh

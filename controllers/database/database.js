@@ -1,7 +1,12 @@
 exports.connect = function(callback){
-	var mongo_client = require('mongodb').MongoClient;
-	//mongo_client.connect('mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PWD + '@' + process.env.MONGO_HOST + process.env.MONGO_PORT + '/' + process.env.MONGO_DB, function (err, db) {
-		mongo_client.connect('mongodb://' + process.env.MONGO_HOST +  '/' + process.env.MONGO_DB, function (err, db) {
+	var mongo_client = require('mongodb').MongoClient
+	var mongo_url
+	if (process.env.DB_HOST === 'remote') {
+		mongo_url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PWD + '@' + process.env.MONGO_HOST + ':' + process.env.MONGO_PORT + '/' + process.env.MONGO_DB
+	} else {
+		mongo_url = 'mongodb://' + process.env.MONGO_HOST +  '/' + process.env.MONGO_DB
+	}
+	mongo_client.connect(mongo_url, function (err, db) {
 		if (err) {
 			callback(err);
 		}

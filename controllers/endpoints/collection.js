@@ -16,7 +16,7 @@ exports.POST = function(req, res, next) {
 	var callb = req.body.callback
 	var exp_uuid = req.body.expUuid
 	var test_uuid = new db.mongo.ObjectID(req.body.testUuid)
-	var outcome = req.body.result
+	var outcome = parseFloat(req.body.result)
 	//var time_of_day = req.body.timeOfDay
 
 	db.mongo.data.update(
@@ -25,14 +25,16 @@ exports.POST = function(req, res, next) {
 	},
 	{
 		$set : {
-			'data.result' = outcome // Upserts automatically if result not defined
+			'data.$.result' : outcome // Upserts automatically if result not defined
 		}
 	},
 	function(err, result) {
 		if (err) {
+			console.log(err)
 			sendResponse(res, 400)
+		} else {
+			sendResponse(res, 200)
 		}
-		sendResponse(res, 200)
 	})
 }
 

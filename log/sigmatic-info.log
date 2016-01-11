@@ -1,0 +1,109 @@
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T18:40:22.138Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Inserted into modules document id 5690030062fd35570a7ab670","time":"2016-01-08T18:42:08.680Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Inserted into data document id 5690030062fd35570a7ab671","time":"2016-01-08T18:42:08.682Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Inserted into variations document id 5690033162fd35570a7ab672","time":"2016-01-08T18:42:57.618Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Updated (pushed variation id) modules document id 5690030062fd35570a7ab670","time":"2016-01-08T18:42:57.620Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Inserted into variations document id 5690033462fd35570a7ab673","time":"2016-01-08T18:43:00.712Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Updated (pushed variation id) modules document id 5690030062fd35570a7ab670","time":"2016-01-08T18:43:00.713Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Inserted into variations document id 5690033662fd35570a7ab674","time":"2016-01-08T18:43:02.861Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Updated (pushed variation id) modules document id 5690030062fd35570a7ab670","time":"2016-01-08T18:43:02.862Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Inserted into variations document id 5690033a62fd35570a7ab675","time":"2016-01-08T18:43:06.606Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Updated (pushed variation id) modules document id 5690030062fd35570a7ab670","time":"2016-01-08T18:43:06.608Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Cached 5690030062fd35570a7ab670","time":"2016-01-08T18:44:57.088Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Cached 5690033662fd35570a7ab674","time":"2016-01-08T18:44:57.094Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":5,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:44:57.095Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Cached 5690033462fd35570a7ab673","time":"2016-01-08T18:45:26.883Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":2,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:45:26.883Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":3,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:45:38.320Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":4,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:45:41.720Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Cached 5690033a62fd35570a7ab675","time":"2016-01-08T18:45:44.672Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":1,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:45:44.672Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":2,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:45:47.700Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"msg":"Cached 5690033162fd35570a7ab672","time":"2016-01-08T18:45:53.251Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":4,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:45:53.252Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":5,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:45:56.496Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-08T18:45:59.600Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":1,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:03.133Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":2,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:11.103Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":3,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:13.833Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":4,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:17.162Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":5,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:20.099Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-08T18:46:24.051Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":1,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:27.732Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":2,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:31.168Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":3,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:34.107Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":4,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:38.925Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":5,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:41.792Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":1,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:44.757Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":2,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:48.819Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":3,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:51.872Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":4,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:46:55.920Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":5,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:47:43.078Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-08T18:47:59.374Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-08T18:48:14.285Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2647,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-08T18:48:51.665Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2726,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T18:50:09.039Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2726,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":3,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:50:14.979Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2726,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":4,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T18:50:19.665Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2730,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T18:54:16.748Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2733,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T18:55:25.201Z","v":0}
+{"name":"sigmatic","hostname":"DN0a226326.SUNet","pid":2735,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T18:55:45.729Z","v":0}
+{"name":"sigmatic","hostname":"DN0a22b32d.SUNet","pid":2899,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T19:36:46.900Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3043,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T20:38:40.887Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3061,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T20:49:48.465Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3145,"level":50,"msg":"5690030062fd35570a7ab670 is not successfully trained.","time":"2016-01-08T20:56:18.068Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3147,"level":50,"msg":"5690030062fd35570a7ab670 is not successfully trained.","time":"2016-01-08T20:56:35.594Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3149,"level":50,"msg":"5690030062fd35570a7ab670 is not successfully trained.","time":"2016-01-08T20:56:47.134Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3151,"level":50,"msg":"5690030062fd35570a7ab670 is NOT successfully trained.","time":"2016-01-08T20:57:54.216Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3153,"level":50,"msg":"5690030062fd35570a7ab670 is NOT successfully trained.","time":"2016-01-08T20:58:30.745Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3161,"level":30,"msg":"5690030062fd35570a7ab670 is trained.","time":"2016-01-08T21:00:18.279Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3164,"level":30,"msg":"5690030062fd35570a7ab670 is trained.","time":"2016-01-08T21:02:40.366Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3167,"level":30,"msg":"5690030062fd35570a7ab670 is trained.","time":"2016-01-08T21:03:54.843Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3169,"level":30,"msg":"5690030062fd35570a7ab670 is trained.","time":"2016-01-08T21:04:32.110Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3171,"level":30,"msg":"5690030062fd35570a7ab670 is trained.","time":"2016-01-08T21:05:32.451Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3173,"level":30,"msg":"5690030062fd35570a7ab670 is trained.","time":"2016-01-08T21:06:15.181Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3219,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:23:11.821Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3219,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":3,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:23:53.535Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3219,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":4,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:24:30.290Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3219,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":5,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:25:44.459Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3223,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:25:50.255Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3223,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":3,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:25:58.323Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3294,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:26:59.804Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3294,"level":50,"msg":"Variations did not compile:  math is not defined","time":"2016-01-08T21:27:08.778Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3294,"level":30,"msg":"Cached 5690030062fd35570a7ab670","time":"2016-01-08T21:27:08.790Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3296,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:27:32.906Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3296,"level":30,"msg":"Cached 5690033462fd35570a7ab673","time":"2016-01-08T21:27:34.737Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3296,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":4,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:27:34.738Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3298,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:28:08.445Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3298,"level":50,"msg":"Variations did not compile:  math is not defined","time":"2016-01-08T21:28:11.404Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3303,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:28:59.860Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3303,"level":30,"msg":"Cached undefined","time":"2016-01-08T21:29:01.637Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3309,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:31:53.540Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3312,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:33:06.815Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3315,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:35:23.028Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3317,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:36:03.908Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3319,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:36:54.509Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3319,"level":30,"msg":"Cached 5690033662fd35570a7ab674","time":"2016-01-08T21:36:58.726Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3319,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":3,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:36:58.726Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3376,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:37:37.620Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3398,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:38:48.417Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3401,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:39:21.942Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3403,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:39:54.254Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3406,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:40:19.414Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3408,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:40:56.939Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3408,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":3,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:40:58.948Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3410,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:42:27.075Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3415,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:43:13.228Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3418,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:44:18.866Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3422,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:45:50.311Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3422,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":4,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:45:54.888Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3422,"level":30,"msg":"Cached 5690033162fd35570a7ab672","time":"2016-01-08T21:46:01.470Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3422,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":5,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:46:01.471Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3422,"level":30,"result":{"ok":1,"nModified":1,"n":1},"connection":{"id":1,"host":"localhost","port":27017},"msg":"","time":"2016-01-08T21:46:14.402Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3424,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:46:48.770Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3427,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-08T21:47:15.610Z","v":0}
+{"name":"sigmatic","hostname":"DN0a232809.SUNet","pid":3427,"level":50,"msg":"Variations did not compile:  Cannot read property '_id' of null","time":"2016-01-08T21:47:54.921Z","v":0}
+{"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46079,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-11T18:20:36.018Z","v":0}
+{"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46102,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-11T18:26:55.747Z","v":0}
+{"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46104,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-11T18:27:14.234Z","v":0}
+{"name":"sigmatic","hostname":"DN51t5qt.SUNet","pid":46106,"level":30,"NODE_ENV":"debug","NODE_HOST":"local","msg":"env settings","time":"2016-01-11T18:27:18.528Z","v":0}
