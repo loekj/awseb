@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 
+var db = require('../controllers/database/database.js');
 var app = require('../app');
 var debug = require('debug')('node-express:server');
 var http = require('http');
