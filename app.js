@@ -23,32 +23,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 //app.use(cookieParser());
 
-/* 
- * OAuth
- */
-var oauth2lib = require('oauth20-provider');
-var oauth2 = new oauth2lib({log: {level: 2}});
-app.use(oauth2.inject());
-
-app.post('/token', oauth2.controller.token);
-app.get('/authorization', isAuthorized, oauth2.controller.authorization, function(req, res) {
-    // Render our decision page
-    // Look into ./test/server for further information
-    res.render('authorization', {layout: false});
-});
-app.post('/authorization', isAuthorized, oauth2.controller.authorization);
-
-function isAuthorized(req, res, next) {
-    if (req.session.authorized) next();
-    else {
-        var params = req.query;
-        params.backUrl = req.path;
-        res.redirect('/login?' + query.stringify(params));
-    }
-};
-
-
-
 /*
 * API Endpoints
 */
@@ -56,16 +30,19 @@ if (mode == 'production') {
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
 	var register = require('./controllers/endpoints/register.js');
 	var collection = require('./controllers/endpoints/collection.js');
-	var login = require('./controllers/endpoints/login.js');
 	
 	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
-	
-	app.post('/login', login.POST);
+
+// OAuth2:
+	var login = require('./controllers/login/login.js');
+	app.get('/login', login.login);
+	app.get('/githubauth', login.githubauth);
+	app.get('/loginsuccess', login.loginsuccess);
+	app.get('/logout', login.logout);
 
 } else if (mode == 'debug') {
-	var login = require('./controllers/endpoints/login.js');
 	var register = require('./controllers/endpoints/register.js');
 	var fulfillment = require('./controllers/endpoints/fulfillment.js');
 	var collection = require('./controllers/endpoints/collection.js');
@@ -74,8 +51,8 @@ if (mode == 'production') {
 	var experiment_id = require('./controllers/endpoints/exp_id.js');
 	var experiment_id_variation = require('./controllers/endpoints/exp_id_var.js');
 	var experiment_id_variation_id = require('./controllers/endpoints/exp_id_var_id.js');
+	var login = require('./controllers/login/login.js');
 
-	app.post('/login', login.POST);
 	app.post('/register', register.POST);
 
 	app.post('/collection', collection.POST);
@@ -96,6 +73,14 @@ if (mode == 'production') {
 	app.get('/:userId/exp/:expId/var/:varId', experiment_id_variation_id.GET);
 	app.post('/:userId/exp/:expId/var/:varId', experiment_id_variation_id.POST);
 	app.patch('/:userId/exp/:expId/var/:varId', experiment_id_variation_id.PATCH);
+
+// OAuth2:
+	app.get('/login', login.login);
+	app.get('/githubauth', login.githubauth);
+	app.get('/loginsuccess', login.loginsuccess);
+	app.get('/logout', login.logout);
+	app.get('/check', login.check);
+	
 }
 
 db.connect(function(err) {

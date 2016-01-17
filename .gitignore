@@ -1,6 +1,6 @@
 node_modules/
-.gitignore
 .elasticbeanstalk/
+*.log
 
 # Local run cmd
 run*.sh
@@ -14,3 +14,5 @@ test/tests2/full_reset*.sh
 
 # Mysql database files
 database_info*.txt
+
+
