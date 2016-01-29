@@ -67,16 +67,16 @@ if (mode == 'production') {
 	app.patch('/:userId/exp/:expId/var/:varId', experiment_id_variation_id.PATCH);
 }
 
-db.connect(function(err) {
-	if (err) {
-		throw err;
-	}
-	if (process.env.NODE_HOST == 'local') {
+if (process.env.NODE_HOST == 'local') {
+	db.connect(function(err) {
+		if (err) {
+			throw err;
+		}	
 		server.listen(3000, '127.0.0.1');
 		server.on('listening', function() {
 			console.log('Express server started on port %s at %s', server.address().port, server.address().address);
 		});
-	}
-});
+	});
+}
 
 module.exports = app;
