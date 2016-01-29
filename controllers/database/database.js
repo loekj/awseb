@@ -1,3 +1,5 @@
+var exec = require('child_process').exec
+
 exports.connect = function(callback){
 	var mongo_client = require('mongodb').MongoClient
 	var mongo_url
@@ -11,6 +13,10 @@ exports.connect = function(callback){
 			callback(err);
 		}
 		var redisClient = require('redis').createClient;
+		if (process.env.DB_HOST === 'remote' && process.env.NODE_HOST === 'local') {
+			// in dev environement with remote db
+			// copy remote db and use that one
+		}
 		exports.mongo = db;
 		exports.mongo.ObjectID = require('mongodb').ObjectID;
 		exports.mongo.accounts = db.collection('accounts');

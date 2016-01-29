@@ -26,35 +26,33 @@ exports.POST = function(req, res, next) {
 	.then(function(modules) {
 		res.status(200).json(modules)
 	}).catch(function(err) {
-		log.error("Variations did not compile: ",err.message)
+		log.error("Variations did not compile: ", err)
 		res.status(400).json({err: err})
-		throw err
 	})
 }
 
 function getVariationPromises(moduleArray, userData) {
 	var variationPromiseArray = []
 	var module
-	var modulePromise
 	var i
 	for(i=0; i < moduleArray.length; i++) {
 		module = moduleArray[i]
 		if (!utils.isDef(module.activeVariation)) {
 			// User isn't already in test:
-			console.log("Not in variation. Either add to one, or deliver winner.")
-			modulePromise = getDbEntry(db.mongo.modules, module.expUuid)
+			variationPromiseArray.push(
+				getDbEntry(db.mongo.modules, module.expUuid)
 				.then(function(module) {
-					//console.log('getDbEntry result:', module)
 					return getTestIdOrWinningVariation(module, userData)
+				}).catch(function(err) {
+					throw err
 				})
-
-			variationPromiseArray.push(modulePromise)
+			)
 		} else {
 			// User is already in test. Deliver consistent variation to them:
 			console.log("ALREADY IN TEST: FEED ACTIVE VARIATION")
-			//console.log('module.activeVariation',module.activeVariation)
-			modulePromise = getDbEntry(db.mongo.variations, module.activeVariation)
-			variationPromiseArray.push(modulePromise)
+			variationPromiseArray.push(
+				getDbEntry(db.mongo.variations, module.activeVariation)
+			)
 		}
 	}
 	return variationPromiseArray
@@ -76,7 +74,10 @@ function getTestIdOrWinningVariation(module, userData) {
 			variation.succ = module.succ
 			variation.testUuid = test_uuid
 			return variation
+		}).catch(function(error) {
+			console.log("ERROR: ", JSON.stringify(error))
 		})
+
 	} else {
 		console.log("NON-TEST SUBJECT: PREDICT WINNING")
 		// predict variation by machine learning
@@ -91,6 +92,18 @@ function getTestIdOrWinningVariation(module, userData) {
 		return predictPromise.then(function(variationId) {
 			console.log('Predicted variation ID: ', variationId)
 			return getDbEntry(db.mongo.variations, variationId)
+		}).catch(function(error) {
+			// Serve random variation
+			console.log("ERROR IN PREDICTING. SERVING RANDOM VARIATION.")
+			variationId = getRandomVariationId(module.variations)
+			return getDbEntry(db.mongo.variations, variationId)
+				.then(function(variation) {
+					test_uuid = new db.mongo.ObjectID()
+					addUserToInTestDB(module._id, userData, variation._id, test_uuid)
+					variation.succ = module.succ
+					variation.testUuid = test_uuid
+					return variation
+				})			
 		})
 	}
 }
@@ -132,26 +145,25 @@ function getDbEntry(collection, id) {
 	return promiseLib.promise(function(resolve, reject) {	
 		db.redis.get(id, function(err, result) {
 			if (err) {
-				log.error(err)
-				reject(err)
+				log.error("Not found redis key " + id)
 			}
-			if (result) { //exist in cache
-				console.log("EXIST IN CACHE! :D")
+			if (utils.isDef(result)) { //exist in cache
 				resolve(JSON.parse(result))
 			} else { //does not exist in cache
-				console.log("NOT EXIST IN CACHE! :(")
+				console.log("NOT IN CACHE")
 				var obj_id = new db.mongo.ObjectID(id)
-				var dbPromise = collection.findOne({
+				collection.findOne({
 					'_id' : obj_id
-				})
-				//console.log('db Promise: ', dbPromise)
-				dbPromise.then(function(result) {
-					// add to cache
-					//console.log('db  query results: ', {id: id, result: result})
+				}).then(function(result) {
+					console.log("id: " + id)
+					console.log("result: ", JSON.stringify(result))
+					if (!utils.isDef(result)) {
+						reject("Id " + id + " not found")
+					}
 					resolve(result)
 					db.redis.set(id, JSON.stringify(result), function(err, result) {
 						if (err) {
-							log.error("Cache redus.set error id: " + id)
+							log.error("Redis not set key id " + id)
 						}
 						log.info("Cached " + id)
 					})
@@ -178,29 +190,26 @@ function predictVariationNB(module, inputs) {
 		var max_var_id
 		//must be defined, otherwise random var branch would be executed
 		
-
 		//forEach is sync, so should work.
 		Object.keys(module.fit).forEach(function(key){
 			var i = 0
 			var prob = 0
 			module.fit[key].forEach(function(feature) {
 				if (Array.isArray(feature)) { //numerical
-					//console.log("INPUT:" ,math.pow(math.log(2 * Math.PI * feature[1]),2))
-					//console.log("FEATURE ARRAY: ", JSON.stringify(feature))
 					prob += -0.5 * math.log(2 * Math.PI * feature[1]) - math.pow(parseFloat(inputs[i]) - feature[0], 2) / (2 * feature[1])
-					//console.log("PROB NUMERICAL: ", prob)
 				} else { //categorical
-					//console.log("INPUTS[i]; " , inputs[i])
-					//console.log("FEATURE ARRAY: ", JSON.stringify(feature))
+					var prob_feature = feature[inputs[i]]
+					if (!utils.isDef(prob_feature)) {
+						log.error("WARNING: Feature class not known in fitted model.")
+						throw TypeError("Feature class not known in fitted model.")
+					}
 					prob += feature[inputs[i]]
-					//console.log("PROB CAT: ", prob)
 				}
 				i++
 			})
 			if (prob > max_score) {
 				max_score = prob
 				max_var_id = key
-				console.log("UPDTING MAX: ", key)
 			}			
 		})
 		resolve(max_var_id)

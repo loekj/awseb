@@ -144,7 +144,12 @@ exports.trainNB = function(exp_uuid, callback) {
 					callback(err)
 				} else {
 					log.info(exp_uuid + " is trained.")
-					callback(null, result)
+					db.redis.del(module_id, function(err, result_cache) {
+						if (err) {
+							log.error(err)
+						}
+						callback(null, result)
+					})	
 				}
 			}
 		)
