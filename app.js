@@ -21,7 +21,18 @@ if (host == 'local') {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.set('jsonp callback name','sigCallback');
+
+// Danger: This is a temporary measure to allow cross-origin JS requests from any domain.  
+// We'll need to specify explicit permissions, later on.
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+// Must match JSONP name var in front-end code:
+// app.set('jsonp callback name','sigCallback');
+
 //app.use(cookieParser());
 /*
 * API Endpoints

@@ -18,16 +18,16 @@ exports.GET = function(req, res, next) {
 	var userData = req.body.userData
 	var modulesArray = req.body.modules
 	if(modulesArray.length === undefined) {
-		res.status(400).jsonp({error: 'No modules present in request.'})
+		res.status(400).json({error: 'No modules present in request.'})
 	}
 	var variationPromiseArray = getVariationPromises(modulesArray, userData)
 
 	promiseLib.all(variationPromiseArray)
 	.then(function(modules) {
-		res.status(200).jsonp(modules)
+		res.status(200).json(modules)
 	}).catch(function(err) {
 		log.error("Variations did not compile: ", err)
-		res.status(400).jsonp({err: err})
+		res.status(400).json({err: err})
 	})
 }
 
