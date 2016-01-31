@@ -173,13 +173,6 @@ function getDbEntry(collection, id) {
 	})
 }
 
-// function LogGauss(x, mean, variance, callback) {
-// 	console.log("X: ", x)
-// 	console.log("MEAN: ", mean)
-// 	console.log("VAR: ", variance)
-// 	callback()
-// }
-
 /*
 In future guard for overflow, check whether key exist in fit model 
 (maybe it is a new class not present in fitted model yet). If any of these issues arise, call callback

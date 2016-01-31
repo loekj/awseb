@@ -166,13 +166,8 @@ exports.PATCH = function(req, res, next) {
 * request to init experiment. Change database tables
 */
 exports.POST = function(req, res, next) {
-
-  var succ_uuid = null
-  if (utils.isDef(req.body.succUuid.toLowerCase())) {
-    succ_uuid = req.body.succUuid
-  }
-
   var userId = new db.mongo.ObjectID(req.params.userId)
+  
   db.mongo.modules.insert(
     {
       '_userId' : userId,
@@ -184,7 +179,6 @@ exports.POST = function(req, res, next) {
       'window' : parseInt(req.body.dataWindow,10),
       'update' : parseInt(req.body.updateModel,10),
       'variations' : [],
-      'succUuid' : succ_uuid,
       'succ' : req.body.succ,
       'featureType' : req.body.featureType
     }, function(err, result) {
