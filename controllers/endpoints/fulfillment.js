@@ -196,11 +196,16 @@ function predictVariationNB(module, inputs) {
 			var prob = 0
 			module.fit[key].forEach(function(feature) {
 				if (Array.isArray(feature)) { //numerical
-					prob += -0.5 * math.log(2 * Math.PI * feature[1]) - math.pow(parseFloat(inputs[i]) - feature[0], 2) / (2 * feature[1])
+					var feature_val = parseFloat(inputs[i])
+					if (Object.is(feature_val), NaN || !utils.isDef(feature_val)) {
+						log.error("Non-numerical passed in fitted model.")
+						throw TypeError("Non-numerical passed in fitted model.")
+					}		
+					prob += -0.5 * math.log(2 * Math.PI * feature[1]) - math.pow(feature_val - feature[0], 2) / (2 * feature[1])
 				} else { //categorical
 					var prob_feature = feature[inputs[i]]
 					if (!utils.isDef(prob_feature)) {
-						log.error("WARNING: Feature class not known in fitted model.")
+						log.error("Feature class not known or accessing out of bounds array in fitted model.")
 						throw TypeError("Feature class not known in fitted model.")
 					}
 					prob += feature[inputs[i]]
