@@ -13,7 +13,7 @@ var log = logger.getLogger()
 /* 
 * API dir
 */
-exports.POST = function(req, res, next) {
+exports.GET = function(req, res, next) {
 	var callb = req.body.callback
 	var userData = req.body.userData
 	var modulesArray = req.body.modules
