@@ -58,8 +58,8 @@ if (mode == 'production') {
 
 	app.post('/register', register.POST);
 
-	app.get('/collection', collection.GET);
-	app.get('/fulfillment', fulfillment.GET);
+	app.POST('/collection', collection.POST);
+	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
 
 	app.get('/:userId/exp', experiment.GET);

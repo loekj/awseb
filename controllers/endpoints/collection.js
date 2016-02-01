@@ -12,7 +12,7 @@ sendResponse = function(res, code) {
 /* 
 * API dir
 */
-exports.GET = function(req, res, next) {
+exports.POST = function(req, res, next) {
 	var callb = req.body.callback
 	var exp_uuid = req.body.expUuid
 	var test_uuid = new db.mongo.ObjectID(req.body.testUuid)
