@@ -58,7 +58,7 @@ if (mode == 'production') {
 
 	app.post('/register', register.POST);
 
-	app.POST('/collection', collection.POST);
+	app.post('/collection', collection.POST);
 	app.post('/fulfillment', fulfillment.POST);
 	app.post('/register', register.POST);
 
