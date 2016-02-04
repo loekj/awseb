@@ -1,5 +1,5 @@
 var express = require('express');
-var cors = require('cors');
+//var cors = require('cors');
 
 var path = require('path');
 var http = require('http');
@@ -21,14 +21,21 @@ if (host == 'local') {
 	var server = http.createServer(app);
 }
 //app.use(cors());
-app.options('*', cors());
+//app.options('*', cors());
+
 //app.use(allowCrossDomain);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+
 
 // Danger: This is a temporary measure to allow cross-origin JS requests from any domain.  
 // We'll need to specify explicit permissions, later on.
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')))
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	next();
+});
 // app.use(function(req, res, next) {
 // 	res.header("Access-Control-Allow-Origin", "*");
 // 	res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
@@ -40,6 +47,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 		next();
 // 	}
 // });
+
+// app.all('/', function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//   next();
+//  });
 
 // Must match JSONP name var in front-end code:
 // app.set('jsonp callback name','sigCallback');
