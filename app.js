@@ -20,7 +20,8 @@ var app = express();
 if (host == 'local') {
 	var server = http.createServer(app);
 }
-app.use(cors());
+//app.use(cors());
+app.options('*', cors());
 //app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
