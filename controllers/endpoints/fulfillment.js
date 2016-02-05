@@ -18,7 +18,6 @@ exports.POST = function(req, res, next) {
 	var userData = req.body.userData
 	var modulesArray = req.body.modules
 	console.log(JSON.stringify({body: req.body, issue: typeof modulesArray}))
-	res.json({body: req.body, issue: typeof modulesArray})
 	if(modulesArray.length === undefined) {
 		res.status(400).json({error: 'No modules present in request.'})
 	}
