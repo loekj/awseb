@@ -17,7 +17,6 @@ exports.POST = function(req, res, next) {
 	var callb = req.body.callback
 	var userData = req.body.userData
 	var modulesArray = req.body.modules
-	console.log(JSON.stringify({body: req.body, issue: typeof modulesArray}))
 	if(modulesArray.length === undefined) {
 		res.status(400).json({error: 'No modules present in request.'})
 	}
@@ -70,11 +69,20 @@ function getTestIdOrWinningVariation(module, userData) {
 		//Test person! Select random variation 
 		variationId = getRandomVariationId(module.variations)
 		return getDbEntry(db.mongo.variations, variationId).then(function(variation) {
+			var res_obj
+			res_obj.content : [{
+				moduleUuid : module._id,
+				code : {
+					html : variation.html,
+					css : variation.css,
+					js : variation.js
+				},
+				tests : module.succ
+			}]
 			test_uuid = new db.mongo.ObjectID()
+			res_obj.testUuid : test_uuid
 			addUserToInTestDB(module._id, userData, variation._id, test_uuid)
-			variation.succ = module.succ
-			variation.testUuid = test_uuid
-			return variation
+			return res_obj
 		}).catch(function(error) {
 			console.log("ERROR: ", JSON.stringify(error))
 		})
@@ -99,11 +107,20 @@ function getTestIdOrWinningVariation(module, userData) {
 			variationId = getRandomVariationId(module.variations)
 			return getDbEntry(db.mongo.variations, variationId)
 				.then(function(variation) {
+					var res_obj
+					res_obj.content : [{
+						moduleUuid : module._id,
+						code : {
+							html : variation.html,
+							css : variation.css,
+							js : variation.js
+						},
+						tests : module.succ
+					}]
 					test_uuid = new db.mongo.ObjectID()
+					res_obj.testUuid : test_uuid
 					addUserToInTestDB(module._id, userData, variation._id, test_uuid)
-					variation.succ = module.succ
-					variation.testUuid = test_uuid
-					return variation
+					return res_obj
 				})			
 		})
 	}
