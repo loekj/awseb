@@ -152,6 +152,9 @@ function addUserToInTestDB(experimentId, userData, variationId, test_uuid) {
 				}
 			}
 		},
+		{
+			upsert : true
+		},
 		function(err, result) {
 			if (err) {
 				log.error(err)
