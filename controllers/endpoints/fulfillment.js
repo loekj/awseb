@@ -4,6 +4,8 @@ var express = require('express')
 var promiseLib = require('when')
 
 var math = require('math')
+var mathjs = require('mathjs')
+
 var utils = require('../../misc/utils.js')
 var db = require('../database/database.js')
 var logger = require('../../log/logger.js')
@@ -39,6 +41,7 @@ function getVariationPromises(moduleArray, userData) {
 		module = moduleArray[i]
 		if (!utils.isDef(module.activeVariation)) {
 			// User isn't already in test:
+			console.log("EXPUUID: " + module.expUuid)
 			variationPromiseArray.push(
 				getDbEntry(db.mongo.modules, module.expUuid)
 				.then(function(module) {
@@ -60,14 +63,17 @@ function getVariationPromises(moduleArray, userData) {
 
 function getTestIdOrWinningVariation(module, userData) {
 	// Get random number
-	var addUserToTest = (Math.random() * 100 <= parseInt(module.prop))
+	var addUserToTest = (math.random() * 100 <= parseInt(module.prop))
 	var variationId
 	var predictPromise
 	var test_uuid
-	if(addUserToTest === true || !utils.isDef(module.fit)) { //fit does not exist if not trained yet
+	if(addUserToTest === true || addUserToTest == false || !utils.isDef(module.model)) { //fit does not exist if not trained yet
 		console.log("TEST SUBJECT: RANDOM VAR")
-		//Test person! Select random variation 
+		//Test person! Select random variation
+		console.log("VARIATIONS DEFINED?: " + JSON.stringify(typeof module.variations))
+		console.log(module.variations)
 		variationId = getRandomVariationId(module.variations)
+		console.log("RAND VAR: " + variationId)
 		return getDbEntry(db.mongo.variations, variationId).then(function(variation) {
 			var res_obj = {
 				content : [{
@@ -92,9 +98,9 @@ function getTestIdOrWinningVariation(module, userData) {
 		console.log("NON-TEST SUBJECT: PREDICT WINNING")
 		// predict variation by machine learning
 		// fetch corresponding test function
-		if (module.succ.depVarType === 'binary') {
-			predictPromise = predictVariationNB(module, userData)
-		} else if (module.succ.depVarType === 'mclass') {
+		if (module.succ.TestSuccFn.depVarType === 'binary') {
+			predictPromise = predictVariationFWNB(module, userData)
+		} else if (module.succ.TestSuccFn.depVarType === 'mclass') {
 			predictPromise = predictVariationMCLASS(module, userData)
 		} else {//(module.succ.depVarType === 'num') {
 			predictPromise = predictVariationREGR(module, userData)
@@ -129,7 +135,8 @@ function getTestIdOrWinningVariation(module, userData) {
 }
 
 function getRandomVariationId(variations) {
-	var keyIndex = Math.round(Math.random() * variations.length)
+	var keyIndex = mathjs.randomInt(variations.length)
+	console.log("KEYINDEX: " + JSON.stringify(keyIndex))
 	var variationId = variations[keyIndex]
 	return variationId
 }
@@ -207,10 +214,10 @@ function predictVariationNB(module, inputs) {
 		//must be defined, otherwise random var branch would be executed
 		
 		//forEach is sync, so should work.
-		Object.keys(module.fit).forEach(function(key){
+		Object.keys(module.model.fit).forEach(function(key){
 			var i = 0
 			var prob = 0
-			module.fit[key].forEach(function(feature) {
+			module.model.fit[key].forEach(function(feature) {
 				if (Array.isArray(feature)) { //numerical
 					var feature_val = parseFloat(inputs[i])
 					if (Object.is(feature_val), NaN || !utils.isDef(feature_val)) {
@@ -228,11 +235,55 @@ function predictVariationNB(module, inputs) {
 				}
 				i++
 			})
+			prob += module.model.prior[key]
+			if (prob > max_score) {
+				max_score = prob
+				max_var_id = key
+			}
+		})
+		resolve(max_var_id)
+	})
+}
+
+/*
+* Feature Weighted NB
+*/
+function predictVariationFWNB(module, inputs) {
+	return promiseLib.promise(function(resolve, reject) {
+		var max_score = Number.NEGATIVE_INFINITY
+		var max_var_id
+		//must be defined, otherwise random var branch would be executed
+		
+		//forEach is sync, so should work.
+		Object.keys(module.model.fit).forEach(function(key){
+			var i = 0
+			var prob = 0
+			module.model.fit[key].forEach(function(feature) {
+				if (Array.isArray(feature)) { //numerical
+					var feature_val = parseFloat(inputs[i])
+					if (Object.is(feature_val), NaN || !utils.isDef(feature_val)) {
+						log.error("Non-numerical passed in fitted model.")
+						throw TypeError("Non-numerical passed in fitted model.")
+					}		
+					prob += module.model.weights[i] * (-0.5 * math.log(2 * Math.PI * feature[1]) - math.pow(feature_val - feature[0], 2) / (2 * feature[1]) )
+				} else { //categorical
+					var prob_feature = feature[inputs[i]]
+					if (!utils.isDef(prob_feature)) {
+						log.error("Feature class not known or accessing out of bounds array in fitted model.")
+						throw TypeError("Feature class not known in fitted model.")
+					}
+					prob += module.model.weights[i] * feature[inputs[i]]
+				}
+				i++
+			})
+			prob += module.model.prior[key]
 			if (prob > max_score) {
 				max_score = prob
 				max_var_id = key
 			}			
+			console.log("ITER FOR LOOP PREDICT")
 		})
+		console.log("ENDED FOR")
 		resolve(max_var_id)
 	})
 }

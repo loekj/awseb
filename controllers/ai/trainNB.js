@@ -33,6 +33,7 @@ exports.trainNB = function(exp_uuid, callback) {
 		var data_arr = result[1].data
 
 		var fit = {}
+		var prior = {}
 		var totals = {}
 		var cats = []
 		var i, j
@@ -49,27 +50,37 @@ exports.trainNB = function(exp_uuid, callback) {
 			// do stuff
 		})
 		*/
-
+		var n_valid_obs = 0
 		data_arr.forEach(function(val) {
 			// Skip if subject in test or result === nul (timeout)
-			if (!utils.isDef(val.result) || val.result === "0") { // "0" is failed succ. func
-				//continue do nothing for now as we have no collections yet, only test data sent out.
-			}
+			if (utils.isDef(val.result) && val.result !== "0") { // "0" is failed succ. func
+			// if (!utils.isDef(val.result) || val.result === "0") { // "0" is failed succ. func
+			// 	//continue do nothing for now as we have no collections yet, only test data sent out.
+			// }
+				n_valid_obs++
+				var userData = val.userData
 
-			var userData = val.userData
+				// Increment for prior counts of variations
+				if (utils.isDef(prior[val.variation])) {
+					prior[val.variation]++
+				} else {
+					prior[val.variation] = 1 // TODO: including laplace?
+				}			
 
-			// Iterate over each feature
-			for (j = 0; j < feature_type.length; j++) {
-				if (feature_type[j] === "0") { //categorical
+				// Iterate over each feature
+				for (j = 0; j < feature_type.length; j++) {
+					if (feature_type[j] === "0") { //categorical
 
-
-					if (utils.isDef(fit[val.variation][j])) {
+						// First time encountering this variable (categorical -> init dict)
+						if (!utils.isDef(fit[val.variation][j])) {
+							fit[val.variation][j] = {}
+						}
 						if (utils.isDef(fit[val.variation][j][userData[j]])) {
 							fit[val.variation][j][userData[j]]++
 
 						// First time iterating over feature for variation, init count
 						} else {
-							fit[val.variation][j][userData[j]] = 1
+							fit[val.variation][j][userData[j]] = 1 // TODO: including laplace?
 						}
 
 						// keep track of all classes for the categorical features
@@ -77,23 +88,28 @@ exports.trainNB = function(exp_uuid, callback) {
 							cats[j].push(userData[j])
 						}
 
-					// First time iterating over feature, init dict
-					} else {
-						fit[val.variation][j] = {}
-					}
+					} else { //numerical
 
-				} else { //numerical
+						// Keep track of all values, to calc mean and variance later
+						if (utils.isDef(fit[val.variation][j])){
+							fit[val.variation][j].push(parseFloat(userData[j]))
 
-					// Keep track of all values, to calc mean and variance later
-					if (utils.isDef(fit[val.variation][j])){
-						fit[val.variation][j].push(parseFloat(userData[j]))
-
-					// First time iterating over feature, init array
-					} else {
-						fit[val.variation][j] = [parseFloat(userData[j])]
+						// First time iterating over feature, init array
+						} else {
+							fit[val.variation][j] = [parseFloat(userData[j])]
+						}
 					}
 				}
 			}
+		})
+
+		if (Object.keys(prior).length != variations.length) {
+			log.error("Not all variations are served or recorded in module yet.")
+		}
+
+		// Calculate prior probs here TODO: laplace smoothing?
+		Object.keys(prior).forEach(function(key) {
+			prior[key] /= n_valid_obs
 		})
 
 		Object.keys(fit).forEach(function(key) {
@@ -127,6 +143,11 @@ exports.trainNB = function(exp_uuid, callback) {
 			}
 		})
 
+		// map to log here
+		Object.keys(prior).forEach(function(key) {
+			prior[key] = math.log(prior[key])
+		})
+
 		// Store the fitted model and update the modified timestamp
 		db.mongo.modules.update(
 			{
@@ -134,8 +155,12 @@ exports.trainNB = function(exp_uuid, callback) {
 			},
 			{
 				$set : {
-					'modified' : Date.now(),
-					'fit' : fit
+					model : {
+						type : 'NB',
+						modified : Date.now(),
+						fit : fit,
+						prior : prior
+					}
 				}
 			},
 			function(err, result) {

@@ -25,7 +25,7 @@ exports.POST = function(req, res, next) {
 	},
 	{
 		$set : {
-			'data.$.result' : outcome // Upserts automatically if result not defined
+			'data.$.result' : outcome // Should upsert automatically if result not defined
 		}
 	},
 	function(err, result) {

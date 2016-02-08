@@ -43,11 +43,12 @@ class RESTwrapper():
 
 def main(argv = None):
 	if len(argv) < 3:
-		print('Usage:\n\t{0}<"local"/"remote"> <# of cases>'.format(argv[0]))
+		print('Usage:\n\t{0}<"local"/"remote"> <# of cases> <module id>'.format(argv[0]))
 		sys.exit(0)
 
 	mode = argv[1]
 	n = int(argv[2])
+	exp_uuid = argv[3]
 
 	if (mode == 'remote'):
 		r = RESTwrapper('http://branch-dev.elasticbeanstalk.com/')	
@@ -56,7 +57,7 @@ def main(argv = None):
 
 	def get_random_datapoint():
 		# feature 1: car color
-		color = ['black', 'green', 'red', 'blue', 'purple']
+		color = ['black', 'green', 'red', 'blue']
 
 		# feature 2: miles driven range
 		min_miles = 5000
@@ -70,15 +71,27 @@ def main(argv = None):
 		max_income = 300000
 		return '["' + color[random.randint(0,len(color)-1)] + '","' + str(random.randint(min_miles,max_miles)) + '","' + car[random.randint(0,len(car)-1)] + '","' + str(random.randint(min_income,max_income)) + '"]'
 
-		
+	def get_marginal_gauss_datapoint():
+		# feature 1: car color
+		color = ['black', 'green', 'red', 'blue']
 
-	exp_uuid  = raw_input('Input expUuid:\t')
+		# feature 2: miles driven range
+		mu1 = 120000
+		sig1 = 30000
+
+		# feature 3: car make
+		car = ['nissan', 'ford', 'toyota', 'volvo']
+
+		# feature 4: income range
+		mu2 = 60000
+		sig2 = 20000
+		return '["' + color[random.randint(0,len(color)-1)] + '","' + str(random.gauss(mu1,sig1)) + '","' + car[random.randint(0,len(car)-1)] + '","' + str(random.gauss(mu2,sig2)) + '"]'		
 
 	# generating random data
 	for _ in range(n):
-		r.post('fulfillment','{"callback":"__jsonp_0","userData":' + str(get_random_datapoint()) +',"modules":[{"expUuid":"' + exp_uuid + '"}]}')
+		r.post('fulfillment','{"userData":' + str(get_random_datapoint()) +',"modules":[{"expUuid":"' + exp_uuid + '"}]}')
 		print("")
-		time.sleep(10)
+		#raw_input("ASD")#time.sleep(0.1)
 
 	
 
