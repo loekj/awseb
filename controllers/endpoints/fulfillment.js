@@ -26,7 +26,7 @@ exports.POST = function(req, res, next) {
 
 	promiseLib.all(variationPromiseArray)
 	.then(function(modules) {
-		res.status(200).json(modules)
+		res.status(200).json({content: modules})
 	}).catch(function(err) {
 		log.error("Variations did not compile: ", err)
 		res.status(400).json({err: err})
