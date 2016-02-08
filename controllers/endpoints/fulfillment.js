@@ -75,7 +75,7 @@ function getTestIdOrWinningVariation(module, userData) {
 		variationId = getRandomVariationId(module.variations)
 		console.log("RAND VAR: " + variationId)
 		return getDbEntry(db.mongo.variations, variationId).then(function(variation) {
-			var res_obj = [{
+			var res_obj = {
 					moduleUuid : module._id,
 					code : {
 						html : variation.html,
@@ -83,7 +83,7 @@ function getTestIdOrWinningVariation(module, userData) {
 						js : variation.js
 					},
 					tests : module.succ
-				}]
+				}
 			test_uuid = new db.mongo.ObjectID()
 			res_obj.testUuid = test_uuid
 			addUserToInTestDB(module._id, userData, variation._id, test_uuid)
@@ -118,7 +118,7 @@ function getTestIdOrWinningVariation(module, userData) {
 			variationId = getRandomVariationId(module.variations)
 			return getDbEntry(db.mongo.variations, variationId)
 				.then(function(variation) {
-					var res_obj = [{
+					var res_obj = {
 							moduleUuid : module._id,
 							code : {
 								html : variation.html,
@@ -126,7 +126,7 @@ function getTestIdOrWinningVariation(module, userData) {
 								js : variation.js
 							},
 							tests : module.succ
-						}]
+						}
 					test_uuid = new db.mongo.ObjectID()
 					res_obj.testUuid = test_uuid
 					addUserToInTestDB(module._id, userData, variation._id, test_uuid)
