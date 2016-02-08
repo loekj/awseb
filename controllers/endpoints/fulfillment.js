@@ -67,7 +67,7 @@ function getTestIdOrWinningVariation(module, userData) {
 	var variationId
 	var predictPromise
 	var test_uuid
-	if(addUserToTest === true || addUserToTest == false || !utils.isDef(module.model)) { //fit does not exist if not trained yet
+	if(addUserToTest === true || !utils.isDef(module.model)) { //fit does not exist if not trained yet
 		console.log("TEST SUBJECT: RANDOM VAR")
 		//Test person! Select random variation
 		console.log("VARIATIONS DEFINED?: " + JSON.stringify(typeof module.variations))
@@ -99,7 +99,13 @@ function getTestIdOrWinningVariation(module, userData) {
 		// predict variation by machine learning
 		// fetch corresponding test function
 		if (module.succ.TestSuccFn.depVarType === 'binary') {
-			predictPromise = predictVariationFWNB(module, userData)
+			if (module.model.type === 'FWNB') {
+				predictPromise = predictVariationFWNB(module, userData)
+			} else if (module.model.type === 'NB') {
+				predictPromise = predictVariationNB(module, userData)
+			} else {
+				predictPromise = predictVariationNB(module, userData)
+			}
 		} else if (module.succ.TestSuccFn.depVarType === 'mclass') {
 			predictPromise = predictVariationMCLASS(module, userData)
 		} else {//(module.succ.depVarType === 'num') {
