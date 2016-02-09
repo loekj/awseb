@@ -76,6 +76,7 @@ function getTestIdOrWinningVariation(module, userData) {
 		console.log("RAND VAR: " + variationId)
 		return getDbEntry(db.mongo.variations, variationId).then(function(variation) {
 			var res_obj = {
+					variationUuid : variation._id,
 					moduleUuid : module._id,
 					code : {
 						html : variation.html,
@@ -119,6 +120,7 @@ function getTestIdOrWinningVariation(module, userData) {
 			return getDbEntry(db.mongo.variations, variationId)
 				.then(function(variation) {
 					var res_obj = {
+							variationUuid : variation._id,
 							moduleUuid : module._id,
 							code : {
 								html : variation.html,
