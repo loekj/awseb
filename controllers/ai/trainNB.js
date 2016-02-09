@@ -189,7 +189,7 @@ if (require.main === module) {
 		}
 		exports.trainNB(process.argv[2], function(err, result) {
 			process.exit(1)
-			// IF NOT ERR, FLUSH MODULE_ID FROM CACHE (or aply invalid tag)!
+			// IF NOT ERR, FLUSH MODULE_ID FROM CACHE (or aply invalid tag??)!
 		})
 	})
 }

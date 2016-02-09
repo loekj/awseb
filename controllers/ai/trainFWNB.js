@@ -19,7 +19,8 @@ var HYPER_MULT = 1
 var KL_NUMERICAL_BINS = 5
 
 /*
-Dumb training model, everything in memory for now
+ONLY WORKS FOR CATEGORICAL FEATURES AS OF NOW. NUMERICAL IMPLEMENTATION IS INCORRECT. 
+ONLY USE IF ALL FEATURE TYPES ARE CATEGORICAL.
 */
 exports.trainFWNB = function(exp_uuid, callback) {
 
