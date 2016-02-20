@@ -54,7 +54,18 @@ function getVariationPromises(moduleArray, userData) {
 			// User is already in test. Deliver consistent variation to them:
 			console.log("ALREADY IN TEST: FEED ACTIVE VARIATION")
 			variationPromiseArray.push(
-				getDbEntry(db.mongo.variations, module.activeVariation)
+				getDbEntry(db.mongo.variations, module.activeVariation).then(function(variation) {
+					var res_obj = {
+							code : {
+								html : variation.html,
+								css : variation.css,
+								js : variation.js
+							}
+						}
+					return res_obj
+				}).catch(function(error) {
+					console.log("ERROR: ", JSON.stringify(error))
+				})
 			)
 		}
 	}
