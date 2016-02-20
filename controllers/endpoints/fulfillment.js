@@ -56,15 +56,13 @@ function getVariationPromises(moduleArray, userData) {
 			variationPromiseArray.push(
 				getDbEntry(db.mongo.variations, module.activeVariation).then(function(variation) {
 					var res_obj = {
-							moduleUuid : module._id,
+							moduleUuid : variation._moduleId,
 							code : {
 								html : variation.html,
 								css : variation.css,
 								js : variation.js
 							}
 						}
-					console.log("RES_OBJ::")
-					console.log(res_obj)
 					return res_obj
 				}).catch(function(error) {
 					console.log("ERROR: ", JSON.stringify(error))
