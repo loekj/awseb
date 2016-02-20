@@ -63,6 +63,8 @@ function getVariationPromises(moduleArray, userData) {
 								js : variation.js
 							}
 						}
+					console.log("RES_OBJ::")
+					console.log(res_obj)
 					return res_obj
 				}).catch(function(error) {
 					console.log("ERROR: ", JSON.stringify(error))
