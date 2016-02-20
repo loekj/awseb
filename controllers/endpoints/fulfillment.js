@@ -56,6 +56,7 @@ function getVariationPromises(moduleArray, userData) {
 			variationPromiseArray.push(
 				getDbEntry(db.mongo.variations, module.activeVariation).then(function(variation) {
 					var res_obj = {
+							moduleUuid : module._id,
 							code : {
 								html : variation.html,
 								css : variation.css,
