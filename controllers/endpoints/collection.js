@@ -5,21 +5,19 @@ var logger = require('../../log/logger.js')
 var log = logger.getLogger();
 
 
-sendResponse = function(res, code) {
-	res.status(code).json({})
+sendResponse = function(res, code, data) {
+	res.status(code).json(data)
 }
 
 /* 
 * API dir
 */
 exports.POST = function(req, res, next) {
-	var callb = req.body.callback
-	var exp_uuid = req.body.expUuid
-	var test_uuid = new db.mongo.ObjectID(req.body.testUuid)
-	var outcome = parseFloat(req.body.result)
-	//var time_of_day = req.body.timeOfDay
 	console.log("COLLECTION.JS")
 	console.log(req.body)
+	var test_uuid = new db.mongo.ObjectID(req.body.testUuid)
+	var outcome = req.body.result
+	//var time_of_day = req.body.timeOfDay
 	db.mongo.data.update(
 	{
 		'data.testUuid' : test_uuid
@@ -32,9 +30,9 @@ exports.POST = function(req, res, next) {
 	function(err, result) {
 		if (err) {
 			console.log(err)
-			sendResponse(res, 400)
+			sendResponse(res, 400, test_uuid)
 		} else {
-			sendResponse(res, 200)
+			sendResponse(res, 200, test_uuid)
 		}
 	})
 }
