@@ -18,7 +18,8 @@ exports.POST = function(req, res, next) {
 	var test_uuid = new db.mongo.ObjectID(req.body.testUuid)
 	var outcome = parseFloat(req.body.result)
 	//var time_of_day = req.body.timeOfDay
-
+	console.log("COLLECTION.JS")
+	console.log(req.body)
 	db.mongo.data.update(
 	{
 		'data.testUuid' : test_uuid
