@@ -2,9 +2,8 @@ node_modules/
 .gitignore
 .elasticbeanstalk/
 
-# Local run cmd
-train*.sh
-run*.sh
+# secret stuff!
+secret/*
 test/tests1/full_reset*.sh
 test/tests2/full_reset*.sh
 
