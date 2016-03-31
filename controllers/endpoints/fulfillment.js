@@ -119,8 +119,8 @@ function getTestIdOrWinningVariation(module, userData) {
 			}
 		} else if (module.succ.TestSuccFn.depVarType === 'mclass') {
 			predictPromise = predictVariationMCLASS(module, userData)
-		} else {//(module.succ.depVarType === 'num') {
-			predictPromise = predictVariationREGR(module, userData)
+		} else {//(module.succ.depVarType === 'Numerical') {
+			predictPromise = predictVariationGLM_ElNet(module, userData)
 		}
 		return predictPromise.then(function(variationId) {
 			console.log('Predicted variation ID: ', variationId)
@@ -306,8 +306,21 @@ function predictVariationFWNB(module, inputs) {
 
 function predictVariationMCLASS(module, inputs) {
 }
+/*
+In future guard for overflow, check whether key exist in fit model 
+(maybe it is a new class not present in fitted model yet). If any of these issues arise, call callback
+*/
+function predictVariationGLM_ElNet(module, inputs) {
 
-function predictVariationREGR(module, inputs) {
+	return promiseLib.promise(function(resolve, reject) {
+		var max_score = Number.NEGATIVE_INFINITY
+		var max_var_id
+		//must be defined, otherwise random var branch would be executed
+		Object.keys(module.model.fit).forEach(function(key){
+		}
+
+		resolve(max_var_id)
+	})
 }	
 
 
