@@ -11,6 +11,7 @@ from sklearn import linear_model
 import warnings
 from datetime import datetime
 import itertools
+import pprint
 
 if __name__ == "__main__":
 
@@ -23,6 +24,9 @@ if __name__ == "__main__":
 	except:
 		print("No database file found!")
 		sys.exit(1)
+
+	# visualize the fetched object
+	pp = pprint.PrettyPrinter()
 
 	#url_db = "mongodb://"+db_info["user"]+":"+db_info["password"]+"@"+db_info["host"]+":"+db_info["port"]
 	client = MongoClient(db_info["host"]+":"+db_info["port"])
@@ -52,7 +56,6 @@ if __name__ == "__main__":
 			try:
 				
 				for idx, feature in enumerate(module_info["featureType"]):
-					#print(feature)
 					if feature == "0": # categorical, keep as string and track seen levels
 						row["userData"][idx] = str(row["userData"][idx])
 						this_feature = row["userData"][idx].strip()
@@ -83,8 +86,7 @@ if __name__ == "__main__":
 						X_all[str(row["variation"])][-1].append([0] * (len(cat_levels[idx]) - 1))
 						if this_observed != cat_levels[idx][-1]: # then it's not the implied level
 							idx_level = cat_levels[idx].index(this_observed)
-							X_all[str(row["variation"])][-1][-1][idx_level] = 1
-					#	raw_input('...')							
+							X_all[str(row["variation"])][-1][-1][idx_level] = 1						
 					else: # numerical (ordinal?)
 						X_all[str(row["variation"])][-1][idx] = float(row["userData"][idx])
 			except Exception as e:
@@ -95,8 +97,8 @@ if __name__ == "__main__":
 	#decide here if that is enough to train this model for all
 	for var_id, var_data in Y_all.iteritems():
 		if len(var_data) < 200:
-			#raise RuntimeError
 			print(str(len(var_data)) + "/200: Not enough samples yet for variation " + str(var_id))
+			raise RuntimeError()
 
 	# flatten X row-by-row:
 	for variation_key in X_all:
@@ -129,6 +131,7 @@ if __name__ == "__main__":
 	
 	# setup trained funcs
 	fitted_pars = {str(variation) : None for variation in variations}
+	intercepts = {str(variation) : None for variation in variations}
 	clf = linear_model.ElasticNetCV(**model_props)
 	warnings.filterwarnings("ignore", category=DeprecationWarning)
 	for var_id in X_all:
@@ -136,6 +139,7 @@ if __name__ == "__main__":
 		clf.set_params(cv= len(X_all[var_id]))
 		fitted_model = clf.fit(X_all[var_id],Y_all[var_id])
 		fitted_pars[var_id] = list(fitted_model.coef_)
+		intercepts[var_id] = fitted_model.intercept_
 
 	# now wrap each cat var parameter fitted pars list in a dict
 	for variation_key in fitted_pars:
@@ -152,7 +156,7 @@ if __name__ == "__main__":
 				new_pars_data.append( fitted_pars[variation_key][0] )
 				fitted_pars[variation_key].pop(0)
 			ii += 1
-		fitted_pars[variation_key] = new_pars_data
+		fitted_pars[variation_key] = [intercepts[variation_key]] + new_pars_data
 	
 	result_update = db.modules.update_one(
 		{
@@ -163,7 +167,6 @@ if __name__ == "__main__":
 				"model" : {
 					"type" : "GLM_ElNet",
 					"modified" : datetime.utcnow(),
-					"intercept" : float(fitted_model.intercept_),
 					"levels" : cat_levels,
 					"fit" : fitted_pars
 				}

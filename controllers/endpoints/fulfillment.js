@@ -236,7 +236,7 @@ function predictVariationNB(module, inputs) {
 			module.model.fit[key].forEach(function(feature) {
 				if (Array.isArray(feature)) { //numerical
 					var feature_val = parseFloat(inputs[i])
-					if (Object.is(feature_val), NaN || !utils.isDef(feature_val)) {
+					if (Object.is(feature_val, NaN) || !utils.isDef(feature_val)) {
 						log.error("Non-numerical passed in fitted model.")
 						throw TypeError("Non-numerical passed in fitted model.")
 					}		
@@ -311,15 +311,45 @@ In future guard for overflow, check whether key exist in fit model
 (maybe it is a new class not present in fitted model yet). If any of these issues arise, call callback
 */
 function predictVariationGLM_ElNet(module, inputs) {
-
 	return promiseLib.promise(function(resolve, reject) {
-		var max_score = Number.NEGATIVE_INFINITY
-		var max_var_id
-		//must be defined, otherwise random var branch would be executed
-		Object.keys(module.model.fit).forEach(function(key){
-		}
+		let max_predict = Number.NEGATIVE_INFINITY
+		let max_predict_var_id,
+			var_pars,
+			var_input,
+			var_predict
+		
+		let featureTypes = module.featureType
+		let catLevels = module.model.levels
 
-		resolve(max_var_id)
+		//model.fit must be defined, otherwise random var branch would be executed
+		async.forEach(Object.keys(module.model.fit), function(key, callback){
+			var_pars = module.model.fit[key]
+			var_predict = var_pars.shift()
+			featureTypes.forEach(function(feature, idx) {
+				if (feature === "0") { // categorical
+					var_input = var_pars[idx][inputs[idx]]
+					if (!utils.isDef(var_input)) {
+						utils.contains(catLevels[idx], inputs[idx], function(err, result) {
+								if (err) {
+									console.log("ERROR")
+								}
+								if (result === -1) {
+									console.log("WARNING: level not found: " + inputs[idx])
+								}
+							})
+					} else {
+						var_predict += var_input
+					}
+				} else {
+					var_predict += (var_pars[idx] * inputs[idx])
+				}
+			})
+			if (var_predict > max_predict) {
+				max_predict = var_predict
+				max_predict_var_id = key
+			}
+		})
+		resolve(max_predict_var_id)
 	})
 }	
 

@@ -28,3 +28,20 @@ exports.variance = function(arr) {
 	})
 	return sum_squares / (arr.length-1)
 }
+
+exports.contains = function(a, obj, callback) {
+	let exists = false
+	try {
+		for (let i = 0; i < a.length; i++) {
+			if (a[i] === obj) {
+				callback(null, i)
+				exists = true
+			}
+		}
+	} catch(err) {
+		callback(err)
+	}
+	if (!exists) {
+		callback(null, -1)
+	}
+}
