@@ -33,6 +33,7 @@ exports.POST = function(req, res, next) {
 				if (err) {
 					res.status(400).json({});
 				}
+				console.log("REGISTERING")
 				res.status(200).json({});
 			}
 		);
